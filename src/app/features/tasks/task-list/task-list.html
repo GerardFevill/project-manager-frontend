@@ -1,33 +1,41 @@
 <div class="task-list-container">
   <div class="header">
     <h1>Project Manager</h1>
-    <button class="btn-primary" (click)="openCreateTaskDialog()">
+    <button mat-raised-button color="primary" (click)="openCreateTaskDialog()">
+      <mat-icon>add</mat-icon>
       New Task
     </button>
   </div>
 
   <!-- Filters -->
   <div class="filters">
-    <select [(ngModel)]="filters.status" (change)="loadTasks()" class="input-field">
-      <option value="all">Toutes les tâches</option>
-      <option [value]="TaskStatus.DRAFT">Brouillon</option>
-      <option [value]="TaskStatus.ACTIVE">Actives</option>
-      <option [value]="TaskStatus.COMPLETED">Terminées</option>
-      <option [value]="TaskStatus.BLOCKED">Bloquées</option>
-      <option [value]="TaskStatus.RECURRING">Récurrentes</option>
-      <option [value]="TaskStatus.ARCHIVED">Archivées</option>
-    </select>
-    <select [(ngModel)]="filters.priority" (change)="loadTasks()" class="input-field">
-      <option [value]="undefined">Toutes les priorités</option>
-      <option value="low">Faible</option>
-      <option value="medium">Moyenne</option>
-      <option value="high">Haute</option>
-      <option value="urgent">Urgente</option>
-    </select>
-    <label class="checkbox-label">
-      <input type="checkbox" [(ngModel)]="filters.onlyRoot" (change)="loadTasks()" />
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select [(ngModel)]="filters.status" (selectionChange)="loadTasks()">
+        <mat-option value="all">Toutes les tâches</mat-option>
+        <mat-option [value]="TaskStatus.DRAFT">Brouillon</mat-option>
+        <mat-option [value]="TaskStatus.ACTIVE">Actives</mat-option>
+        <mat-option [value]="TaskStatus.COMPLETED">Terminées</mat-option>
+        <mat-option [value]="TaskStatus.BLOCKED">Bloquées</mat-option>
+        <mat-option [value]="TaskStatus.RECURRING">Récurrentes</mat-option>
+        <mat-option [value]="TaskStatus.ARCHIVED">Archivées</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Priorité</mat-label>
+      <mat-select [(ngModel)]="filters.priority" (selectionChange)="loadTasks()">
+        <mat-option [value]="undefined">Toutes les priorités</mat-option>
+        <mat-option value="low">Faible</mat-option>
+        <mat-option value="medium">Moyenne</mat-option>
+        <mat-option value="high">Haute</mat-option>
+        <mat-option value="urgent">Urgente</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="filters.onlyRoot" (change)="loadTasks()">
       Tâches racines uniquement
-    </label>
+    </mat-checkbox>
   </div>
 
   <!-- Task Table -->

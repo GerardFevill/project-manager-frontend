@@ -2,36 +2,39 @@
 <mat-dialog-content>
   <div class="form-content">
     <!-- Title -->
-    <input
-      [(ngModel)]="taskData.title"
-      placeholder="Titre de la tâche"
-      class="input-field"
-    />
+    <mat-form-field appearance="outline">
+      <mat-label>Titre de la tâche</mat-label>
+      <input matInput [(ngModel)]="taskData.title" required />
+    </mat-form-field>
 
     <!-- Description -->
-    <textarea
-      [(ngModel)]="taskData.description"
-      placeholder="Description (optionnel)"
-      class="input-field"
-      rows="4"
-    ></textarea>
+    <mat-form-field appearance="outline">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput [(ngModel)]="taskData.description" rows="4"></textarea>
+    </mat-form-field>
 
     <!-- Status & Priority -->
     <div class="row">
-      <select [(ngModel)]="taskData.status" class="input-field">
-        <option [value]="TaskStatus.DRAFT">Brouillon</option>
-        <option [value]="TaskStatus.ACTIVE">Active</option>
-        <option [value]="TaskStatus.COMPLETED">Terminée</option>
-        <option [value]="TaskStatus.BLOCKED">Bloquée</option>
-        <option [value]="TaskStatus.RECURRING">Récurrente</option>
-      </select>
+      <mat-form-field appearance="outline">
+        <mat-label>Statut</mat-label>
+        <mat-select [(ngModel)]="taskData.status">
+          <mat-option [value]="TaskStatus.DRAFT">Brouillon</mat-option>
+          <mat-option [value]="TaskStatus.ACTIVE">Active</mat-option>
+          <mat-option [value]="TaskStatus.COMPLETED">Terminée</mat-option>
+          <mat-option [value]="TaskStatus.BLOCKED">Bloquée</mat-option>
+          <mat-option [value]="TaskStatus.RECURRING">Récurrente</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <select [(ngModel)]="taskData.priority" class="input-field">
-        <option value="low">Faible</option>
-        <option value="medium">Moyenne</option>
-        <option value="high">Haute</option>
-        <option value="urgent">Urgente</option>
-      </select>
+      <mat-form-field appearance="outline">
+        <mat-label>Priorité</mat-label>
+        <mat-select [(ngModel)]="taskData.priority">
+          <mat-option value="low">Faible</mat-option>
+          <mat-option value="medium">Moyenne</mat-option>
+          <mat-option value="high">Haute</mat-option>
+          <mat-option value="urgent">Urgente</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <!-- Progress Slider -->
@@ -50,18 +53,19 @@
 
     <!-- Dates -->
     <div class="row">
-      <input
-        type="date"
-        [(ngModel)]="taskData.startDate"
-        class="input-field"
-        placeholder="Date de début"
-      />
-      <input
-        type="date"
-        [(ngModel)]="taskData.dueDate"
-        class="input-field"
-        placeholder="Date d'échéance"
-      />
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="taskData.startDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date d'échéance</mat-label>
+        <input matInput [matDatepicker]="duePicker" [(ngModel)]="taskData.dueDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="duePicker"></mat-datepicker-toggle>
+        <mat-datepicker #duePicker></mat-datepicker>
+      </mat-form-field>
     </div>
 
     <!-- Recurrence -->
@@ -70,33 +74,26 @@
     ></app-task-recurrence-selector>
 
     @if (taskData.recurrence && taskData.recurrence !== TaskRecurrence.NONE) {
-      <input
-        type="datetime-local"
-        [(ngModel)]="taskData.nextOccurrence"
-        class="input-field"
-        placeholder="Prochaine occurrence"
-      />
+      <mat-form-field appearance="outline">
+        <mat-label>Prochaine occurrence</mat-label>
+        <input matInput type="datetime-local" [(ngModel)]="taskData.nextOccurrence" />
+      </mat-form-field>
     }
 
     <!-- Time tracking -->
     <div class="row">
-      <input
-        type="number"
-        [(ngModel)]="taskData.estimatedHours"
-        placeholder="Heures estimées"
-        class="input-field"
-        min="0"
-        step="0.5"
-      />
+      <mat-form-field appearance="outline">
+        <mat-label>Heures estimées</mat-label>
+        <input matInput type="number" [(ngModel)]="taskData.estimatedHours" min="0" step="0.5" />
+        <mat-hint>Temps estimé en heures</mat-hint>
+      </mat-form-field>
+
       @if (data) {
-        <input
-          type="number"
-          [(ngModel)]="taskData.actualHours"
-          placeholder="Heures réelles"
-          class="input-field"
-          min="0"
-          step="0.5"
-        />
+        <mat-form-field appearance="outline">
+          <mat-label>Heures réelles</mat-label>
+          <input matInput type="number" [(ngModel)]="taskData.actualHours" min="0" step="0.5" />
+          <mat-hint>Temps réellement passé</mat-hint>
+        </mat-form-field>
       }
     </div>
 

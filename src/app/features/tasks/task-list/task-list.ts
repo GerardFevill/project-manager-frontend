@@ -9,6 +9,10 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskFilterDto, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
@@ -34,6 +38,10 @@ import {
     MatIconModule,
     MatTooltipModule,
     MatChipsModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatCardModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent
   ],
