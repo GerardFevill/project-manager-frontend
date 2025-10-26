@@ -40,6 +40,10 @@ export class TaskService {
       if (filters.priorities && filters.priorities.length > 0) {
         filters.priorities.forEach(p => params = params.append('priorities', p));
       }
+      if (filters.type) params = params.set('type', filters.type);
+      if (filters.types && filters.types.length > 0) {
+        filters.types.forEach(t => params = params.append('types', t));
+      }
       if (filters.recurrence) params = params.set('recurrence', filters.recurrence);
       if (filters.onlyRoot !== undefined) params = params.set('onlyRoot', filters.onlyRoot.toString());
       if (filters.onlyOverdue !== undefined) params = params.set('onlyOverdue', filters.onlyOverdue.toString());
@@ -189,6 +193,13 @@ export class TaskService {
    */
   calculateProgressFromChildren(id: string): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/${id}/calculate-progress`, {});
+  }
+
+  /**
+   * Convert a task to project type
+   */
+  convertToProject(id: string): Observable<Task> {
+    return this.http.post<Task>(`${this.apiUrl}/${id}/convert-to-project`, {});
   }
 
   // ============================================================================

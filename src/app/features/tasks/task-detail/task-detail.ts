@@ -19,6 +19,7 @@ import {
   ConfirmDialogComponent,
   TaskBlockDialogComponent
 } from '../../../shared/components';
+import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-badge/task-type-badge.component';
 
 @Component({
   selector: 'app-task-detail',
@@ -35,7 +36,8 @@ import {
     MatMenuModule,
     MatDividerModule,
     TaskStatusBadgeComponent,
-    TaskProgressBarComponent
+    TaskProgressBarComponent,
+    TaskTypeBadgeComponent
   ],
   templateUrl: './task-detail.html',
   styleUrl: './task-detail.scss'
@@ -201,6 +203,35 @@ export class TaskDetailComponent implements OnInit {
           error: (err) => {
             console.error('Error deleting task:', err);
             this.notificationService.error(TASK_MESSAGES.DELETE_ERROR);
+          }
+        });
+      }
+    });
+  }
+
+  convertToProject() {
+    const currentTask = this.task();
+    if (!currentTask) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Convertir en projet',
+        message: 'Voulez-vous convertir cette tâche en projet ?',
+        confirmText: 'Convertir',
+        cancelText: 'Annuler'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskService.convertToProject(currentTask.id).subscribe({
+          next: () => {
+            this.notificationService.success('Tâche convertie en projet avec succès');
+            this.loadTask(currentTask.id);
+          },
+          error: (err) => {
+            console.error('Error converting to project:', err);
+            this.notificationService.error('Erreur lors de la conversion');
           }
         });
       }

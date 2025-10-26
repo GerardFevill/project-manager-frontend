@@ -34,6 +34,12 @@
             <mat-icon>archive</mat-icon>
             <span>Archiver</span>
           </button>
+          @if (task()!.type !== 'project' && task()!.type !== 'milestone') {
+            <button mat-menu-item (click)="convertToProject()">
+              <mat-icon>folder</mat-icon>
+              <span>Convertir en projet</span>
+            </button>
+          }
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="deleteTask()" class="delete-menu-item">
             <mat-icon>delete</mat-icon>
@@ -50,7 +56,10 @@
         <mat-card-header>
           <div class="title-header">
             <h2>{{ task()!.title }}</h2>
-            <app-task-status-badge [status]="task()!.status"></app-task-status-badge>
+            <div class="badges">
+              <app-task-status-badge [status]="task()!.status"></app-task-status-badge>
+              <app-task-type-badge [type]="task()!.type"></app-task-type-badge>
+            </div>
           </div>
         </mat-card-header>
         <mat-card-content>

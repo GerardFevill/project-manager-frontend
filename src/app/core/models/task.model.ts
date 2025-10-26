@@ -1,4 +1,5 @@
 import { TaskStatus, TaskRecurrence } from './task-enums';
+import { TaskType } from './task-type.enum';
 
 /**
  * Main Task Interface
@@ -14,6 +15,7 @@ export interface Task {
   status: TaskStatus;
   progress: number; // 0-100
   priority: 'low' | 'medium' | 'high' | 'urgent';
+  type: TaskType;
 
   // Dates
   dueDate: Date | null;
@@ -54,6 +56,7 @@ export interface CreateTaskDto {
   status?: TaskStatus;
   progress?: number;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  type?: TaskType;
   dueDate?: string;
   startDate?: string;
   recurrence?: TaskRecurrence;
@@ -73,6 +76,7 @@ export interface UpdateTaskDto {
   status?: TaskStatus;
   progress?: number;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  type?: TaskType;
   dueDate?: string;
   startDate?: string;
   recurrence?: TaskRecurrence;
@@ -88,11 +92,13 @@ export interface UpdateTaskDto {
  * Advanced filters for task queries
  */
 export interface TaskFilterDto {
-  // Status & Priority
+  // Status & Priority & Type
   status?: TaskStatus | 'all';
   statuses?: TaskStatus[];
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   priorities?: ('low' | 'medium' | 'high' | 'urgent')[];
+  type?: TaskType;
+  types?: TaskType[];
   recurrence?: TaskRecurrence;
 
   // Hierarchical filters

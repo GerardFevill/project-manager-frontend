@@ -29,6 +29,7 @@ import {
   TaskProgressBarComponent,
   TaskBlockDialogComponent
 } from '../../../shared/components';
+import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-badge/task-type-badge.component';
 
 @Component({
   selector: 'app-task-list',
@@ -53,7 +54,8 @@ import {
     MatDividerModule,
     MatPaginatorModule,
     TaskStatusBadgeComponent,
-    TaskProgressBarComponent
+    TaskProgressBarComponent,
+    TaskTypeBadgeComponent
   ],
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
@@ -68,7 +70,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   tasks = signal<Task[]>([]);
   loading = signal(false);
-  displayedColumns: string[] = ['status', 'title', 'progress', 'priority', 'tags', 'dueDate', 'actions'];
+  displayedColumns: string[] = ['status', 'type', 'title', 'progress', 'priority', 'tags', 'dueDate', 'actions'];
   TaskStatus = TaskStatus;
 
   // Pagination
