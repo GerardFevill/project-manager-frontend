@@ -63,45 +63,113 @@ textarea.input-field {
   color: var(--text-color);
 }
 
-.tasks {
-  display: grid;
-  gap: 15px;
-}
-
-.task-card {
+.table-container {
+  width: 100%;
+  overflow-x: auto;
   background: var(--card-bg);
-  border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 20px;
-  transition: box-shadow 0.3s;
+  border: 1px solid var(--border-color);
 }
 
-.task-card:hover {
-  box-shadow: 0 4px 8px var(--shadow);
+.tasks-table {
+  width: 100%;
+  background: var(--card-bg);
 }
 
-.task-card.completed {
-  opacity: 0.7;
+.tasks-table th {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 16px;
+  border-bottom: 2px solid var(--border-color);
+  text-align: left;
 }
 
-.task-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+.tasks-table td {
+  padding: 16px;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.tasks-table tr:hover {
+  background: var(--hover-bg);
+}
+
+.completed-row {
+  opacity: 0.6;
+}
+
+.title-cell {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.description-cell {
+  color: var(--text-secondary);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .task-checkbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  accent-color: var(--accent-color);
 }
 
-.task-header h3 {
-  flex: 1;
-  margin: 0;
-  font-size: 1.2rem;
-  color: var(--text-color);
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  width: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  color: var(--text-color) !important;
+
+  ::ng-deep mat-icon {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    line-height: 20px !important;
+  }
+}
+
+.view-btn {
+  &:hover {
+    background: rgba(9, 105, 218, 0.1) !important;
+    color: #0969da !important;
+  }
+}
+
+.edit-btn {
+  &:hover {
+    background: rgba(191, 135, 0, 0.1) !important;
+    color: #bf8700 !important;
+  }
+}
+
+.duplicate-btn {
+  &:hover {
+    background: rgba(130, 80, 223, 0.1) !important;
+    color: var(--accent-color) !important;
+  }
+}
+
+.delete-btn {
+  &:hover {
+    background: rgba(207, 34, 46, 0.1) !important;
+    color: #cf222e !important;
+  }
 }
 
 .completed-text {

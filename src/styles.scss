@@ -26,12 +26,15 @@ html {
 }
 
 :root {
+  /* GitHub Light theme colors */
   --bg-color: #ffffff;
-  --text-color: oklch(19.37% 0.006 300.98);
-  --text-secondary: oklch(36.98% 0.014 302.71);
-  --border-color: oklch(70.9% 0.015 304.04);
-  --card-bg: #ffffff;
-  --shadow: rgba(0, 0, 0, 0.1);
+  --text-color: #24292f;
+  --text-secondary: #57606a;
+  --border-color: #d0d7de;
+  --card-bg: #f6f8fa;
+  --shadow: rgba(31, 35, 40, 0.15);
+  --hover-bg: #f3f4f6;
+  --accent-color: #8250df;
 }
 
 :root.dark-mode {
@@ -43,6 +46,7 @@ html {
   --card-bg: #0d1117;
   --shadow: rgba(1, 4, 9, 0.8);
   --hover-bg: #161b22;
+  --accent-color: #a371f7;
 }
 
 * {
@@ -58,11 +62,99 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.6;
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.125rem; }
+h5, h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Snackbar/Toaster styles */
+.snackbar-success {
+  --mdc-snackbar-container-color: #2da44e !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+
+  .mdc-snackbar__surface {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(45, 164, 78, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    min-width: 320px !important;
+    padding: 16px 20px !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+  }
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: #cf222e !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+
+  .mdc-snackbar__surface {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(207, 34, 46, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    min-width: 320px !important;
+    padding: 16px 20px !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+  }
+}
+
+.snackbar-warning {
+  --mdc-snackbar-container-color: #bf8700 !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+
+  .mdc-snackbar__surface {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(191, 135, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    min-width: 320px !important;
+    padding: 16px 20px !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+  }
+}
+
+.snackbar-info {
+  --mdc-snackbar-container-color: #0969da !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+
+  .mdc-snackbar__surface {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(9, 105, 218, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    min-width: 320px !important;
+    padding: 16px 20px !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Global snackbar positioning */
+.mat-mdc-snack-bar-container {
+  margin: 16px !important;
 }
