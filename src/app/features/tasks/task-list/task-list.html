@@ -201,6 +201,19 @@
             [class.blocked-row]="row.status === TaskStatus.BLOCKED"
             [class.archived-row]="row.status === TaskStatus.ARCHIVED"></tr>
       </table>
+
+      <!-- Pagination -->
+      @if (!loading() && tasks().length > 0) {
+        <mat-paginator
+          [length]="totalItems()"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          [pageIndex]="(filters.page || 1) - 1"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+          aria-label="Sélectionner la page">
+        </mat-paginator>
+      }
     }
   </div>
 </div>

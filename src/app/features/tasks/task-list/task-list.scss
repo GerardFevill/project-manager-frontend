@@ -374,3 +374,10 @@ textarea.input-field {
     background: rgba(207, 34, 46, 0.1) !important;
   }
 }
+
+// Pagination
+mat-paginator {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-color);
+}

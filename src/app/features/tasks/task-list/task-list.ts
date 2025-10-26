@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskFilterDto, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
@@ -48,6 +49,7 @@ import {
     MatCardModule,
     MatMenuModule,
     MatDividerModule,
+    MatPaginatorModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent
   ],
@@ -65,9 +67,16 @@ export class TaskListComponent implements OnInit {
   displayedColumns: string[] = ['status', 'title', 'progress', 'priority', 'tags', 'dueDate', 'actions'];
   TaskStatus = TaskStatus;
 
+  // Pagination
+  totalItems = signal(0);
+  pageSize = 20;
+  pageSizeOptions = [10, 20, 50, 100];
+
   filters: TaskFilterDto = {
     status: 'all',
-    onlyRoot: true
+    onlyRoot: true,
+    page: 1,
+    limit: 20
   };
 
   // Multi-select filters
@@ -96,6 +105,7 @@ export class TaskListComponent implements OnInit {
     this.taskService.findAll(this.filters).subscribe({
       next: (response) => {
         this.allTasks.set(response.data);
+        this.totalItems.set(response.meta.total);
         this.applyMultiSelectFilters();
         this.loading.set(false);
         this.notificationService.success(TASK_MESSAGES.LOADED(this.tasks().length));
@@ -106,6 +116,13 @@ export class TaskListComponent implements OnInit {
         this.notificationService.error(TASK_MESSAGES.LOAD_ERROR);
       }
     });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.filters.page = event.pageIndex + 1;
+    this.filters.limit = event.pageSize;
+    this.pageSize = event.pageSize;
+    this.loadTasks();
   }
 
   applyMultiSelectFilters() {
