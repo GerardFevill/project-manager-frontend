@@ -1,4 +1,6 @@
-# Portal
+# Project Manager Frontend
+
+Angular 20 frontend application for the Project Manager API - A hierarchical task management system with fractal structure.
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
 
@@ -53,6 +55,50 @@ ng e2e
 ```
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Docker
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t gerardfevill/project-manager-frontend:latest .
+
+# Run with docker-compose
+docker-compose up
+
+# Or run directly
+docker run -p 4200:80 gerardfevill/project-manager-frontend:latest
+```
+
+The application will be available at `http://localhost:4200`
+
+## Features
+
+- Create, update, and delete tasks
+- Hierarchical task structure (fractal tasks with unlimited nesting)
+- Task completion toggle
+- Filter tasks by status, priority, and hierarchy level
+- View task subtrees
+- Responsive UI with inline styles
+
+## Architecture
+
+- **Models**: TypeScript interfaces matching backend entities
+- **Services**: HTTP client services for API communication
+- **Components**: Standalone components with signals for reactive state
+- **Routing**: Lazy-loaded routes for optimal performance
+
+## API Configuration
+
+Edit `src/environments/environment.ts` to configure the API URL:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000'
+};
+```
 
 ## Additional Resources
 
