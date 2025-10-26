@@ -26,7 +26,10 @@ export class TaskService {
   }
 
   findOne(id: string, includeRelations = false): Observable<Task> {
-    const params = includeRelations ? { includeRelations: 'true' } : {};
+    let params = new HttpParams();
+    if (includeRelations) {
+      params = params.set('includeRelations', 'true');
+    }
     return this.http.get<Task>(`${this.apiUrl}/${id}`, { params });
   }
 
