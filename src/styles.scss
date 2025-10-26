@@ -1,1 +1,68 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$violet-palette,
+  ),
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$violet-palette,
+  ),
+));
+
+html {
+  @include mat.all-component-themes($light-theme);
+
+  &.dark-mode {
+    @include mat.all-component-colors($dark-theme);
+  }
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: oklch(19.37% 0.006 300.98);
+  --text-secondary: oklch(36.98% 0.014 302.71);
+  --border-color: oklch(70.9% 0.015 304.04);
+  --card-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+:root.dark-mode {
+  /* GitHub Dark theme colors */
+  --bg-color: #010409;
+  --text-color: #e6edf3;
+  --text-secondary: #7d8590;
+  --border-color: #30363d;
+  --card-bg: #0d1117;
+  --shadow: rgba(1, 4, 9, 0.8);
+  --hover-bg: #161b22;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100%;
+}

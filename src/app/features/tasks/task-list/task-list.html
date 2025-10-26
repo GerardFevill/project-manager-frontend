@@ -1,0 +1,105 @@
+<div class="task-list-container">
+  <div class="header">
+    <h1>Project Manager</h1>
+    <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancel' : 'New Task' }}
+    </button>
+  </div>
+
+  <!-- Create Task Form -->
+  @if (showCreateForm) {
+    <div class="task-form">
+      <h2>Create New Task</h2>
+      <input
+        [(ngModel)]="newTask.title"
+        placeholder="Task title"
+        class="input-field"
+      />
+      <textarea
+        [(ngModel)]="newTask.description"
+        placeholder="Description (optional)"
+        class="input-field"
+      ></textarea>
+      <select [(ngModel)]="newTask.priority" class="input-field">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="urgent">Urgent</option>
+      </select>
+      <input
+        type="date"
+        [(ngModel)]="newTask.dueDate"
+        class="input-field"
+      />
+      <div class="form-actions">
+        <button (click)="createTask()" class="btn-primary">Create</button>
+        <button (click)="showCreateForm = false" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- Filters -->
+  <div class="filters">
+    <select [(ngModel)]="filters.status" (change)="loadTasks()" class="input-field">
+      <option value="all">All Tasks</option>
+      <option value="active">Active</option>
+      <option value="completed">Completed</option>
+    </select>
+    <select [(ngModel)]="filters.priority" (change)="loadTasks()" class="input-field">
+      <option [value]="undefined">All Priorities</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+      <option value="urgent">Urgent</option>
+    </select>
+    <label class="checkbox-label">
+      <input type="checkbox" [(ngModel)]="filters.onlyRoot" (change)="loadTasks()" />
+      Root tasks only
+    </label>
+  </div>
+
+  <!-- Task List -->
+  <div class="tasks">
+    @if (loading()) {
+      <div class="loading">Loading tasks...</div>
+    } @else if (tasks().length === 0) {
+      <div class="empty">No tasks found. Create your first task!</div>
+    } @else {
+      @for (task of tasks(); track task.id) {
+        <div class="task-card" [class.completed]="task.completed">
+          <div class="task-header">
+            <input
+              type="checkbox"
+              [checked]="task.completed"
+              (change)="toggleTask(task.id)"
+              class="task-checkbox"
+            />
+            <h3 [class.completed-text]="task.completed">{{ task.title }}</h3>
+            <span class="priority priority-{{ task.priority }}">{{ task.priority }}</span>
+          </div>
+
+          @if (task.description) {
+            <p class="task-description">{{ task.description }}</p>
+          }
+
+          <div class="task-meta">
+            <span>Level: {{ task.level }}</span>
+            @if (task.dueDate) {
+              <span>Due: {{ task.dueDate | date:'short' }}</span>
+            }
+            <span>Created: {{ task.createdAt | date:'short' }}</span>
+          </div>
+
+          <div class="task-actions">
+            <button (click)="viewChildren(task.id)" class="btn-small">
+              View Subtasks
+            </button>
+            <button (click)="deleteTask(task.id)" class="btn-danger-small">
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

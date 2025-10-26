@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "f8b85bd1-0166-45fc-af57-66c62bc79684"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -10,7 +11,10 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "inlineTemplate": false,
+          "inlineStyle": false,
+          "skipTests": false
         }
       },
       "root": "",

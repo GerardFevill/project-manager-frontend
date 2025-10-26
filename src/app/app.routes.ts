@@ -8,6 +8,6 @@ export const routes: Routes = [
   },
   {
     path: 'tasks',
-    loadComponent: () => import('./features/tasks/task-list.component').then(m => m.TaskListComponent)
+    loadComponent: () => import('./features/tasks/task-list/task-list').then(m => m.TaskListComponent)
   }
 ];
