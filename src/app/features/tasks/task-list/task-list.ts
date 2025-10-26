@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +31,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
