@@ -69,14 +69,14 @@ export class TaskListComponent implements OnInit {
 
   // Pagination
   totalItems = signal(0);
-  pageSize = 20;
-  pageSizeOptions = [20, 10, 50, 100];
+  pageSize = 10;
+  pageSizeOptions = [10, 20, 50, 100];
 
   filters: TaskFilterDto = {
     status: 'all',
     onlyRoot: true,
     page: 1,
-    limit: 20
+    limit: 10
   };
 
   // Multi-select filters
