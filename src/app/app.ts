@@ -1,18 +1,32 @@
 import { Component, signal, effect } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatSidenavModule,
+    MatListModule,
+    MatToolbarModule
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
   protected readonly title = signal('portal');
   protected readonly isDarkMode = signal(false);
+  protected readonly sidenavOpened = signal(true); // Sidenav open by default
 
   constructor() {
     // Load dark mode preference from localStorage
@@ -38,5 +52,9 @@ export class App {
 
   protected toggleDarkMode() {
     this.isDarkMode.set(!this.isDarkMode());
+  }
+
+  protected toggleSidenav() {
+    this.sidenavOpened.set(!this.sidenavOpened());
   }
 }

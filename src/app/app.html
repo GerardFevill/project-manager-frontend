@@ -1,17 +1,95 @@
-<button
-  mat-icon-button
-  class="dark-mode-toggle"
-  (click)="toggleDarkMode()"
-  [matTooltip]="isDarkMode() ? 'Passer en mode clair' : 'Passer en mode sombre'"
-  matTooltipPosition="left"
->
-  @if (isDarkMode()) {
-    <mat-icon>light_mode</mat-icon>
-  } @else {
-    <mat-icon>dark_mode</mat-icon>
-  }
-</button>
+<mat-sidenav-container class="sidenav-container">
+  <!-- Sidebar -->
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    [opened]="sidenavOpened()"
+    class="sidenav"
+  >
+    <!-- Sidebar Header -->
+    <div class="sidenav-header">
+      <button mat-icon-button (click)="toggleSidenav()" matTooltip="Réduire le menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h2 class="sidenav-title">Project Manager</h2>
+    </div>
 
-<div class="container">
-  <router-outlet />
-</div>
+    <!-- Navigation Menu -->
+    <mat-nav-list class="nav-list">
+      <a mat-list-item routerLink="/tasks" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>task</mat-icon>
+        <span matListItemTitle>Mes Tâches</span>
+      </a>
+
+      <a mat-list-item routerLink="/projects" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>folder</mat-icon>
+        <span matListItemTitle>Projets</span>
+      </a>
+
+      <a mat-list-item routerLink="/calendar" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>calendar_today</mat-icon>
+        <span matListItemTitle>Calendrier</span>
+      </a>
+
+      <a mat-list-item routerLink="/analytics" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>analytics</mat-icon>
+        <span matListItemTitle>Statistiques</span>
+      </a>
+
+      <mat-divider></mat-divider>
+
+      <a mat-list-item routerLink="/settings" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Paramètres</span>
+      </a>
+
+      <a mat-list-item routerLink="/help" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>help</mat-icon>
+        <span matListItemTitle>Aide</span>
+      </a>
+    </mat-nav-list>
+
+    <!-- Sidebar Footer -->
+    <div class="sidenav-footer">
+      <button mat-button class="user-profile">
+        <mat-icon>account_circle</mat-icon>
+        <span>Mon Compte</span>
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content class="main-content">
+    <!-- Top Toolbar -->
+    <mat-toolbar class="toolbar">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        matTooltip="Menu"
+        class="menu-toggle"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="toolbar-spacer"></span>
+
+      <!-- Dark Mode Toggle -->
+      <button
+        mat-icon-button
+        (click)="toggleDarkMode()"
+        [matTooltip]="isDarkMode() ? 'Passer en mode clair' : 'Passer en mode sombre'"
+      >
+        @if (isDarkMode()) {
+          <mat-icon>light_mode</mat-icon>
+        } @else {
+          <mat-icon>dark_mode</mat-icon>
+        }
+      </button>
+    </mat-toolbar>
+
+    <!-- Page Content -->
+    <div class="page-content">
+      <router-outlet />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
