@@ -94,8 +94,8 @@ export class TaskListComponent implements OnInit {
     this.notificationService.info(TASK_MESSAGES.LOADING);
 
     this.taskService.findAll(this.filters).subscribe({
-      next: (tasks) => {
-        this.allTasks.set(tasks);
+      next: (response) => {
+        this.allTasks.set(response.data);
         this.applyMultiSelectFilters();
         this.loading.set(false);
         this.notificationService.success(TASK_MESSAGES.LOADED(this.tasks().length));

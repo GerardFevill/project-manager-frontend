@@ -9,7 +9,8 @@ import {
   TaskStats,
   BlockTaskDto,
   TaskHistory,
-  TaskProgress
+  TaskProgress,
+  PaginatedResponse
 } from '../models';
 import { environment } from '../../../environments/environment';
 
@@ -27,7 +28,7 @@ export class TaskService {
   /**
    * Find all tasks with advanced filters
    */
-  findAll(filters?: TaskFilterDto): Observable<Task[]> {
+  findAll(filters?: TaskFilterDto): Observable<PaginatedResponse<Task>> {
     let params = new HttpParams();
 
     if (filters) {
@@ -50,7 +51,7 @@ export class TaskService {
       if (filters.includeArchived !== undefined) params = params.set('includeArchived', filters.includeArchived.toString());
     }
 
-    return this.http.get<Task[]>(this.apiUrl, { params });
+    return this.http.get<PaginatedResponse<Task>>(this.apiUrl, { params });
   }
 
   /**
