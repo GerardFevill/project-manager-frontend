@@ -205,7 +205,7 @@ export class CreateTaskDialogComponent {
   TaskStatus = TaskStatus;
   TaskRecurrence = TaskRecurrence;
 
-  taskData: CreateTaskDto = {
+  taskData: CreateTaskDto & { actualHours?: number } = {
     title: '',
     priority: 'medium',
     status: TaskStatus.DRAFT,
@@ -242,7 +242,13 @@ export class CreateTaskDialogComponent {
 
   onSubmit() {
     if (this.taskData.title.trim()) {
-      this.dialogRef.close(this.taskData);
+      // If creating (no data), remove actualHours as it's only for updates
+      if (!this.data && this.taskData.actualHours !== undefined) {
+        const { actualHours, ...createData } = this.taskData;
+        this.dialogRef.close(createData);
+      } else {
+        this.dialogRef.close(this.taskData);
+      }
     }
   }
 }
