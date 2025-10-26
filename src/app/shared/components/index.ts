@@ -1,2 +1,7 @@
 export * from './confirm-dialog/confirm-dialog';
 export * from './create-task-dialog/create-task-dialog';
+export * from './task-status-badge/task-status-badge';
+export * from './task-progress-bar/task-progress-bar';
+export * from './task-recurrence-selector/task-recurrence-selector';
+export * from './task-tags-input/task-tags-input';
+export * from './task-block-dialog/task-block-dialog';

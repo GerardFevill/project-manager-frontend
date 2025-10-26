@@ -9,48 +9,63 @@
   <!-- Filters -->
   <div class="filters">
     <select [(ngModel)]="filters.status" (change)="loadTasks()" class="input-field">
-      <option value="all">All Tasks</option>
-      <option value="active">Active</option>
-      <option value="completed">Completed</option>
+      <option value="all">Toutes les tâches</option>
+      <option [value]="TaskStatus.DRAFT">Brouillon</option>
+      <option [value]="TaskStatus.ACTIVE">Actives</option>
+      <option [value]="TaskStatus.COMPLETED">Terminées</option>
+      <option [value]="TaskStatus.BLOCKED">Bloquées</option>
+      <option [value]="TaskStatus.RECURRING">Récurrentes</option>
+      <option [value]="TaskStatus.ARCHIVED">Archivées</option>
     </select>
     <select [(ngModel)]="filters.priority" (change)="loadTasks()" class="input-field">
-      <option [value]="undefined">All Priorities</option>
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-      <option value="urgent">Urgent</option>
+      <option [value]="undefined">Toutes les priorités</option>
+      <option value="low">Faible</option>
+      <option value="medium">Moyenne</option>
+      <option value="high">Haute</option>
+      <option value="urgent">Urgente</option>
     </select>
     <label class="checkbox-label">
       <input type="checkbox" [(ngModel)]="filters.onlyRoot" (change)="loadTasks()" />
-      Root tasks only
+      Tâches racines uniquement
     </label>
   </div>
 
   <!-- Task Table -->
   <div class="table-container">
     @if (loading()) {
-      <div class="loading">Loading tasks...</div>
+      <div class="loading">Chargement des tâches...</div>
     } @else if (tasks().length === 0) {
-      <div class="empty">No tasks found. Create your first task!</div>
+      <div class="empty">Aucune tâche trouvée. Créez votre première tâche !</div>
     } @else {
       <table mat-table [dataSource]="tasks()" class="tasks-table">
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let task">
+            <app-task-status-badge [status]="task.status"></app-task-status-badge>
+          </td>
+        </ng-container>
 
         <!-- Title Column -->
         <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef>Titre</th>
           <td mat-cell *matCellDef="let task">
-            <div class="title-cell" [class.completed-text]="task.completed">
+            <div class="title-cell" [class.overdue]="isOverdue(task)">
               {{ task.title }}
+              @if (isOverdue(task)) {
+                <mat-icon class="overdue-icon" matTooltip="En retard">warning</mat-icon>
+              }
             </div>
           </td>
         </ng-container>
 
-        <!-- Description Column -->
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>Description</th>
+        <!-- Progress Column -->
+        <ng-container matColumnDef="progress">
+          <th mat-header-cell *matHeaderCellDef>Progression</th>
           <td mat-cell *matCellDef="let task">
-            <div class="description-cell">
-              {{ task.description || '-' }}
+            <div class="progress-cell">
+              <app-task-progress-bar [progress]="task.progress"></app-task-progress-bar>
             </div>
           </td>
         </ng-container>
@@ -65,25 +80,34 @@
           </td>
         </ng-container>
 
+        <!-- Tags Column -->
+        <ng-container matColumnDef="tags">
+          <th mat-header-cell *matHeaderCellDef>Tags</th>
+          <td mat-cell *matCellDef="let task">
+            <div class="tags-cell">
+              @if (task.tags && task.tags.length > 0) {
+                <mat-chip-set>
+                  @for (tag of task.tags.slice(0, 2); track tag) {
+                    <mat-chip>{{ tag }}</mat-chip>
+                  }
+                  @if (task.tags.length > 2) {
+                    <mat-chip>+{{ task.tags.length - 2 }}</mat-chip>
+                  }
+                </mat-chip-set>
+              } @else {
+                <span class="no-tags">-</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
         <!-- Due Date Column -->
         <ng-container matColumnDef="dueDate">
           <th mat-header-cell *matHeaderCellDef>Échéance</th>
           <td mat-cell *matCellDef="let task">
-            {{ task.dueDate ? (task.dueDate | date:'short') : '-' }}
-          </td>
-        </ng-container>
-
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Statut</th>
-          <td mat-cell *matCellDef="let task">
-            <input
-              type="checkbox"
-              [checked]="task.completed"
-              (change)="toggleTask(task.id)"
-              class="task-checkbox"
-              [matTooltip]="task.completed ? 'Marquer comme active' : 'Marquer comme complétée'"
-            />
+            <div [class.overdue-date]="isOverdue(task)">
+              {{ task.dueDate ? (task.dueDate | date:'short') : '-' }}
+            </div>
           </td>
         </ng-container>
 
@@ -92,14 +116,38 @@
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let task">
             <div class="action-buttons">
+              <!-- Toggle -->
               <button
                 mat-icon-button
-                (click)="viewTask(task)"
-                matTooltip="Voir"
-                class="action-btn view-btn"
+                (click)="toggleTask(task.id)"
+                [matTooltip]="task.status === TaskStatus.COMPLETED ? 'Marquer comme active' : 'Marquer comme terminée'"
+                class="action-btn toggle-btn"
               >
-                <mat-icon>visibility</mat-icon>
+                <mat-icon>{{ task.status === TaskStatus.COMPLETED ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
               </button>
+
+              <!-- Block/Unblock -->
+              @if (task.status === TaskStatus.BLOCKED) {
+                <button
+                  mat-icon-button
+                  (click)="unblockTask(task.id)"
+                  matTooltip="Débloquer"
+                  class="action-btn unblock-btn"
+                >
+                  <mat-icon>lock_open</mat-icon>
+                </button>
+              } @else {
+                <button
+                  mat-icon-button
+                  (click)="blockTask(task)"
+                  matTooltip="Bloquer"
+                  class="action-btn block-btn"
+                >
+                  <mat-icon>block</mat-icon>
+                </button>
+              }
+
+              <!-- Edit -->
               <button
                 mat-icon-button
                 (click)="editTask(task)"
@@ -108,6 +156,29 @@
               >
                 <mat-icon>edit</mat-icon>
               </button>
+
+              <!-- Archive/Unarchive -->
+              @if (task.status === TaskStatus.ARCHIVED) {
+                <button
+                  mat-icon-button
+                  (click)="unarchiveTask(task.id)"
+                  matTooltip="Restaurer"
+                  class="action-btn unarchive-btn"
+                >
+                  <mat-icon>unarchive</mat-icon>
+                </button>
+              } @else {
+                <button
+                  mat-icon-button
+                  (click)="archiveTask(task.id)"
+                  matTooltip="Archiver"
+                  class="action-btn archive-btn"
+                >
+                  <mat-icon>archive</mat-icon>
+                </button>
+              }
+
+              <!-- Duplicate -->
               <button
                 mat-icon-button
                 (click)="duplicateTask(task)"
@@ -116,6 +187,8 @@
               >
                 <mat-icon>content_copy</mat-icon>
               </button>
+
+              <!-- Delete -->
               <button
                 mat-icon-button
                 (click)="deleteTask(task.id)"
@@ -124,12 +197,26 @@
               >
                 <mat-icon>delete</mat-icon>
               </button>
+
+              <!-- View children -->
+              @if (task.children && task.children.length > 0) {
+                <button
+                  mat-icon-button
+                  (click)="viewChildren(task.id)"
+                  matTooltip="Voir les sous-tâches ({{ task.children.length }})"
+                  class="action-btn children-btn"
+                >
+                  <mat-icon>subdirectory_arrow_right</mat-icon>
+                </button>
+              }
             </div>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.completed-row]="row.completed"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [class.blocked-row]="row.status === TaskStatus.BLOCKED"
+            [class.archived-row]="row.status === TaskStatus.ARCHIVED"></tr>
       </table>
     }
   </div>
