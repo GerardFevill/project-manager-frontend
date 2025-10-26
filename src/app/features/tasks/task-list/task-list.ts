@@ -71,8 +71,19 @@ export class TaskListComponent implements OnInit {
   };
 
   // Multi-select filters
-  selectedStatuses: TaskStatus[] = [];
-  selectedPriorities: ('low' | 'medium' | 'high' | 'urgent')[] = [];
+  selectedStatuses: (TaskStatus | 'all')[] = [];
+  selectedPriorities: ('low' | 'medium' | 'high' | 'urgent' | 'all')[] = [];
+
+  allStatuses: TaskStatus[] = [
+    TaskStatus.DRAFT,
+    TaskStatus.ACTIVE,
+    TaskStatus.COMPLETED,
+    TaskStatus.BLOCKED,
+    TaskStatus.RECURRING,
+    TaskStatus.ARCHIVED
+  ];
+
+  allPriorities: ('low' | 'medium' | 'high' | 'urgent')[] = ['low', 'medium', 'high', 'urgent'];
 
   ngOnInit() {
     this.loadTasks();
@@ -100,24 +111,60 @@ export class TaskListComponent implements OnInit {
   applyMultiSelectFilters() {
     let filteredTasks = this.allTasks();
 
-    // Filter by selected statuses
-    if (this.selectedStatuses.length > 0) {
+    // Filter by selected statuses (excluding 'all')
+    const statusFilters = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
+    if (statusFilters.length > 0 && !this.selectedStatuses.includes('all')) {
       filteredTasks = filteredTasks.filter(task =>
-        this.selectedStatuses.includes(task.status)
+        statusFilters.includes(task.status)
       );
     }
 
-    // Filter by selected priorities
-    if (this.selectedPriorities.length > 0) {
+    // Filter by selected priorities (excluding 'all')
+    const priorityFilters = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
+    if (priorityFilters.length > 0 && !this.selectedPriorities.includes('all')) {
       filteredTasks = filteredTasks.filter(task =>
-        this.selectedPriorities.includes(task.priority)
+        priorityFilters.includes(task.priority)
       );
     }
 
     this.tasks.set(filteredTasks);
   }
 
-  onMultiSelectFilterChange() {
+  onStatusFilterChange() {
+    // If "all" is selected, select all statuses
+    if (this.selectedStatuses.includes('all')) {
+      if (this.selectedStatuses.length === this.allStatuses.length + 1) {
+        // If all are selected, deselect all
+        this.selectedStatuses = [];
+      } else {
+        // Select all
+        this.selectedStatuses = ['all', ...this.allStatuses];
+      }
+    } else {
+      // If all individual statuses are selected, add "all"
+      if (this.selectedStatuses.length === this.allStatuses.length) {
+        this.selectedStatuses = ['all', ...this.allStatuses];
+      }
+    }
+    this.applyMultiSelectFilters();
+  }
+
+  onPriorityFilterChange() {
+    // If "all" is selected, select all priorities
+    if (this.selectedPriorities.includes('all')) {
+      if (this.selectedPriorities.length === this.allPriorities.length + 1) {
+        // If all are selected, deselect all
+        this.selectedPriorities = [];
+      } else {
+        // Select all
+        this.selectedPriorities = ['all', ...this.allPriorities];
+      }
+    } else {
+      // If all individual priorities are selected, add "all"
+      if (this.selectedPriorities.length === this.allPriorities.length) {
+        this.selectedPriorities = ['all', ...this.allPriorities];
+      }
+    }
     this.applyMultiSelectFilters();
   }
 

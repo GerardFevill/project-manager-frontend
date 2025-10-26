@@ -11,7 +11,9 @@
   <div class="filters">
     <mat-form-field appearance="outline">
       <mat-label>Statuts</mat-label>
-      <mat-select [(ngModel)]="selectedStatuses" (selectionChange)="onMultiSelectFilterChange()" multiple>
+      <mat-select [(ngModel)]="selectedStatuses" (selectionChange)="onStatusFilterChange()" multiple>
+        <mat-option value="all">Tous</mat-option>
+        <mat-divider></mat-divider>
         <mat-option [value]="TaskStatus.DRAFT">Brouillon</mat-option>
         <mat-option [value]="TaskStatus.ACTIVE">Actives</mat-option>
         <mat-option [value]="TaskStatus.COMPLETED">Terminées</mat-option>
@@ -23,7 +25,9 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Priorités</mat-label>
-      <mat-select [(ngModel)]="selectedPriorities" (selectionChange)="onMultiSelectFilterChange()" multiple>
+      <mat-select [(ngModel)]="selectedPriorities" (selectionChange)="onPriorityFilterChange()" multiple>
+        <mat-option value="all">Toutes</mat-option>
+        <mat-divider></mat-divider>
         <mat-option value="low">Faible</mat-option>
         <mat-option value="medium">Moyenne</mat-option>
         <mat-option value="high">Haute</mat-option>
