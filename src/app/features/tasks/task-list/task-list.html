@@ -1,10 +1,39 @@
 <div class="task-list-container">
   <div class="header">
     <h1>Project Manager</h1>
-    <button mat-raised-button color="primary" (click)="openCreateTaskDialog()">
-      <mat-icon>add</mat-icon>
-      New Task
-    </button>
+    <div class="header-actions">
+      <button mat-button [matMenuTriggerFor]="navMenu">
+        <mat-icon>menu</mat-icon>
+        Menu
+      </button>
+      <mat-menu #navMenu="matMenu">
+        <button mat-menu-item routerLink="/tasks">
+          <mat-icon>task</mat-icon>
+          <span>Tâches</span>
+        </button>
+        <button mat-menu-item routerLink="/stats">
+          <mat-icon>bar_chart</mat-icon>
+          <span>Statistiques</span>
+        </button>
+        <button mat-menu-item routerLink="/calendar">
+          <mat-icon>calendar_today</mat-icon>
+          <span>Calendrier</span>
+        </button>
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          <span>Paramètres</span>
+        </button>
+        <button mat-menu-item routerLink="/help">
+          <mat-icon>help</mat-icon>
+          <span>Aide</span>
+        </button>
+      </mat-menu>
+
+      <button mat-raised-button color="primary" (click)="openCreateTaskDialog()">
+        <mat-icon>add</mat-icon>
+        New Task
+      </button>
+    </div>
   </div>
 
   <!-- Filters -->

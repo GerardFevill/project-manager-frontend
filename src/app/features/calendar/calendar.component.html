@@ -1,0 +1,95 @@
+<div class="calendar-container">
+  <div class="header">
+    <h1>📅 Calendrier des Tâches</h1>
+    <button mat-raised-button color="primary" routerLink="/tasks">
+      <mat-icon>arrow_back</mat-icon>
+      Retour aux tâches
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Chargement du calendrier...</div>
+  } @else {
+    <!-- Navigation du calendrier -->
+    <mat-card class="calendar-nav">
+      <div class="nav-controls">
+        <button mat-icon-button (click)="previousMonth()" matTooltip="Mois précédent">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <h2 class="month-title">{{ getMonthName() }}</h2>
+
+        <button mat-icon-button (click)="nextMonth()" matTooltip="Mois suivant">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <button mat-raised-button (click)="goToToday()" class="today-btn">
+          Aujourd'hui
+        </button>
+      </div>
+    </mat-card>
+
+    <!-- Calendrier -->
+    <mat-card class="calendar-card">
+      <!-- Jours de la semaine -->
+      <div class="calendar-grid">
+        @for (day of weekDays; track day) {
+          <div class="weekday-header">{{ day }}</div>
+        }
+
+        <!-- Jours du mois -->
+        @for (calendarDay of calendarDays(); track calendarDay.date) {
+          <div
+            class="calendar-day"
+            [class.today]="calendarDay.isToday"
+            [class.other-month]="!calendarDay.isCurrentMonth"
+            [class.has-tasks]="calendarDay.tasks.length > 0">
+
+            <div class="day-number">
+              {{ calendarDay.date.getDate() }}
+            </div>
+
+            @if (calendarDay.tasks.length > 0) {
+              <div class="day-tasks">
+                @for (task of calendarDay.tasks.slice(0, 3); track task.id) {
+                  <a [routerLink]="['/tasks', task.id]" class="task-item" [matTooltip]="task.title">
+                    <div class="task-dot" [class]="'type-' + task.type"></div>
+                    <span class="task-title">{{ task.title }}</span>
+                  </a>
+                }
+                @if (calendarDay.tasks.length > 3) {
+                  <div class="more-tasks">
+                    +{{ calendarDay.tasks.length - 3 }} autres
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </mat-card>
+
+    <!-- Légende -->
+    <mat-card class="legend-card">
+      <h3>Légende</h3>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="task-dot type-task"></div>
+          <span>Tâche</span>
+        </div>
+        <div class="legend-item">
+          <div class="task-dot type-project"></div>
+          <span>Projet</span>
+        </div>
+        <div class="legend-item">
+          <div class="task-dot type-epic"></div>
+          <span>Epic</span>
+        </div>
+        <div class="legend-item">
+          <div class="task-dot type-milestone"></div>
+          <span>Jalon</span>
+        </div>
+      </div>
+    </mat-card>
+  }
+</div>

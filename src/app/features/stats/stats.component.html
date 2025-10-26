@@ -1,0 +1,167 @@
+<div class="stats-container">
+  <div class="header">
+    <h1>📊 Statistiques du Projet</h1>
+    <button mat-raised-button color="primary" routerLink="/tasks">
+      <mat-icon>arrow_back</mat-icon>
+      Retour aux tâches
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Chargement des statistiques...</div>
+  } @else if (stats()) {
+    <!-- Vue d'ensemble -->
+    <div class="overview-section">
+      <mat-card class="stat-card total">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>task_alt</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.total }}</div>
+            <div class="stat-label">Total de tâches</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card active">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>play_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.byStatus.active || 0 }}</div>
+            <div class="stat-label">Tâches actives</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card completed">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.byStatus.completed || 0 }}</div>
+            <div class="stat-label">Terminées</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card completion">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats()!.completionRate }}%</div>
+            <div class="stat-label">Taux de complétion</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Statistiques par Type -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>category</mat-icon>
+          Répartition par Type
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @for (typeStat of typeStats(); track typeStat.type) {
+          <div class="type-stat-row">
+            <div class="type-info">
+              <mat-icon [style.color]="typeStat.color">{{ typeStat.icon }}</mat-icon>
+              <span class="type-label">{{ typeStat.label }}</span>
+            </div>
+            <div class="type-progress">
+              <mat-progress-bar
+                mode="determinate"
+                [value]="typeStat.percentage"
+                [style.--mdc-linear-progress-active-indicator-color]="typeStat.color">
+              </mat-progress-bar>
+            </div>
+            <div class="type-count">
+              <span class="count">{{ typeStat.count }}</span>
+              <span class="percentage">({{ typeStat.percentage.toFixed(1) }}%)</span>
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Statistiques par Statut -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>assignment</mat-icon>
+          Répartition par Statut
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @for (statusItem of stats()!.byStatus | keyvalue; track statusItem.key) {
+          @if (statusItem.value > 0) {
+            <div class="status-row">
+              <span class="status-label">{{ getStatusLabel(statusItem.key) }}</span>
+              <span class="status-count">{{ statusItem.value }}</span>
+            </div>
+            <mat-divider></mat-divider>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Statistiques par Priorité -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>priority_high</mat-icon>
+          Répartition par Priorité
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @for (priorityItem of stats()!.byPriority | keyvalue; track priorityItem.key) {
+          @if (priorityItem.value > 0) {
+            <div class="priority-row">
+              <span class="priority-label priority-{{ priorityItem.key }}">
+                {{ getPriorityLabel(priorityItem.key) }}
+              </span>
+              <span class="priority-count">{{ priorityItem.value }}</span>
+            </div>
+            <mat-divider></mat-divider>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Autres métriques -->
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>insights</mat-icon>
+          Autres Métriques
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="metric-row">
+          <span class="metric-label">Tâches en retard</span>
+          <span class="metric-value overdue">{{ stats()!.overdue }}</span>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="metric-row">
+          <span class="metric-label">Progression moyenne</span>
+          <span class="metric-value">{{ stats()!.avgProgress }}%</span>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="metric-row">
+          <span class="metric-label">Tâches bloquées</span>
+          <span class="metric-value">{{ stats()!.byStatus.blocked || 0 }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
