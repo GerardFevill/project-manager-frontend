@@ -4,20 +4,20 @@
 
 :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
   border-radius: 6px !important;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding: 24px !important;
   overflow-x: hidden !important;
   max-width: 90vw;
   width: clamp(280px, 50vw, 400px);
 }
 
 mat-dialog-content {
-  padding: 20px 0;
+  padding: 0 !important;
   overflow-x: hidden !important;
 }
 
 mat-dialog-actions {
-  padding: 8px 0;
+  padding: 0 !important;
+  margin-top: 16px;
   gap: 8px;
   overflow-x: hidden !important;
 }
