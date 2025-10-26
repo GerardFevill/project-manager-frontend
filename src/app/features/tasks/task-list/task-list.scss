@@ -9,6 +9,17 @@
   align-items: center;
   margin-bottom: 30px;
 
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .app-icon {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
   .header-actions {
     display: flex;
     gap: 1rem;
@@ -19,6 +30,7 @@
 h1 {
   font-size: 2rem;
   color: var(--text-color);
+  margin: 0;
 }
 
 .task-form {
