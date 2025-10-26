@@ -37,7 +37,7 @@
     } @else if (tasks().length === 0) {
       <div class="empty">Aucune tâche trouvée. Créez votre première tâche !</div>
     } @else {
-      <table mat-table [dataSource]="tasks()" class="tasks-table">
+      <table mat-table [dataSource]="tasks()" matSort (matSortChange)="sortData($event)" class="tasks-table">
 
         <!-- Status Column -->
         <ng-container matColumnDef="status">
@@ -49,7 +49,7 @@
 
         <!-- Title Column -->
         <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef>Titre</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Titre</th>
           <td mat-cell *matCellDef="let task">
             <div class="title-cell" [class.overdue]="isOverdue(task)">
               {{ task.title }}
@@ -62,7 +62,7 @@
 
         <!-- Progress Column -->
         <ng-container matColumnDef="progress">
-          <th mat-header-cell *matHeaderCellDef>Progression</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Progression</th>
           <td mat-cell *matCellDef="let task">
             <div class="progress-cell">
               <app-task-progress-bar [progress]="task.progress"></app-task-progress-bar>
@@ -72,7 +72,7 @@
 
         <!-- Priority Column -->
         <ng-container matColumnDef="priority">
-          <th mat-header-cell *matHeaderCellDef>Priorité</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Priorité</th>
           <td mat-cell *matCellDef="let task">
             <span class="priority priority-{{ task.priority }}">
               {{ task.priority }}
@@ -103,7 +103,7 @@
 
         <!-- Due Date Column -->
         <ng-container matColumnDef="dueDate">
-          <th mat-header-cell *matHeaderCellDef>Échéance</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Échéance</th>
           <td mat-cell *matCellDef="let task">
             <div [class.overdue-date]="isOverdue(task)">
               {{ task.dueDate ? (task.dueDate | date:'short') : '-' }}

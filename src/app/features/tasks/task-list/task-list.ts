@@ -5,6 +5,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
@@ -29,6 +30,7 @@ import {
     MatDialogModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     MatIconModule,
     MatTooltipModule,
     MatChipsModule,
@@ -280,5 +282,48 @@ export class TaskListComponent implements OnInit {
     const now = new Date();
     const dueDate = new Date(task.dueDate);
     return dueDate < now && task.status !== TaskStatus.COMPLETED;
+  }
+
+  sortData(sort: Sort) {
+    const data = this.tasks().slice();
+
+    if (!sort.active || sort.direction === '') {
+      this.tasks.set(data);
+      return;
+    }
+
+    const sortedData = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+
+      switch (sort.active) {
+        case 'title':
+          return this.compare(a.title.toLowerCase(), b.title.toLowerCase(), isAsc);
+
+        case 'priority':
+          const priorityOrder = { low: 1, medium: 2, high: 3, urgent: 4 };
+          return this.compare(
+            priorityOrder[a.priority] || 0,
+            priorityOrder[b.priority] || 0,
+            isAsc
+          );
+
+        case 'progress':
+          return this.compare(a.progress || 0, b.progress || 0, isAsc);
+
+        case 'dueDate':
+          const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+          const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+          return this.compare(dateA, dateB, isAsc);
+
+        default:
+          return 0;
+      }
+    });
+
+    this.tasks.set(sortedData);
+  }
+
+  private compare(a: number | string, b: number | string, isAsc: boolean): number {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 }
