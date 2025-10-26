@@ -29,10 +29,12 @@ export interface ConfirmDialogData {
       border-radius: 6px !important;
       padding-left: 24px;
       padding-right: 24px;
+      overflow-x: hidden;
     }
 
     mat-dialog-content {
       padding: 20px 0;
+      overflow-x: hidden;
     }
     mat-dialog-actions {
       padding: 8px 0;

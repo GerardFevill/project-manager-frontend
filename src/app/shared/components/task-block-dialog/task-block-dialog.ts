@@ -55,6 +55,7 @@ export interface BlockDialogResult {
       border-radius: 6px !important;
       padding-left: 24px;
       padding-right: 24px;
+      overflow-x: hidden;
     }
 
     .dialog-content {
@@ -63,6 +64,7 @@ export interface BlockDialogResult {
       gap: 16px;
       padding: 20px 0;
       min-width: 400px;
+      overflow-x: hidden;
     }
 
     .task-title {

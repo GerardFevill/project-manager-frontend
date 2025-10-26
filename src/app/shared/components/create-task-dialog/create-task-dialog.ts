@@ -145,6 +145,7 @@ import { TaskTagsInputComponent } from '../task-tags-input/task-tags-input';
       border-radius: 6px !important;
       padding-left: 24px;
       padding-right: 24px;
+      overflow-x: hidden;
     }
 
     .form-content {
@@ -156,6 +157,7 @@ import { TaskTagsInputComponent } from '../task-tags-input/task-tags-input';
       max-width: 600px;
       max-height: 70vh;
       overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .row {
