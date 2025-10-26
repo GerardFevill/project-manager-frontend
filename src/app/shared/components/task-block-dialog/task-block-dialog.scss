@@ -1,0 +1,38 @@
+:host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 6px !important;
+  padding-left: 24px;
+  padding-right: 24px;
+  overflow-x: hidden;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0;
+  min-width: 400px;
+  overflow-x: hidden;
+}
+
+.task-title {
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 0;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.reason-field {
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+mat-dialog-actions {
+  padding: 8px 0;
+  gap: 8px;
+}

@@ -1,0 +1,114 @@
+<h2 mat-dialog-title>{{ data ? 'Modifier la tâche' : 'Créer une nouvelle tâche' }}</h2>
+<mat-dialog-content>
+  <div class="form-content">
+    <!-- Title -->
+    <input
+      [(ngModel)]="taskData.title"
+      placeholder="Titre de la tâche"
+      class="input-field"
+    />
+
+    <!-- Description -->
+    <textarea
+      [(ngModel)]="taskData.description"
+      placeholder="Description (optionnel)"
+      class="input-field"
+      rows="4"
+    ></textarea>
+
+    <!-- Status & Priority -->
+    <div class="row">
+      <select [(ngModel)]="taskData.status" class="input-field">
+        <option [value]="TaskStatus.DRAFT">Brouillon</option>
+        <option [value]="TaskStatus.ACTIVE">Active</option>
+        <option [value]="TaskStatus.COMPLETED">Terminée</option>
+        <option [value]="TaskStatus.BLOCKED">Bloquée</option>
+        <option [value]="TaskStatus.RECURRING">Récurrente</option>
+      </select>
+
+      <select [(ngModel)]="taskData.priority" class="input-field">
+        <option value="low">Faible</option>
+        <option value="medium">Moyenne</option>
+        <option value="high">Haute</option>
+        <option value="urgent">Urgente</option>
+      </select>
+    </div>
+
+    <!-- Progress Slider -->
+    <div class="progress-section">
+      <label class="field-label">Progression: {{ taskData.progress }}%</label>
+      <mat-slider
+        min="0"
+        max="100"
+        step="5"
+        discrete
+        [displayWith]="formatLabel"
+      >
+        <input matSliderThumb [(ngModel)]="taskData.progress">
+      </mat-slider>
+    </div>
+
+    <!-- Dates -->
+    <div class="row">
+      <input
+        type="date"
+        [(ngModel)]="taskData.startDate"
+        class="input-field"
+        placeholder="Date de début"
+      />
+      <input
+        type="date"
+        [(ngModel)]="taskData.dueDate"
+        class="input-field"
+        placeholder="Date d'échéance"
+      />
+    </div>
+
+    <!-- Recurrence -->
+    <app-task-recurrence-selector
+      [(ngModel)]="taskData.recurrence"
+    ></app-task-recurrence-selector>
+
+    @if (taskData.recurrence && taskData.recurrence !== TaskRecurrence.NONE) {
+      <input
+        type="datetime-local"
+        [(ngModel)]="taskData.nextOccurrence"
+        class="input-field"
+        placeholder="Prochaine occurrence"
+      />
+    }
+
+    <!-- Time tracking -->
+    <div class="row">
+      <input
+        type="number"
+        [(ngModel)]="taskData.estimatedHours"
+        placeholder="Heures estimées"
+        class="input-field"
+        min="0"
+        step="0.5"
+      />
+      @if (data) {
+        <input
+          type="number"
+          [(ngModel)]="taskData.actualHours"
+          placeholder="Heures réelles"
+          class="input-field"
+          min="0"
+          step="0.5"
+        />
+      }
+    </div>
+
+    <!-- Tags -->
+    <app-task-tags-input
+      [(ngModel)]="taskData.tags"
+    ></app-task-tags-input>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()">
+    {{ data ? 'Modifier' : 'Créer' }}
+  </button>
+</mat-dialog-actions>

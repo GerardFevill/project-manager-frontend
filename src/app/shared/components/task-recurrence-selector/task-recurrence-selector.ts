@@ -16,31 +16,8 @@ import { TaskRecurrence, TaskRecurrenceHelper } from '../../../core/models';
       multi: true
     }
   ],
-  template: `
-    <mat-form-field appearance="outline" class="recurrence-field">
-      <mat-label>Récurrence</mat-label>
-      <mat-select
-        [(ngModel)]="value"
-        (ngModelChange)="onValueChange($event)"
-        [disabled]="disabled"
-      >
-        @for (option of recurrenceOptions; track option.value) {
-          <mat-option [value]="option.value">
-            {{ option.label }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  `,
-  styles: [`
-    .recurrence-field {
-      width: 100%;
-    }
-
-    ::ng-deep .mat-mdc-form-field {
-      width: 100%;
-    }
-  `]
+  templateUrl: './task-recurrence-selector.html',
+  styleUrl: './task-recurrence-selector.scss'
 })
 export class TaskRecurrenceSelectorComponent implements ControlValueAccessor {
   value: TaskRecurrence = TaskRecurrence.NONE;

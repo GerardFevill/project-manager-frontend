@@ -24,69 +24,8 @@ import { MatInputModule } from '@angular/material/input';
       multi: true
     }
   ],
-  template: `
-    <div class="tags-container">
-      <mat-form-field appearance="outline" class="tag-input-field">
-        <mat-label>Tags</mat-label>
-        <input
-          matInput
-          [(ngModel)]="currentTag"
-          (keydown.enter)="addTag($event)"
-          (keydown.comma)="addTag($event)"
-          placeholder="Ajouter un tag (Enter ou ,)"
-          [disabled]="disabled"
-        />
-      </mat-form-field>
-
-      @if (tags.length > 0) {
-        <mat-chip-set class="tags-list">
-          @for (tag of tags; track tag) {
-            <mat-chip
-              [removable]="!disabled"
-              (removed)="removeTag(tag)"
-            >
-              {{ tag }}
-              @if (!disabled) {
-                <mat-icon matChipRemove>cancel</mat-icon>
-              }
-            </mat-chip>
-          }
-        </mat-chip-set>
-      }
-    </div>
-  `,
-  styles: [`
-    .tags-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-    }
-
-    .tag-input-field {
-      width: 100%;
-    }
-
-    .tags-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    mat-chip {
-      background-color: var(--accent-color, #0d6efd) !important;
-      color: white !important;
-    }
-
-    mat-chip mat-icon {
-      color: rgba(255, 255, 255, 0.8) !important;
-      cursor: pointer;
-    }
-
-    mat-chip mat-icon:hover {
-      color: white !important;
-    }
-  `]
+  templateUrl: './task-tags-input.html',
+  styleUrl: './task-tags-input.scss'
 })
 export class TaskTagsInputComponent implements ControlValueAccessor {
   tags: string[] = [];

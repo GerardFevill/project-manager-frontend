@@ -1,0 +1,15 @@
+<div class="progress-container">
+  <div class="progress-bar">
+    <div
+      class="progress-fill"
+      [style.width.%]="progress"
+      [class.low]="progress < 33"
+      [class.medium]="progress >= 33 && progress < 66"
+      [class.high]="progress >= 66 && progress < 100"
+      [class.complete]="progress === 100"
+    ></div>
+  </div>
+  @if (showLabel) {
+    <span class="progress-label">{{ progress }}%</span>
+  }
+</div>

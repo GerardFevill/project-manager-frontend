@@ -1,0 +1,14 @@
+<mat-form-field appearance="outline" class="recurrence-field">
+  <mat-label>Récurrence</mat-label>
+  <mat-select
+    [(ngModel)]="value"
+    (ngModelChange)="onValueChange($event)"
+    [disabled]="disabled"
+  >
+    @for (option of recurrenceOptions; track option.value) {
+      <mat-option [value]="option.value">
+        {{ option.label }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

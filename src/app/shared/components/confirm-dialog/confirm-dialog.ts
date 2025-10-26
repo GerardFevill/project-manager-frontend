@@ -14,33 +14,8 @@ export interface ConfirmDialogData {
   selector: 'app-confirm-dialog',
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>{{ data.title }}</h2>
-    <mat-dialog-content>
-      <p>{{ data.message }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button [mat-dialog-close]="false">{{ data.cancelText }}</button>
-      <button mat-raised-button color="warn" [mat-dialog-close]="true">{{ data.confirmText }}</button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-      border-radius: 6px !important;
-      padding-left: 24px;
-      padding-right: 24px;
-      overflow-x: hidden;
-    }
-
-    mat-dialog-content {
-      padding: 20px 0;
-      overflow-x: hidden;
-    }
-    mat-dialog-actions {
-      padding: 8px 0;
-      gap: 8px;
-    }
-  `]
+  templateUrl: './confirm-dialog.html',
+  styleUrl: './confirm-dialog.scss'
 })
 export class ConfirmDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {}
