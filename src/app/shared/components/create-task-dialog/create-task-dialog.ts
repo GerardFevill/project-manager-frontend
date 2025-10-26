@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -25,7 +25,8 @@ import { TaskTagsInputComponent } from '../task-tags-input/task-tags-input';
     TaskTagsInputComponent
   ],
   templateUrl: './create-task-dialog.html',
-  styleUrl: './create-task-dialog.scss'
+  styleUrl: './create-task-dialog.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class CreateTaskDialogComponent {
   TaskStatus = TaskStatus;
