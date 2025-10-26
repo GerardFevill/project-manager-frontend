@@ -60,6 +60,7 @@ export class TaskListComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   tasks = signal<Task[]>([]);
+  allTasks = signal<Task[]>([]);
   loading = signal(false);
   displayedColumns: string[] = ['status', 'title', 'progress', 'priority', 'tags', 'dueDate', 'actions'];
   TaskStatus = TaskStatus;
@@ -68,6 +69,10 @@ export class TaskListComponent implements OnInit {
     status: 'all',
     onlyRoot: true
   };
+
+  // Multi-select filters
+  selectedStatuses: TaskStatus[] = [];
+  selectedPriorities: ('low' | 'medium' | 'high' | 'urgent')[] = [];
 
   ngOnInit() {
     this.loadTasks();
@@ -79,9 +84,10 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.findAll(this.filters).subscribe({
       next: (tasks) => {
-        this.tasks.set(tasks);
+        this.allTasks.set(tasks);
+        this.applyMultiSelectFilters();
         this.loading.set(false);
-        this.notificationService.success(TASK_MESSAGES.LOADED(tasks.length));
+        this.notificationService.success(TASK_MESSAGES.LOADED(this.tasks().length));
       },
       error: (err) => {
         console.error('Error loading tasks:', err);
@@ -89,6 +95,30 @@ export class TaskListComponent implements OnInit {
         this.notificationService.error(TASK_MESSAGES.LOAD_ERROR);
       }
     });
+  }
+
+  applyMultiSelectFilters() {
+    let filteredTasks = this.allTasks();
+
+    // Filter by selected statuses
+    if (this.selectedStatuses.length > 0) {
+      filteredTasks = filteredTasks.filter(task =>
+        this.selectedStatuses.includes(task.status)
+      );
+    }
+
+    // Filter by selected priorities
+    if (this.selectedPriorities.length > 0) {
+      filteredTasks = filteredTasks.filter(task =>
+        this.selectedPriorities.includes(task.priority)
+      );
+    }
+
+    this.tasks.set(filteredTasks);
+  }
+
+  onMultiSelectFilterChange() {
+    this.applyMultiSelectFilters();
   }
 
   openCreateTaskDialog() {

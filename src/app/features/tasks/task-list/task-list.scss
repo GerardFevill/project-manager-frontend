@@ -49,6 +49,10 @@ textarea.input-field {
   gap: 15px;
   margin-bottom: 20px;
   align-items: center;
+
+  mat-form-field {
+    min-width: 200px;
+  }
 }
 
 .filters .input-field {
