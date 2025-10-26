@@ -62,7 +62,6 @@ export class TaskListComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   tasks = signal<Task[]>([]);
-  allTasks = signal<Task[]>([]);
   loading = signal(false);
   displayedColumns: string[] = ['status', 'title', 'progress', 'priority', 'tags', 'dueDate', 'actions'];
   TaskStatus = TaskStatus;
@@ -76,10 +75,12 @@ export class TaskListComponent implements OnInit {
     status: 'all',
     onlyRoot: true,
     page: 1,
-    limit: 10
+    limit: 10,
+    sortBy: 'createdAt',
+    sortOrder: 'DESC'
   };
 
-  // Multi-select filters
+  // Multi-select filters (envoyés au serveur)
   selectedStatuses: (TaskStatus | 'all')[] = [];
   selectedPriorities: ('low' | 'medium' | 'high' | 'urgent' | 'all')[] = [];
 
@@ -102,19 +103,35 @@ export class TaskListComponent implements OnInit {
     this.loading.set(true);
     this.notificationService.info(TASK_MESSAGES.LOADING);
 
-    this.taskService.findAll(this.filters).subscribe({
+    // Préparer les filtres server-side
+    const serverFilters = { ...this.filters };
+
+    // Envoyer les statuts sélectionnés (sans 'all')
+    const statusFilters = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
+    if (statusFilters.length > 0) {
+      serverFilters.statuses = statusFilters;
+      delete serverFilters.status; // Priorité aux statuses multiples
+    }
+
+    // Envoyer les priorités sélectionnées (sans 'all')
+    const priorityFilters = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
+    if (priorityFilters.length > 0) {
+      serverFilters.priorities = priorityFilters;
+      delete serverFilters.priority; // Priorité aux priorities multiples
+    }
+
+    this.taskService.findAll(serverFilters).subscribe({
       next: (response) => {
         // Handle both paginated and non-paginated responses
         if (response && 'data' in response && 'meta' in response) {
           // Paginated response
-          this.allTasks.set(response.data);
+          this.tasks.set(response.data);
           this.totalItems.set(response.meta.total);
         } else {
           // Non-paginated response (fallback for compatibility)
-          this.allTasks.set(response as any);
+          this.tasks.set(response as any);
           this.totalItems.set((response as any).length || 0);
         }
-        this.applyMultiSelectFilters();
         this.loading.set(false);
         this.notificationService.success(TASK_MESSAGES.LOADED(this.tasks().length));
       },
@@ -131,28 +148,6 @@ export class TaskListComponent implements OnInit {
     this.filters.limit = event.pageSize;
     this.pageSize = event.pageSize;
     this.loadTasks();
-  }
-
-  applyMultiSelectFilters() {
-    let filteredTasks = this.allTasks();
-
-    // Filter by selected statuses (excluding 'all')
-    const statusFilters = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
-    if (statusFilters.length > 0 && !this.selectedStatuses.includes('all')) {
-      filteredTasks = filteredTasks.filter(task =>
-        statusFilters.includes(task.status)
-      );
-    }
-
-    // Filter by selected priorities (excluding 'all')
-    const priorityFilters = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
-    if (priorityFilters.length > 0 && !this.selectedPriorities.includes('all')) {
-      filteredTasks = filteredTasks.filter(task =>
-        priorityFilters.includes(task.priority)
-      );
-    }
-
-    this.tasks.set(filteredTasks);
   }
 
   onStatusFilterChange() {
@@ -173,7 +168,9 @@ export class TaskListComponent implements OnInit {
         }
       }
 
-      this.applyMultiSelectFilters();
+      // Recharger depuis le serveur avec les nouveaux filtres
+      this.filters.page = 1; // Retour à la page 1
+      this.loadTasks();
     }, 0);
   }
 
@@ -195,7 +192,9 @@ export class TaskListComponent implements OnInit {
         }
       }
 
-      this.applyMultiSelectFilters();
+      // Recharger depuis le serveur avec les nouveaux filtres
+      this.filters.page = 1; // Retour à la page 1
+      this.loadTasks();
     }, 0);
   }
 
@@ -407,45 +406,17 @@ export class TaskListComponent implements OnInit {
   }
 
   sortData(sort: Sort) {
-    const data = this.tasks().slice();
-
     if (!sort.active || sort.direction === '') {
-      this.tasks.set(data);
-      return;
+      // Réinitialiser au tri par défaut
+      this.filters.sortBy = 'createdAt';
+      this.filters.sortOrder = 'DESC';
+    } else {
+      // Envoyer le tri au serveur
+      this.filters.sortBy = sort.active;
+      this.filters.sortOrder = sort.direction === 'asc' ? 'ASC' : 'DESC';
     }
 
-    const sortedData = data.sort((a, b) => {
-      const isAsc = sort.direction === 'asc';
-
-      switch (sort.active) {
-        case 'title':
-          return this.compare(a.title.toLowerCase(), b.title.toLowerCase(), isAsc);
-
-        case 'priority':
-          const priorityOrder = { low: 1, medium: 2, high: 3, urgent: 4 };
-          return this.compare(
-            priorityOrder[a.priority] || 0,
-            priorityOrder[b.priority] || 0,
-            isAsc
-          );
-
-        case 'progress':
-          return this.compare(a.progress || 0, b.progress || 0, isAsc);
-
-        case 'dueDate':
-          const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
-          const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
-          return this.compare(dateA, dateB, isAsc);
-
-        default:
-          return 0;
-      }
-    });
-
-    this.tasks.set(sortedData);
-  }
-
-  private compare(a: number | string, b: number | string, isAsc: boolean): number {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    // Recharger depuis le serveur avec le nouveau tri
+    this.loadTasks();
   }
 }

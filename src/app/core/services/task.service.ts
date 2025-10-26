@@ -33,7 +33,13 @@ export class TaskService {
 
     if (filters) {
       if (filters.status) params = params.set('status', filters.status);
+      if (filters.statuses && filters.statuses.length > 0) {
+        filters.statuses.forEach(s => params = params.append('statuses', s));
+      }
       if (filters.priority) params = params.set('priority', filters.priority);
+      if (filters.priorities && filters.priorities.length > 0) {
+        filters.priorities.forEach(p => params = params.append('priorities', p));
+      }
       if (filters.recurrence) params = params.set('recurrence', filters.recurrence);
       if (filters.onlyRoot !== undefined) params = params.set('onlyRoot', filters.onlyRoot.toString());
       if (filters.onlyOverdue !== undefined) params = params.set('onlyOverdue', filters.onlyOverdue.toString());

@@ -90,7 +90,9 @@ export interface UpdateTaskDto {
 export interface TaskFilterDto {
   // Status & Priority
   status?: TaskStatus | 'all';
+  statuses?: TaskStatus[];
   priority?: 'low' | 'medium' | 'high' | 'urgent';
+  priorities?: ('low' | 'medium' | 'high' | 'urgent')[];
   recurrence?: TaskRecurrence;
 
   // Hierarchical filters
