@@ -11,24 +11,35 @@
       </button>
       <h1>Détails de la tâche</h1>
       <div class="header-actions">
-        <button mat-icon-button (click)="editTask()" matTooltip="Modifier">
-          <mat-icon>edit</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Actions">
+          <mat-icon>more_vert</mat-icon>
         </button>
-        @if (task()!.status === TaskStatus.BLOCKED) {
-          <button mat-icon-button (click)="unblockTask()" matTooltip="Débloquer">
-            <mat-icon>lock_open</mat-icon>
+        <mat-menu #actionMenu="matMenu">
+          <button mat-menu-item (click)="editTask()">
+            <mat-icon>edit</mat-icon>
+            <span>Modifier</span>
           </button>
-        } @else {
-          <button mat-icon-button (click)="blockTask()" matTooltip="Bloquer">
-            <mat-icon>block</mat-icon>
+          @if (task()!.status === TaskStatus.BLOCKED) {
+            <button mat-menu-item (click)="unblockTask()">
+              <mat-icon>lock_open</mat-icon>
+              <span>Débloquer</span>
+            </button>
+          } @else {
+            <button mat-menu-item (click)="blockTask()">
+              <mat-icon>block</mat-icon>
+              <span>Bloquer</span>
+            </button>
+          }
+          <button mat-menu-item (click)="archiveTask()">
+            <mat-icon>archive</mat-icon>
+            <span>Archiver</span>
           </button>
-        }
-        <button mat-icon-button (click)="archiveTask()" matTooltip="Archiver">
-          <mat-icon>archive</mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteTask()" matTooltip="Supprimer" class="delete-btn">
-          <mat-icon>delete</mat-icon>
-        </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="deleteTask()" class="delete-menu-item">
+            <mat-icon>delete</mat-icon>
+            <span>Supprimer</span>
+          </button>
+        </mat-menu>
       </div>
     </div>
 

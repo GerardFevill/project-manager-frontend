@@ -7,6 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskStatus } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
@@ -30,6 +32,8 @@ import {
     MatChipsModule,
     MatDialogModule,
     MatTooltipModule,
+    MatMenuModule,
+    MatDividerModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent
   ],

@@ -29,21 +29,26 @@
   }
 
   .header-actions {
-    display: flex;
-    gap: 8px;
-
     button {
       transition: all 0.2s ease;
 
       &:hover {
         background: var(--hover-bg);
       }
-
-      &.delete-btn:hover {
-        background: rgba(207, 34, 46, 0.1);
-        color: #cf222e;
-      }
     }
+  }
+}
+
+// Menu styles
+.delete-menu-item {
+  color: #cf222e !important;
+
+  mat-icon {
+    color: #cf222e !important;
+  }
+
+  &:hover {
+    background: rgba(207, 34, 46, 0.1) !important;
   }
 }
 
