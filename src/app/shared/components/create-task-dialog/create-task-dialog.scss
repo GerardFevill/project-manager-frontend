@@ -1,8 +1,12 @@
+:host ::ng-deep .mat-mdc-dialog-container {
+  overflow-x: hidden !important;
+}
+
 :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
   border-radius: 6px !important;
   padding-left: 24px;
   padding-right: 24px;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   max-width: 90vw;
 }
 
@@ -14,7 +18,7 @@
   width: clamp(300px, 80vw, 600px);
   max-height: 70vh;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .row {
@@ -61,9 +65,14 @@ mat-slider {
   width: 100%;
 }
 
+mat-dialog-content {
+  overflow-x: hidden !important;
+}
+
 mat-dialog-actions {
   padding: 8px 0;
   gap: 8px;
+  overflow-x: hidden !important;
 }
 
 // Responsive: single column on small screens

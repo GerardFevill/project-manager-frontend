@@ -1,8 +1,12 @@
+:host ::ng-deep .mat-mdc-dialog-container {
+  overflow-x: hidden !important;
+}
+
 :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
   border-radius: 6px !important;
   padding-left: 24px;
   padding-right: 24px;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   max-width: 90vw;
 }
 
@@ -12,7 +16,7 @@
   gap: 16px;
   padding: 20px 0;
   width: clamp(280px, 70vw, 500px);
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .task-title {
@@ -33,7 +37,12 @@ textarea {
   font-family: inherit;
 }
 
+mat-dialog-content {
+  overflow-x: hidden !important;
+}
+
 mat-dialog-actions {
   padding: 8px 0;
   gap: 8px;
+  overflow-x: hidden !important;
 }
