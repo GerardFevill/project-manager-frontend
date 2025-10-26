@@ -106,18 +106,30 @@ export class TaskListComponent implements OnInit {
     // Préparer les filtres server-side
     const serverFilters = { ...this.filters };
 
-    // Envoyer les statuts sélectionnés (sans 'all')
-    const statusFilters = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
-    if (statusFilters.length > 0) {
+    // Envoyer les statuts sélectionnés
+    // Si 'all' est présent ou aucun filtre, ne pas envoyer de filtres
+    if (this.selectedStatuses.includes('all') || this.selectedStatuses.length === 0) {
+      // Pas de filtre de statut
+      delete serverFilters.statuses;
+      delete serverFilters.status;
+    } else {
+      // Filtrer par les statuts sélectionnés
+      const statusFilters = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
       serverFilters.statuses = statusFilters;
-      delete serverFilters.status; // Priorité aux statuses multiples
+      delete serverFilters.status;
     }
 
-    // Envoyer les priorités sélectionnées (sans 'all')
-    const priorityFilters = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
-    if (priorityFilters.length > 0) {
+    // Envoyer les priorités sélectionnées
+    // Si 'all' est présent ou aucun filtre, ne pas envoyer de filtres
+    if (this.selectedPriorities.includes('all') || this.selectedPriorities.length === 0) {
+      // Pas de filtre de priorité
+      delete serverFilters.priorities;
+      delete serverFilters.priority;
+    } else {
+      // Filtrer par les priorités sélectionnées
+      const priorityFilters = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
       serverFilters.priorities = priorityFilters;
-      delete serverFilters.priority; // Priorité aux priorities multiples
+      delete serverFilters.priority;
     }
 
     this.taskService.findAll(serverFilters).subscribe({
@@ -153,23 +165,23 @@ export class TaskListComponent implements OnInit {
   onStatusFilterChange() {
     // Use setTimeout to let Angular update the model first
     setTimeout(() => {
-      const isAllSelected = this.selectedStatuses.includes('all');
-      const allIndividualSelected = this.allStatuses.every(s => this.selectedStatuses.includes(s));
+      const hasAll = this.selectedStatuses.includes('all');
+      const individualStatuses = this.selectedStatuses.filter(s => s !== 'all') as TaskStatus[];
+      const allIndividualSelected = this.allStatuses.every(s => individualStatuses.includes(s));
 
-      if (isAllSelected) {
-        // If "all" is selected but not all individual items, select all
-        if (!allIndividualSelected) {
-          this.selectedStatuses = ['all', ...this.allStatuses];
-        }
-      } else {
-        // If all individual items are selected, add "all"
-        if (allIndividualSelected && this.selectedStatuses.length === this.allStatuses.length) {
-          this.selectedStatuses = ['all', ...this.allStatuses];
-        }
+      if (hasAll && individualStatuses.length === 0) {
+        // Si seulement "all" est sélectionné, tout afficher (garder juste "all")
+        this.selectedStatuses = ['all'];
+      } else if (hasAll && individualStatuses.length > 0) {
+        // Si "all" + des items individuels, garder seulement les items individuels
+        this.selectedStatuses = individualStatuses;
+      } else if (!hasAll && allIndividualSelected) {
+        // Si tous les items individuels sont sélectionnés, ajouter "all"
+        this.selectedStatuses = ['all'];
       }
 
       // Recharger depuis le serveur avec les nouveaux filtres
-      this.filters.page = 1; // Retour à la page 1
+      this.filters.page = 1;
       this.loadTasks();
     }, 0);
   }
@@ -177,23 +189,23 @@ export class TaskListComponent implements OnInit {
   onPriorityFilterChange() {
     // Use setTimeout to let Angular update the model first
     setTimeout(() => {
-      const isAllSelected = this.selectedPriorities.includes('all');
-      const allIndividualSelected = this.allPriorities.every(p => this.selectedPriorities.includes(p));
+      const hasAll = this.selectedPriorities.includes('all');
+      const individualPriorities = this.selectedPriorities.filter(p => p !== 'all') as ('low' | 'medium' | 'high' | 'urgent')[];
+      const allIndividualSelected = this.allPriorities.every(p => individualPriorities.includes(p));
 
-      if (isAllSelected) {
-        // If "all" is selected but not all individual items, select all
-        if (!allIndividualSelected) {
-          this.selectedPriorities = ['all', ...this.allPriorities];
-        }
-      } else {
-        // If all individual items are selected, add "all"
-        if (allIndividualSelected && this.selectedPriorities.length === this.allPriorities.length) {
-          this.selectedPriorities = ['all', ...this.allPriorities];
-        }
+      if (hasAll && individualPriorities.length === 0) {
+        // Si seulement "all" est sélectionné, tout afficher (garder juste "all")
+        this.selectedPriorities = ['all'];
+      } else if (hasAll && individualPriorities.length > 0) {
+        // Si "all" + des items individuels, garder seulement les items individuels
+        this.selectedPriorities = individualPriorities;
+      } else if (!hasAll && allIndividualSelected) {
+        // Si tous les items individuels sont sélectionnés, ajouter "all"
+        this.selectedPriorities = ['all'];
       }
 
       // Recharger depuis le serveur avec les nouveaux filtres
-      this.filters.page = 1; // Retour à la page 1
+      this.filters.page = 1;
       this.loadTasks();
     }, 0);
   }
