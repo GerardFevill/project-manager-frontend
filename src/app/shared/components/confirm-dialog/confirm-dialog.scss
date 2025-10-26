@@ -10,14 +10,24 @@
   width: clamp(280px, 50vw, 400px);
 }
 
+h2[mat-dialog-title] {
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+}
+
 mat-dialog-content {
   padding: 0 !important;
+  margin: 0 0 16px 0 !important;
   overflow-x: hidden !important;
+}
+
+mat-dialog-content p {
+  margin: 0;
 }
 
 mat-dialog-actions {
   padding: 0 !important;
-  margin-top: 16px;
+  margin: 0 !important;
   gap: 8px;
   overflow-x: hidden !important;
 }

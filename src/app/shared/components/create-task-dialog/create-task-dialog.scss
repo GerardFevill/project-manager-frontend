@@ -9,6 +9,11 @@
   max-width: 90vw;
 }
 
+h2[mat-dialog-title] {
+  margin: 0 0 20px 0 !important;
+  padding: 0 !important;
+}
+
 .form-content {
   display: flex;
   flex-direction: column;
@@ -66,12 +71,13 @@ mat-slider {
 
 mat-dialog-content {
   padding: 0 !important;
+  margin: 0 0 20px 0 !important;
   overflow-x: hidden !important;
 }
 
 mat-dialog-actions {
   padding: 0 !important;
-  margin-top: 16px;
+  margin: 0 !important;
   gap: 8px;
   overflow-x: hidden !important;
 }
