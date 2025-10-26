@@ -3,6 +3,8 @@
   padding-left: 24px;
   padding-right: 24px;
   overflow-x: hidden;
+  max-width: 90vw;
+  width: clamp(280px, 50vw, 400px);
 }
 
 mat-dialog-content {

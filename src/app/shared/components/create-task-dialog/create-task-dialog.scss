@@ -3,6 +3,7 @@
   padding-left: 24px;
   padding-right: 24px;
   overflow-x: hidden;
+  max-width: 90vw;
 }
 
 .form-content {
@@ -10,8 +11,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 20px 0;
-  min-width: 500px;
-  max-width: 600px;
+  width: clamp(300px, 80vw, 600px);
   max-height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -32,6 +32,7 @@
   color: var(--text-color);
   font-size: 15px;
   transition: border-color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .input-field:focus {
@@ -63,4 +64,15 @@ mat-slider {
 mat-dialog-actions {
   padding: 8px 0;
   gap: 8px;
+}
+
+// Responsive: single column on small screens
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-content {
+    width: clamp(250px, 90vw, 600px);
+  }
 }

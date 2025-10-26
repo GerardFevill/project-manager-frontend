@@ -3,6 +3,7 @@
   padding-left: 24px;
   padding-right: 24px;
   overflow-x: hidden;
+  max-width: 90vw;
 }
 
 .dialog-content {
@@ -10,7 +11,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 20px 0;
-  min-width: 400px;
+  width: clamp(280px, 70vw, 500px);
   overflow-x: hidden;
 }
 
