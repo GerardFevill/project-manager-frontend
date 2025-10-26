@@ -69,6 +69,7 @@ export class TaskListComponent implements OnInit {
 
   // Pagination
   totalItems = signal(0);
+  totalFilteredItems = signal(0);
   pageSize = 20;
   pageSizeOptions = [20, 10, 50, 100];
 
@@ -153,6 +154,7 @@ export class TaskListComponent implements OnInit {
     }
 
     this.tasks.set(filteredTasks);
+    this.totalFilteredItems.set(filteredTasks.length);
   }
 
   onStatusFilterChange() {
