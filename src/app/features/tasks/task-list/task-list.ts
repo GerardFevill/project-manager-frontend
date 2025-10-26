@@ -76,9 +76,7 @@ export class TaskListComponent implements OnInit {
   }
 
   openCreateTaskDialog() {
-    const dialogRef = this.dialog.open(CreateTaskDialogComponent, {
-      width: '500px'
-    });
+    const dialogRef = this.dialog.open(CreateTaskDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -146,7 +144,6 @@ export class TaskListComponent implements OnInit {
 
   editTask(task: Task) {
     const dialogRef = this.dialog.open(CreateTaskDialogComponent, {
-      width: '500px',
       data: task
     });
 
@@ -204,7 +201,6 @@ export class TaskListComponent implements OnInit {
 
   blockTask(task: Task) {
     const dialogRef = this.dialog.open(TaskBlockDialogComponent, {
-      width: '500px',
       data: { task }
     });
 
