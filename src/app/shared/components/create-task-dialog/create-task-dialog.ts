@@ -141,6 +141,12 @@ import { TaskTagsInputComponent } from '../task-tags-input/task-tags-input';
     </mat-dialog-actions>
   `,
   styles: [`
+    :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+      border-radius: 6px !important;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
     .form-content {
       display: flex;
       flex-direction: column;

@@ -25,6 +25,12 @@ export interface ConfirmDialogData {
     </mat-dialog-actions>
   `,
   styles: [`
+    :host ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+      border-radius: 6px !important;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
     mat-dialog-content {
       padding: 20px 0;
     }
