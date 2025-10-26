@@ -12,12 +12,17 @@ Application Angular de gestion de projets et tâches avec authentification backe
 src/app/
 ├── core/
 │   ├── models/          # Interfaces TypeScript (Task, TaskFilterDto, CreateTaskDto)
-│   └── services/        # Services (TaskService pour API REST)
+│   ├── services/        # Services (TaskService, NotificationService, UserService)
+│   └── constants/       # Constantes (messages, config)
+├── shared/
+│   └── components/      # Composants réutilisables
+│       ├── confirm-dialog/        # Dialogue de confirmation
+│       └── create-task-dialog/    # Formulaire de création/édition
 ├── features/
 │   └── tasks/
 │       └── task-list/   # Composant de gestion des tâches
 │           ├── task-list.ts      # Logique du composant
-│           ├── task-list.html    # Template
+│           ├── task-list.html    # Template (tableau Material)
 │           └── task-list.scss    # Styles
 ├── app.ts               # Composant racine
 ├── app.html            # Template racine
@@ -65,7 +70,9 @@ src/app/
    - Par priorité (low, medium, high, urgent)
    - Root tasks uniquement ou avec sous-tâches
 
-### API Service (TaskService)
+### Services
+
+#### TaskService (API REST)
 
 ```typescript
 // Méthodes disponibles
@@ -73,6 +80,21 @@ findAll(filters: TaskFilterDto): Observable<Task[]>
 create(task: CreateTaskDto): Observable<Task>
 toggle(id: string): Observable<Task>
 remove(id: string): Observable<void>
+```
+
+#### NotificationService (Toasters)
+
+```typescript
+// Service centralisé pour les notifications
+success(message: string, duration?: number, action?: string): void
+error(message: string, duration?: number, action?: string): void
+warning(message: string, duration?: number, action?: string): void
+info(message: string, duration?: number, action?: string): void
+
+// Configuration par défaut:
+// - Position: haut à droite
+// - Durées: info(1s), success(2s), warning/error(3s)
+// - Classes CSS: snackbar-success, snackbar-error, snackbar-warning, snackbar-info
 ```
 
 ### Interfaces principales
@@ -211,10 +233,77 @@ $dark-theme: mat.define-theme((
 ));
 ```
 
+## 🧩 Composants Partagés
+
+### ConfirmDialogComponent
+
+Dialogue de confirmation réutilisable avec Material Design.
+
+```typescript
+// Utilisation
+const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  data: {
+    title: 'Confirmer la suppression',
+    message: 'Êtes-vous sûr?',
+    confirmText: 'Supprimer',
+    cancelText: 'Annuler'
+  }
+});
+
+dialogRef.afterClosed().subscribe(result => {
+  if (result) {
+    // Action confirmée
+  }
+});
+```
+
+### CreateTaskDialogComponent
+
+Dialogue pour créer ou modifier une tâche.
+
+```typescript
+// Création
+const dialogRef = this.dialog.open(CreateTaskDialogComponent, {
+  width: '500px'
+});
+
+// Édition (passe les données existantes)
+const dialogRef = this.dialog.open(CreateTaskDialogComponent, {
+  width: '500px',
+  data: task // Task existante
+});
+
+dialogRef.afterClosed().subscribe((result: CreateTaskDto) => {
+  if (result) {
+    // result contient les données du formulaire
+  }
+});
+```
+
+## 📦 Constantes
+
+### TASK_MESSAGES
+
+Centralise tous les messages de notification pour les tâches.
+
+```typescript
+import { TASK_MESSAGES } from '@core/constants/messages';
+
+// Messages disponibles
+TASK_MESSAGES.LOADING              // 'Chargement des tâches...'
+TASK_MESSAGES.LOADED(count)        // 'X tâche(s) chargée(s)'
+TASK_MESSAGES.CREATED              // '✅ Tâche créée avec succès'
+TASK_MESSAGES.UPDATED              // '✏️ Tâche modifiée avec succès'
+TASK_MESSAGES.DELETED              // '🗑️ Tâche supprimée avec succès'
+TASK_MESSAGES.DUPLICATED           // '✅ Tâche dupliquée avec succès'
+TASK_MESSAGES.CONFIRM_DELETE       // Objet pour dialogue de confirmation
+```
+
 ## 📌 Notes importantes
 
-1. **Structure modulaire**: Tous les composants sont dans `features/`
+1. **Structure modulaire**: Composants features/ + shared/
 2. **Services centralisés**: Dans `core/services/`
+3. **Constantes**: Messages et config dans `core/constants/`
 3. **Models partagés**: Dans `core/models/`
 4. **Thème adaptatif**: Toute l'UI s'adapte au mode dark/light
 5. **Composants standalone**: Pas de NgModule, imports directs
