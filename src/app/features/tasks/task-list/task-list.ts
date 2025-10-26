@@ -104,8 +104,16 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.findAll(this.filters).subscribe({
       next: (response) => {
-        this.allTasks.set(response.data);
-        this.totalItems.set(response.meta.total);
+        // Handle both paginated and non-paginated responses
+        if (response && 'data' in response && 'meta' in response) {
+          // Paginated response
+          this.allTasks.set(response.data);
+          this.totalItems.set(response.meta.total);
+        } else {
+          // Non-paginated response (fallback for compatibility)
+          this.allTasks.set(response as any);
+          this.totalItems.set((response as any).length || 0);
+        }
         this.applyMultiSelectFilters();
         this.loading.set(false);
         this.notificationService.success(TASK_MESSAGES.LOADED(this.tasks().length));
@@ -148,41 +156,47 @@ export class TaskListComponent implements OnInit {
   }
 
   onStatusFilterChange() {
-    // If "all" is selected, select all statuses
-    if (this.selectedStatuses.includes('all')) {
-      if (this.selectedStatuses.length === this.allStatuses.length + 1) {
-        // If all are selected, deselect all
-        this.selectedStatuses = [];
+    // Use setTimeout to let Angular update the model first
+    setTimeout(() => {
+      const isAllSelected = this.selectedStatuses.includes('all');
+      const allIndividualSelected = this.allStatuses.every(s => this.selectedStatuses.includes(s));
+
+      if (isAllSelected) {
+        // If "all" is selected but not all individual items, select all
+        if (!allIndividualSelected) {
+          this.selectedStatuses = ['all', ...this.allStatuses];
+        }
       } else {
-        // Select all
-        this.selectedStatuses = ['all', ...this.allStatuses];
+        // If all individual items are selected, add "all"
+        if (allIndividualSelected && this.selectedStatuses.length === this.allStatuses.length) {
+          this.selectedStatuses = ['all', ...this.allStatuses];
+        }
       }
-    } else {
-      // If all individual statuses are selected, add "all"
-      if (this.selectedStatuses.length === this.allStatuses.length) {
-        this.selectedStatuses = ['all', ...this.allStatuses];
-      }
-    }
-    this.applyMultiSelectFilters();
+
+      this.applyMultiSelectFilters();
+    }, 0);
   }
 
   onPriorityFilterChange() {
-    // If "all" is selected, select all priorities
-    if (this.selectedPriorities.includes('all')) {
-      if (this.selectedPriorities.length === this.allPriorities.length + 1) {
-        // If all are selected, deselect all
-        this.selectedPriorities = [];
+    // Use setTimeout to let Angular update the model first
+    setTimeout(() => {
+      const isAllSelected = this.selectedPriorities.includes('all');
+      const allIndividualSelected = this.allPriorities.every(p => this.selectedPriorities.includes(p));
+
+      if (isAllSelected) {
+        // If "all" is selected but not all individual items, select all
+        if (!allIndividualSelected) {
+          this.selectedPriorities = ['all', ...this.allPriorities];
+        }
       } else {
-        // Select all
-        this.selectedPriorities = ['all', ...this.allPriorities];
+        // If all individual items are selected, add "all"
+        if (allIndividualSelected && this.selectedPriorities.length === this.allPriorities.length) {
+          this.selectedPriorities = ['all', ...this.allPriorities];
+        }
       }
-    } else {
-      // If all individual priorities are selected, add "all"
-      if (this.selectedPriorities.length === this.allPriorities.length) {
-        this.selectedPriorities = ['all', ...this.allPriorities];
-      }
-    }
-    this.applyMultiSelectFilters();
+
+      this.applyMultiSelectFilters();
+    }, 0);
   }
 
   openCreateTaskDialog() {
