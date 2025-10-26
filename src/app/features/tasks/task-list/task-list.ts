@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,6 +17,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskFilterDto, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
@@ -56,10 +58,13 @@ import {
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
+
+  // Subject pour debounce des changements de filtres
+  private filterChange$ = new Subject<void>();
 
   tasks = signal<Task[]>([]);
   loading = signal(false);
@@ -96,7 +101,20 @@ export class TaskListComponent implements OnInit {
   allPriorities: ('low' | 'medium' | 'high' | 'urgent')[] = ['low', 'medium', 'high', 'urgent'];
 
   ngOnInit() {
+    // S'abonner aux changements de filtres avec debounce de 300ms
+    this.filterChange$.pipe(
+      debounceTime(300)
+    ).subscribe(() => {
+      this.loadTasks();
+    });
+
+    // Charger les tâches initialement
     this.loadTasks();
+  }
+
+  ngOnDestroy() {
+    // Nettoyer la subscription
+    this.filterChange$.complete();
   }
 
   loadTasks() {
@@ -180,9 +198,9 @@ export class TaskListComponent implements OnInit {
         this.selectedStatuses = ['all'];
       }
 
-      // Recharger depuis le serveur avec les nouveaux filtres
+      // Recharger depuis le serveur avec les nouveaux filtres (avec debounce)
       this.filters.page = 1;
-      this.loadTasks();
+      this.filterChange$.next();
     }, 0);
   }
 
@@ -204,9 +222,9 @@ export class TaskListComponent implements OnInit {
         this.selectedPriorities = ['all'];
       }
 
-      // Recharger depuis le serveur avec les nouveaux filtres
+      // Recharger depuis le serveur avec les nouveaux filtres (avec debounce)
       this.filters.page = 1;
-      this.loadTasks();
+      this.filterChange$.next();
     }, 0);
   }
 
