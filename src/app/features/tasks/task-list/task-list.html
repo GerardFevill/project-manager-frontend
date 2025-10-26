@@ -123,111 +123,74 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let task">
-            <div class="action-buttons">
-              <!-- View Details -->
-              <button
-                mat-icon-button
-                [routerLink]="['/tasks', task.id]"
-                matTooltip="Voir les détails"
-                class="action-btn view-btn"
-              >
+            <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actionMenu="matMenu">
+              <button mat-menu-item [routerLink]="['/tasks', task.id]">
                 <mat-icon>visibility</mat-icon>
+                <span>Voir les détails</span>
               </button>
 
-              <!-- Toggle -->
-              <button
-                mat-icon-button
-                (click)="toggleTask(task.id)"
-                [matTooltip]="task.status === TaskStatus.COMPLETED ? 'Marquer comme active' : 'Marquer comme terminée'"
-                class="action-btn toggle-btn"
-              >
-                <mat-icon>{{ task.status === TaskStatus.COMPLETED ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
-              </button>
-
-              <!-- Block/Unblock -->
-              @if (task.status === TaskStatus.BLOCKED) {
-                <button
-                  mat-icon-button
-                  (click)="unblockTask(task.id)"
-                  matTooltip="Débloquer"
-                  class="action-btn unblock-btn"
-                >
-                  <mat-icon>lock_open</mat-icon>
+              @if (task.status === TaskStatus.COMPLETED) {
+                <button mat-menu-item (click)="toggleTask(task.id)">
+                  <mat-icon>undo</mat-icon>
+                  <span>Marquer comme active</span>
                 </button>
               } @else {
-                <button
-                  mat-icon-button
-                  (click)="blockTask(task)"
-                  matTooltip="Bloquer"
-                  class="action-btn block-btn"
-                >
-                  <mat-icon>block</mat-icon>
+                <button mat-menu-item (click)="toggleTask(task.id)">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>Marquer comme terminée</span>
                 </button>
               }
 
-              <!-- Edit -->
-              <button
-                mat-icon-button
-                (click)="editTask(task)"
-                matTooltip="Éditer"
-                class="action-btn edit-btn"
-              >
+              <button mat-menu-item (click)="editTask(task)">
                 <mat-icon>edit</mat-icon>
+                <span>Modifier</span>
               </button>
 
-              <!-- Archive/Unarchive -->
-              @if (task.status === TaskStatus.ARCHIVED) {
-                <button
-                  mat-icon-button
-                  (click)="unarchiveTask(task.id)"
-                  matTooltip="Restaurer"
-                  class="action-btn unarchive-btn"
-                >
-                  <mat-icon>unarchive</mat-icon>
+              @if (task.status === TaskStatus.BLOCKED) {
+                <button mat-menu-item (click)="unblockTask(task.id)">
+                  <mat-icon>lock_open</mat-icon>
+                  <span>Débloquer</span>
                 </button>
               } @else {
-                <button
-                  mat-icon-button
-                  (click)="archiveTask(task.id)"
-                  matTooltip="Archiver"
-                  class="action-btn archive-btn"
-                >
+                <button mat-menu-item (click)="blockTask(task)">
+                  <mat-icon>block</mat-icon>
+                  <span>Bloquer</span>
+                </button>
+              }
+
+              @if (task.status === TaskStatus.ARCHIVED) {
+                <button mat-menu-item (click)="unarchiveTask(task.id)">
+                  <mat-icon>unarchive</mat-icon>
+                  <span>Restaurer</span>
+                </button>
+              } @else {
+                <button mat-menu-item (click)="archiveTask(task.id)">
                   <mat-icon>archive</mat-icon>
+                  <span>Archiver</span>
                 </button>
               }
 
-              <!-- Duplicate -->
-              <button
-                mat-icon-button
-                (click)="duplicateTask(task)"
-                matTooltip="Dupliquer"
-                class="action-btn duplicate-btn"
-              >
+              <button mat-menu-item (click)="duplicateTask(task)">
                 <mat-icon>content_copy</mat-icon>
+                <span>Dupliquer</span>
               </button>
 
-              <!-- Delete -->
-              <button
-                mat-icon-button
-                (click)="deleteTask(task.id)"
-                matTooltip="Supprimer"
-                class="action-btn delete-btn"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-
-              <!-- View children -->
               @if (task.children && task.children.length > 0) {
-                <button
-                  mat-icon-button
-                  (click)="viewChildren(task.id)"
-                  matTooltip="Voir les sous-tâches ({{ task.children.length }})"
-                  class="action-btn children-btn"
-                >
+                <button mat-menu-item (click)="viewChildren(task.id)">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
+                  <span>Voir les sous-tâches ({{ task.children.length }})</span>
                 </button>
               }
-            </div>
+
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="deleteTask(task.id)" class="delete-menu-item">
+                <mat-icon>delete</mat-icon>
+                <span>Supprimer</span>
+              </button>
+            </mat-menu>
           </td>
         </ng-container>
 

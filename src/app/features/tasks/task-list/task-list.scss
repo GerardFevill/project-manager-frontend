@@ -119,9 +119,38 @@ textarea.input-field {
   opacity: 0.6;
 }
 
+.blocked-row {
+  background: rgba(255, 152, 0, 0.05) !important;
+  border-left: 3px solid #ff9800;
+}
+
+.archived-row {
+  opacity: 0.5;
+  background: rgba(158, 158, 158, 0.05) !important;
+}
+
 .title-cell {
   font-weight: 500;
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &.overdue {
+    color: #cf222e;
+  }
+}
+
+.overdue-icon {
+  color: #cf222e;
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.overdue-date {
+  color: #cf222e;
+  font-weight: 600;
 }
 
 .description-cell {
@@ -306,4 +335,38 @@ textarea.input-field {
   text-align: center;
   padding: 40px;
   color: var(--text-secondary);
+}
+
+// Progress Cell
+.progress-cell {
+  min-width: 120px;
+}
+
+// Tags Cell
+.tags-cell {
+  mat-chip-set {
+    mat-chip {
+      background: var(--bg-secondary);
+      color: var(--text-color);
+      font-size: 11px;
+    }
+  }
+
+  .no-tags {
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+}
+
+// Menu styles
+.delete-menu-item {
+  color: #cf222e !important;
+
+  mat-icon {
+    color: #cf222e !important;
+  }
+
+  &:hover {
+    background: rgba(207, 34, 46, 0.1) !important;
+  }
 }

@@ -14,6 +14,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskFilterDto, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
@@ -44,6 +46,8 @@ import {
     MatSelectModule,
     MatFormFieldModule,
     MatCardModule,
+    MatMenuModule,
+    MatDividerModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent
   ],

@@ -82,11 +82,15 @@
                 class="toggle-btn"
               >
                 @if (task()!.status === TaskStatus.COMPLETED) {
-                  <mat-icon>undo</mat-icon>
-                  Marquer comme active
+                  <ng-container>
+                    <mat-icon>undo</mat-icon>
+                    Marquer comme active
+                  </ng-container>
                 } @else {
-                  <mat-icon>check_circle</mat-icon>
-                  Marquer comme terminée
+                  <ng-container>
+                    <mat-icon>check_circle</mat-icon>
+                    Marquer comme terminée
+                  </ng-container>
                 }
               </button>
             </mat-card-content>
