@@ -3,17 +3,53 @@
 }
 
 .mat-mdc-dialog-container .mdc-dialog__surface {
-  border-radius: 6px !important;
-  padding: 24px !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
   overflow-x: hidden !important;
   max-width: 90vw !important;
   box-sizing: border-box !important;
 }
 
-.mat-mdc-dialog-title,
-h2[mat-dialog-title] {
-  margin: 0 0 20px 0 !important;
-  padding: 0 !important;
+.dialog-header {
+  padding: 24px 24px 16px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .required-indicator {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    font-weight: 500;
+  }
+}
+
+.mat-mdc-dialog-content,
+mat-dialog-content {
+  padding: 24px !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+  max-height: calc(90vh - 200px);
 }
 
 .form-content {
@@ -21,78 +57,196 @@ h2[mat-dialog-title] {
   flex-direction: column;
   gap: 16px;
   padding: 0;
-  width: clamp(300px, 80vw, 600px);
-  max-height: 70vh;
-  overflow-y: auto;
+  width: clamp(400px, 80vw, 700px);
   overflow-x: hidden !important;
+
+  mat-expansion-panel {
+    box-shadow: none !important;
+    border: 1px solid var(--border-color);
+    border-radius: 8px !important;
+    overflow: hidden;
+
+    &::before {
+      display: none; // Remove default mat-expansion-panel line
+    }
+
+    .mat-expansion-panel-header {
+      padding: 16px 20px;
+      background-color: var(--card-bg);
+      font-weight: 500;
+
+      &:hover {
+        background-color: var(--hover-bg) !important;
+      }
+    }
+
+    .mat-expansion-panel-body {
+      padding: 20px !important;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    mat-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-color);
+      font-weight: 600;
+
+      mat-icon {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+
+    mat-icon[matIconPrefix] {
+      margin-right: 8px;
+      color: var(--text-secondary);
+    }
+  }
+
+  .mat-mdc-select-value mat-icon,
+  .mat-mdc-option mat-icon {
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .option-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+  }
 }
 
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-color);
-  color: var(--text-color);
-  font-size: 15px;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--accent-color);
-}
-
-textarea.input-field {
-  resize: vertical;
-  font-family: inherit;
+  gap: 16px;
 }
 
 .progress-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
+  gap: 12px;
+  padding: 8px 0;
 
-.field-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-color);
+  .field-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--primary-color);
+    }
+  }
 }
 
 mat-slider {
   width: 100%;
 }
 
-.mat-mdc-dialog-content,
-mat-dialog-content {
-  padding: 0 !important;
-  margin: 0 0 20px 0 !important;
-  overflow-x: hidden !important;
+.required {
+  color: #f44336;
+  font-weight: bold;
 }
 
 .mat-mdc-dialog-actions,
 mat-dialog-actions {
-  padding: 0 !important;
+  padding: 16px 24px !important;
   margin: 0 !important;
-  gap: 8px !important;
+  gap: 12px !important;
   overflow-x: hidden !important;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+
+  button {
+    mat-icon {
+      margin-right: 6px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Mat-select option styling
+.mat-mdc-option {
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+}
+
+// Mat-hint styling
+.mat-mdc-form-field-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+// Error messages
+.mat-mdc-form-field-error {
+  font-size: 0.75rem;
+  color: #f44336;
+}
+
+// Mat-divider spacing
+mat-divider {
+  margin: 8px 0 !important;
 }
 
 // Responsive: single column on small screens
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+  .dialog-header {
+    h2 {
+      font-size: 1.25rem;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .form-content {
+    width: clamp(280px, 90vw, 700px);
+  }
+
   .row {
     grid-template-columns: 1fr;
   }
 
-  .form-content {
-    width: clamp(250px, 90vw, 600px);
+  .mat-mdc-dialog-content,
+  mat-dialog-content {
+    max-height: calc(90vh - 180px);
+  }
+}
+
+// Dark mode improvements
+:root.dark-mode & {
+  .dialog-header {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+  }
+
+  mat-expansion-panel {
+    .mat-expansion-panel-header {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+      }
+    }
   }
 }
