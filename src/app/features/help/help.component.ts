@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +25,8 @@ interface FAQItem {
     RouterLink
   ],
   templateUrl: './help.component.html',
-  styleUrl: './help.component.scss'
+  styleUrl: './help.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelpComponent {
   faqs: FAQItem[] = [

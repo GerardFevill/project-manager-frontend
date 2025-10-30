@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +28,8 @@ export interface BlockDialogResult {
   ],
   templateUrl: './task-block-dialog.html',
   styleUrl: './task-block-dialog.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskBlockDialogComponent {
   reason = '';

@@ -26,6 +26,31 @@
     font-size: 24px;
     font-weight: 600;
     color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .header-type-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+
+      &.project-icon {
+        color: #7b1fa2;
+      }
+
+      &.epic-icon {
+        color: #f57c00;
+      }
+
+      &.milestone-icon {
+        color: #388e3c;
+      }
+
+      &.task-icon {
+        color: #1976d2;
+      }
+    }
   }
 
   .header-actions {
@@ -35,6 +60,27 @@
       &:hover {
         background: var(--hover-bg);
       }
+    }
+  }
+}
+
+// Dark mode icon colors
+:root.dark-mode .detail-header h1 {
+  .header-type-icon {
+    &.project-icon {
+      color: #ba68c8;
+    }
+
+    &.epic-icon {
+      color: #ffb74d;
+    }
+
+    &.milestone-icon {
+      color: #81c784;
+    }
+
+    &.task-icon {
+      color: #64b5f6;
     }
   }
 }
@@ -385,6 +431,338 @@ mat-chip-set {
 
     h2 {
       font-size: 22px;
+    }
+  }
+}
+
+// ============================================================================
+// TABS STYLES
+// ============================================================================
+
+.detail-tabs {
+  margin-top: 24px;
+
+  .mat-mdc-tab-labels {
+    background-color: var(--card-bg);
+  }
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+.loading-tab,
+.empty-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// ============================================================================
+// HISTORY TAB STYLES
+// ============================================================================
+
+.history-card {
+  margin-bottom: 24px;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-color);
+
+    mat-icon {
+      color: var(--accent-color);
+    }
+  }
+}
+
+.history-timeline {
+  position: relative;
+  padding-left: 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+  }
+}
+
+.history-item {
+  position: relative;
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .history-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    border: 3px solid var(--bg-color);
+    box-shadow: 0 0 0 2px var(--accent-color);
+  }
+
+  .history-content {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .history-action {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text-color);
+    }
+
+    .history-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  }
+
+  .history-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .history-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-color);
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--accent-color);
+    }
+
+    strong {
+      color: var(--accent-color);
+    }
+  }
+
+  .history-metadata {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+
+    > mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--accent-color);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    > span {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .metadata-content {
+      margin-top: 8px;
+      padding-left: 26px;
+    }
+
+    .metadata-pair {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 13px;
+
+      .meta-key {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .meta-value {
+        color: var(--text-color);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// PROGRESS/TIMELINE TAB STYLES
+// ============================================================================
+
+.progress-card,
+.children-progress-card,
+.timeline-card {
+  margin-bottom: 24px;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-color);
+
+    mat-icon {
+      color: var(--accent-color);
+    }
+  }
+
+  .progress-value {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 8px;
+  }
+}
+
+.children-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .child-item {
+    padding: 12px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+
+    .child-title {
+      display: block;
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+
+    .child-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      app-task-progress-bar {
+        flex: 1;
+      }
+
+      .child-percentage {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent-color);
+        min-width: 45px;
+        text-align: right;
+      }
+    }
+  }
+}
+
+.progress-timeline {
+  position: relative;
+  padding-left: 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+  }
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    border: 3px solid var(--bg-color);
+    box-shadow: 0 0 0 2px var(--accent-color);
+  }
+
+  .timeline-content {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .timeline-action {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text-color);
+    }
+
+    .timeline-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  }
+
+  .timeline-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    app-task-progress-bar {
+      flex: 1;
+    }
+
+    .timeline-percentage {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-color);
+      min-width: 45px;
+      text-align: right;
     }
   }
 }

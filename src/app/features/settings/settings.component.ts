@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -28,7 +28,8 @@ import { RouterLink } from '@angular/router';
     RouterLink
   ],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss'
+  styleUrl: './settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsComponent {
   // Préférences d'affichage

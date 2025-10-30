@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -39,7 +39,8 @@ type TaskFormData = Omit<CreateTaskDto, 'dueDate' | 'startDate'> & {
   ],
   templateUrl: './create-task-dialog.html',
   styleUrl: './create-task-dialog.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTaskDialogComponent {
   TaskStatus = TaskStatus;

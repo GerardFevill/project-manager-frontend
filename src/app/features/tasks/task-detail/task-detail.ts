@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,8 +9,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TaskService, NotificationService } from '../../../core/services';
-import { Task, TaskStatus } from '../../../core/models';
+import { Task, TaskStatus, TaskHistory, TaskProgress } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
 import {
   TaskStatusBadgeComponent,
@@ -35,12 +36,14 @@ import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-bad
     MatTooltipModule,
     MatMenuModule,
     MatDividerModule,
+    MatTabsModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent,
     TaskTypeBadgeComponent
   ],
   templateUrl: './task-detail.html',
-  styleUrl: './task-detail.scss'
+  styleUrl: './task-detail.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -52,6 +55,12 @@ export class TaskDetailComponent implements OnInit {
   task = signal<Task | null>(null);
   loading = signal(true);
   TaskStatus = TaskStatus;
+
+  // History and Progress data
+  history = signal<TaskHistory[]>([]);
+  progress = signal<TaskProgress | null>(null);
+  loadingHistory = signal(false);
+  loadingProgress = signal(false);
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -263,5 +272,54 @@ export class TaskDetailComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  // Load history when history tab is selected
+  loadHistory() {
+    const currentTask = this.task();
+    if (!currentTask || this.history().length > 0) return; // Don't reload if already loaded
+
+    this.loadingHistory.set(true);
+    this.taskService.getTaskHistory(currentTask.id).subscribe({
+      next: (history) => {
+        this.history.set(history);
+        this.loadingHistory.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading task history:', err);
+        this.notificationService.error('Erreur lors du chargement de l\'historique');
+        this.loadingHistory.set(false);
+      }
+    });
+  }
+
+  // Load progress details when progress tab is selected
+  loadProgressDetails() {
+    const currentTask = this.task();
+    if (!currentTask || this.progress() !== null) return; // Don't reload if already loaded
+
+    this.loadingProgress.set(true);
+    this.taskService.getTaskProgress(currentTask.id).subscribe({
+      next: (progress) => {
+        this.progress.set(progress);
+        this.loadingProgress.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading task progress:', err);
+        this.notificationService.error('Erreur lors du chargement de la progression');
+        this.loadingProgress.set(false);
+      }
+    });
+  }
+
+  // Called when tab changes
+  onTabChange(index: number) {
+    if (index === 1) {
+      // History tab
+      this.loadHistory();
+    } else if (index === 2) {
+      // Progress tab
+      this.loadProgressDetails();
+    }
   }
 }

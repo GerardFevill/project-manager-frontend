@@ -10,6 +10,29 @@
   @if (loading()) {
     <div class="loading">Chargement du calendrier...</div>
   } @else {
+    <!-- Filtres par type -->
+    <mat-card class="filter-card">
+      <h3>Afficher :</h3>
+      <div class="filter-checkboxes">
+        <mat-checkbox [(ngModel)]="showTasks" (change)="onFilterChange()" class="filter-checkbox">
+          <mat-icon class="filter-icon" [style.color]="'#1976d2'">check_circle</mat-icon>
+          Tâches
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="showProjects" (change)="onFilterChange()" class="filter-checkbox">
+          <mat-icon class="filter-icon" [style.color]="'#7b1fa2'">folder</mat-icon>
+          Projets
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="showEpics" (change)="onFilterChange()" class="filter-checkbox">
+          <mat-icon class="filter-icon" [style.color]="'#f57c00'">workspaces</mat-icon>
+          Epics
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="showMilestones" (change)="onFilterChange()" class="filter-checkbox">
+          <mat-icon class="filter-icon" [style.color]="'#388e3c'">flag</mat-icon>
+          Jalons
+        </mat-checkbox>
+      </div>
+    </mat-card>
+
     <!-- Navigation du calendrier -->
     <mat-card class="calendar-nav">
       <div class="nav-controls">
@@ -52,14 +75,17 @@
             @if (calendarDay.tasks.length > 0) {
               <div class="day-tasks">
                 @for (task of calendarDay.tasks.slice(0, 3); track task.id) {
-                  <a [routerLink]="['/tasks', task.id]" class="task-item" [matTooltip]="task.title">
-                    <div class="task-dot" [class]="'type-' + task.type"></div>
+                  <a [routerLink]="['/tasks', task.id]"
+                     class="task-item"
+                     [class]="'task-item-' + task.type"
+                     [matTooltip]="task.title + ' (' + task.type + ')'">
+                    <mat-icon class="task-icon-small">{{ getTypeIcon(task.type) }}</mat-icon>
                     <span class="task-title">{{ task.title }}</span>
                   </a>
                 }
                 @if (calendarDay.tasks.length > 3) {
                   <div class="more-tasks">
-                    +{{ calendarDay.tasks.length - 3 }} autres
+                    +{{ calendarDay.tasks.length - 3 }} autre(s)
                   </div>
                 }
               </div>
@@ -69,25 +95,37 @@
       </div>
     </mat-card>
 
-    <!-- Légende -->
+    <!-- Légende améliorée -->
     <mat-card class="legend-card">
-      <h3>Légende</h3>
+      <h3>Types d'éléments</h3>
       <div class="legend-items">
-        <div class="legend-item">
-          <div class="task-dot type-task"></div>
-          <span>Tâche</span>
+        <div class="legend-item" [class.legend-disabled]="!showTasks">
+          <mat-icon class="legend-icon" [style.color]="showTasks ? '#1976d2' : '#999'">check_circle</mat-icon>
+          <div class="legend-text">
+            <span class="legend-label">Tâche</span>
+            <span class="legend-desc">Unité de travail de base</span>
+          </div>
         </div>
-        <div class="legend-item">
-          <div class="task-dot type-project"></div>
-          <span>Projet</span>
+        <div class="legend-item" [class.legend-disabled]="!showProjects">
+          <mat-icon class="legend-icon" [style.color]="showProjects ? '#7b1fa2' : '#999'">folder</mat-icon>
+          <div class="legend-text">
+            <span class="legend-label">Projet</span>
+            <span class="legend-desc">Conteneur de tâches</span>
+          </div>
         </div>
-        <div class="legend-item">
-          <div class="task-dot type-epic"></div>
-          <span>Epic</span>
+        <div class="legend-item" [class.legend-disabled]="!showEpics">
+          <mat-icon class="legend-icon" [style.color]="showEpics ? '#f57c00' : '#999'">workspaces</mat-icon>
+          <div class="legend-text">
+            <span class="legend-label">Epic</span>
+            <span class="legend-desc">Groupe de tâches</span>
+          </div>
         </div>
-        <div class="legend-item">
-          <div class="task-dot type-milestone"></div>
-          <span>Jalon</span>
+        <div class="legend-item" [class.legend-disabled]="!showMilestones">
+          <mat-icon class="legend-icon" [style.color]="showMilestones ? '#388e3c' : '#999'">flag</mat-icon>
+          <div class="legend-text">
+            <span class="legend-label">Jalon</span>
+            <span class="legend-desc">Étape importante</span>
+          </div>
         </div>
       </div>
     </mat-card>

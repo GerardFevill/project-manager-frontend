@@ -9,7 +9,21 @@
       <button mat-icon-button routerLink="/tasks" matTooltip="Retour à la liste">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1>Détails de la tâche</h1>
+      <h1>
+        @if (task()!.type === 'project') {
+          <mat-icon class="header-type-icon project-icon">folder</mat-icon>
+          Détails du projet
+        } @else if (task()!.type === 'epic') {
+          <mat-icon class="header-type-icon epic-icon">workspaces</mat-icon>
+          Détails de l'epic
+        } @else if (task()!.type === 'milestone') {
+          <mat-icon class="header-type-icon milestone-icon">flag</mat-icon>
+          Détails du jalon
+        } @else {
+          <mat-icon class="header-type-icon task-icon">check_circle</mat-icon>
+          Détails de la tâche
+        }
+      </h1>
       <div class="header-actions">
         <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Actions">
           <mat-icon>more_vert</mat-icon>
@@ -49,8 +63,12 @@
       </div>
     </div>
 
-    <!-- Main content -->
-    <div class="detail-content">
+    <!-- Main content with tabs -->
+    <mat-tab-group class="detail-tabs" (selectedIndexChange)="onTabChange($event)">
+      <!-- Tab 1: Details (existing content) -->
+      <mat-tab label="Détails">
+        <ng-template matTabContent>
+          <div class="detail-content">
       <!-- Title and Status Card -->
       <mat-card class="title-card">
         <mat-card-header>
@@ -309,6 +327,171 @@
           }
         </div>
       </div>
-    </div>
+          </div>
+        </ng-template>
+      </mat-tab>
+
+      <!-- Tab 2: History -->
+      <mat-tab label="Historique">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            @if (loadingHistory()) {
+              <div class="loading-tab">
+                <mat-icon>hourglass_empty</mat-icon>
+                <p>Chargement de l'historique...</p>
+              </div>
+            } @else if (history().length === 0) {
+              <div class="empty-tab">
+                <mat-icon>history</mat-icon>
+                <p>Aucun historique disponible pour cette tâche.</p>
+              </div>
+            } @else {
+              <mat-card class="history-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>history</mat-icon>
+                    Historique des actions
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="history-timeline">
+                    @for (entry of history(); track entry.id) {
+                      <div class="history-item">
+                        <div class="history-dot"></div>
+                        <div class="history-content">
+                          <div class="history-header">
+                            <span class="history-action">{{ entry.action }}</span>
+                            <span class="history-date">{{ formatDateTime(entry.executedAt) }}</span>
+                          </div>
+                          <div class="history-details">
+                            <div class="history-detail-item">
+                              <mat-icon>flag</mat-icon>
+                              <span>Statut: <strong>{{ entry.statusAtExecution }}</strong></span>
+                            </div>
+                            <div class="history-detail-item">
+                              <mat-icon>show_chart</mat-icon>
+                              <span>Progression: <strong>{{ entry.progressAtExecution }}%</strong></span>
+                            </div>
+                            @if (entry.duration) {
+                              <div class="history-detail-item">
+                                <mat-icon>schedule</mat-icon>
+                                <span>Durée: <strong>{{ entry.duration }}ms</strong></span>
+                              </div>
+                            }
+                            @if (entry.metadata) {
+                              <div class="history-metadata">
+                                <mat-icon>info</mat-icon>
+                                <span>Métadonnées:</span>
+                                <div class="metadata-content">
+                                  @for (meta of entry.metadata | keyvalue; track meta.key) {
+                                    <div class="metadata-pair">
+                                      <span class="meta-key">{{ meta.key }}:</span>
+                                      <span class="meta-value">{{ meta.value }}</span>
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+        </ng-template>
+      </mat-tab>
+
+      <!-- Tab 3: Progress Timeline -->
+      <mat-tab label="Timeline">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            @if (loadingProgress()) {
+              <div class="loading-tab">
+                <mat-icon>hourglass_empty</mat-icon>
+                <p>Chargement de la timeline...</p>
+              </div>
+            } @else if (!progress()) {
+              <div class="empty-tab">
+                <mat-icon>timeline</mat-icon>
+                <p>Aucune donnée de progression disponible.</p>
+              </div>
+            } @else {
+              <!-- Current Progress Card -->
+              <mat-card class="progress-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>trending_up</mat-icon>
+                    Progression actuelle
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <app-task-progress-bar [progress]="progress()!.currentProgress"></app-task-progress-bar>
+                  <p class="progress-value">{{ progress()!.currentProgress }}% complété</p>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Children Progress Card -->
+              @if (progress()!.childrenProgress && progress()!.childrenProgress!.length > 0) {
+                <mat-card class="children-progress-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <mat-icon>account_tree</mat-icon>
+                      Progression des sous-tâches
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="children-list">
+                      @for (child of progress()!.childrenProgress; track child.id) {
+                        <div class="child-item">
+                          <span class="child-title">{{ child.title }}</span>
+                          <div class="child-progress">
+                            <app-task-progress-bar [progress]="child.progress"></app-task-progress-bar>
+                            <span class="child-percentage">{{ child.progress }}%</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+
+              <!-- Timeline Card -->
+              @if (progress()!.timeline && progress()!.timeline!.length > 0) {
+                <mat-card class="timeline-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <mat-icon>timeline</mat-icon>
+                      Historique de progression
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="progress-timeline">
+                      @for (event of progress()!.timeline; track $index) {
+                        <div class="timeline-item">
+                          <div class="timeline-dot"></div>
+                          <div class="timeline-content">
+                            <div class="timeline-header">
+                              <span class="timeline-action">{{ event.action }}</span>
+                              <span class="timeline-date">{{ formatDate(event.date) }}</span>
+                            </div>
+                            <div class="timeline-progress">
+                              <app-task-progress-bar [progress]="event.progress"></app-task-progress-bar>
+                              <span class="timeline-percentage">{{ event.progress }}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+            }
+          </div>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
   }
 </div>

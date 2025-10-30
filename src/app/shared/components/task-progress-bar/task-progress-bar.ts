@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './task-progress-bar.html',
-  styleUrl: './task-progress-bar.scss'
+  styleUrl: './task-progress-bar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskProgressBarComponent {
   @Input({ required: true }) progress!: number;

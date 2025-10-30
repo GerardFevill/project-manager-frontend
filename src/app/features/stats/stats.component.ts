@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,7 +32,8 @@ interface TypeStats {
     RouterLink
   ],
   templateUrl: './stats.component.html',
-  styleUrl: './stats.component.scss'
+  styleUrl: './stats.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatsComponent implements OnInit {
   private taskService = inject(TaskService);

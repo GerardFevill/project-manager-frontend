@@ -1,0 +1,157 @@
+<div class="project-list-container">
+  <div class="header">
+    <div class="header-title">
+      <mat-icon class="header-icon">folder</mat-icon>
+      <h1>Mes Projets</h1>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="openCreateProjectDialog()">
+        <mat-icon>add</mat-icon>
+        Nouveau Projet
+      </button>
+    </div>
+  </div>
+
+  <!-- Project Table -->
+  <div class="table-container">
+    @if (loading()) {
+      <div class="loading">Chargement des projets...</div>
+    } @else if (tasks().length === 0) {
+      <div class="empty">
+        <mat-icon>folder_off</mat-icon>
+        <p>Aucun projet trouvé.</p>
+        <button mat-raised-button color="primary" (click)="openCreateProjectDialog()">
+          <mat-icon>add</mat-icon>
+          Créer votre premier projet
+        </button>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="tasks()" class="project-table">
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let project">
+            <app-task-status-badge [status]="project.status"></app-task-status-badge>
+          </td>
+        </ng-container>
+
+        <!-- Title Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Nom du projet</th>
+          <td mat-cell *matCellDef="let project">
+            <a [routerLink]="['/tasks', project.id]" class="project-link">
+              <mat-icon class="project-icon">folder</mat-icon>
+              {{ project.title }}
+            </a>
+            @if (project.description) {
+              <div class="project-description">{{ project.description }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Progress Column -->
+        <ng-container matColumnDef="progress">
+          <th mat-header-cell *matHeaderCellDef>Progression</th>
+          <td mat-cell *matCellDef="let project">
+            <app-task-progress-bar [progress]="project.progress || 0"></app-task-progress-bar>
+          </td>
+        </ng-container>
+
+        <!-- Priority Column -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Priorité</th>
+          <td mat-cell *matCellDef="let project">
+            <mat-chip [ngClass]="'priority-' + project.priority">
+              {{ project.priority === 'low' ? 'Faible' :
+                 project.priority === 'medium' ? 'Moyenne' :
+                 project.priority === 'high' ? 'Haute' : 'Urgente' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Due Date Column -->
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef>Échéance</th>
+          <td mat-cell *matCellDef="let project">
+            @if (project.dueDate) {
+              <span [class.overdue]="isOverdue(project)">
+                {{ project.dueDate | date: 'dd/MM/yyyy' }}
+                @if (isOverdue(project)) {
+                  <mat-icon class="overdue-icon" matTooltip="En retard">warning</mat-icon>
+                }
+              </span>
+            } @else {
+              <span class="no-date">-</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let project">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item [routerLink]="['/tasks', project.id]">
+                <mat-icon>visibility</mat-icon>
+                <span>Voir</span>
+              </button>
+              <button mat-menu-item (click)="editProject(project)">
+                <mat-icon>edit</mat-icon>
+                <span>Modifier</span>
+              </button>
+              <button mat-menu-item (click)="toggleProject(project.id)">
+                <mat-icon>
+                  {{ project.status === 'completed' ? 'replay' : 'check_circle' }}
+                </mat-icon>
+                <span>{{ project.status === 'completed' ? 'Réactiver' : 'Marquer terminé' }}</span>
+              </button>
+              <mat-divider></mat-divider>
+              @if (project.status === 'blocked') {
+                <button mat-menu-item (click)="unblockProject(project.id)">
+                  <mat-icon>lock_open</mat-icon>
+                  <span>Débloquer</span>
+                </button>
+              } @else {
+                <button mat-menu-item (click)="blockProject(project)">
+                  <mat-icon>block</mat-icon>
+                  <span>Bloquer</span>
+                </button>
+              }
+              @if (project.status === 'archived') {
+                <button mat-menu-item (click)="unarchiveProject(project.id)">
+                  <mat-icon>unarchive</mat-icon>
+                  <span>Restaurer</span>
+                </button>
+              } @else {
+                <button mat-menu-item (click)="archiveProject(project.id)">
+                  <mat-icon>archive</mat-icon>
+                  <span>Archiver</span>
+                </button>
+              }
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="deleteProject(project.id)" class="delete-action">
+                <mat-icon>delete</mat-icon>
+                <span>Supprimer</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Pagination -->
+      <mat-paginator
+        [length]="totalItems()"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    }
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -21,6 +21,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { TaskService, NotificationService } from '../../../core/services';
 import { Task, TaskFilterDto, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../../../core/models';
+import { TaskType } from '../../../core/models/task-type.enum';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
 import {
   ConfirmDialogComponent,
@@ -59,6 +60,7 @@ import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-bad
   ],
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
@@ -84,12 +86,17 @@ export class TaskListComponent implements OnInit, OnDestroy {
     page: 1,
     limit: 10,
     sortBy: 'createdAt',
-    sortOrder: 'DESC'
+    sortOrder: 'DESC',
+    // Afficher uniquement : tâches, epics et jalons (PAS les projets)
+    types: [TaskType.TASK, TaskType.EPIC, TaskType.MILESTONE]
   };
 
   // Multi-select filters (envoyés au serveur)
   selectedStatuses: (TaskStatus | 'all')[] = [];
   selectedPriorities: ('low' | 'medium' | 'high' | 'urgent' | 'all')[] = [];
+
+  // Toggle to show/hide projects
+  showProjects = false;
 
   allStatuses: TaskStatus[] = [
     TaskStatus.DRAFT,
@@ -449,6 +456,18 @@ export class TaskListComponent implements OnInit, OnDestroy {
     }
 
     // Recharger depuis le serveur avec le nouveau tri
+    this.loadTasks();
+  }
+
+  onShowProjectsChange() {
+    if (this.showProjects) {
+      // Afficher tout : tâches, epics, jalons ET projets
+      this.filters.types = [TaskType.TASK, TaskType.EPIC, TaskType.MILESTONE, TaskType.PROJECT];
+    } else {
+      // Afficher uniquement : tâches, epics et jalons (sans projets)
+      this.filters.types = [TaskType.TASK, TaskType.EPIC, TaskType.MILESTONE];
+    }
+    this.filters.page = 1;
     this.loadTasks();
   }
 }

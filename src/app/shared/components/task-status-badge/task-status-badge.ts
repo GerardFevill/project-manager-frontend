@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { TaskStatus, TaskStatusHelper } from '../../../core/models';
@@ -8,7 +8,8 @@ import { TaskStatus, TaskStatusHelper } from '../../../core/models';
   standalone: true,
   imports: [CommonModule, MatIconModule],
   templateUrl: './task-status-badge.html',
-  styleUrl: './task-status-badge.scss'
+  styleUrl: './task-status-badge.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskStatusBadgeComponent {
   @Input({ required: true }) status!: TaskStatus;

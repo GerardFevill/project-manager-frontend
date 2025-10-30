@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,7 +17,8 @@ import { TaskRecurrence, TaskRecurrenceHelper } from '../../../core/models';
     }
   ],
   templateUrl: './task-recurrence-selector.html',
-  styleUrl: './task-recurrence-selector.scss'
+  styleUrl: './task-recurrence-selector.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskRecurrenceSelectorComponent implements ControlValueAccessor {
   value: TaskRecurrence = TaskRecurrence.NONE;

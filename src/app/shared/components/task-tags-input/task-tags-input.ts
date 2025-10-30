@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
@@ -25,7 +25,8 @@ import { MatInputModule } from '@angular/material/input';
     }
   ],
   templateUrl: './task-tags-input.html',
-  styleUrl: './task-tags-input.scss'
+  styleUrl: './task-tags-input.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskTagsInputComponent implements ControlValueAccessor {
   tags: string[] = [];

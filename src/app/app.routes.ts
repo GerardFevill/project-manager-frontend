@@ -15,8 +15,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/tasks/task-detail/task-detail').then(m => m.TaskDetailComponent)
   },
   {
+    path: 'projects',
+    loadComponent: () => import('./features/projects/project-list').then(m => m.ProjectListComponent)
+  },
+  {
     path: 'stats',
     loadComponent: () => import('./features/stats/stats.component').then(m => m.StatsComponent)
+  },
+  {
+    path: 'analytics',
+    loadComponent: () => import('./features/analytics/analytics').then(m => m.AnalyticsComponent)
   },
   {
     path: 'calendar',

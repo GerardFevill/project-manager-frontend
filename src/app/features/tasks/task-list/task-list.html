@@ -68,7 +68,11 @@
     </mat-form-field>
 
     <mat-checkbox [(ngModel)]="filters.onlyRoot" (change)="loadTasks()">
-      Tâches racines uniquement
+      Éléments racines uniquement
+    </mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="showProjects" (change)="onShowProjectsChange()">
+      Inclure les projets
     </mat-checkbox>
   </div>
 
@@ -238,6 +242,8 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [class.project-row]="row.type === 'project'"
+            [class.epic-row]="row.type === 'epic'"
             [class.blocked-row]="row.status === TaskStatus.BLOCKED"
             [class.archived-row]="row.status === TaskStatus.ARCHIVED"></tr>
       </table>

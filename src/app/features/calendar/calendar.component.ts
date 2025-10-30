@@ -1,15 +1,16 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../../core/services';
 import { Task } from '../../core/models';
-import { TaskStatusBadgeComponent } from '../../shared/components';
-import { TaskTypeBadgeComponent } from '../../shared/components/task-type-badge/task-type-badge.component';
+import { TaskType } from '../../core/models/task-type.enum';
 
 interface CalendarDay {
   date: Date;
@@ -23,17 +24,18 @@ interface CalendarDay {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     MatChipsModule,
-    RouterLink,
-    TaskStatusBadgeComponent,
-    TaskTypeBadgeComponent
+    MatCheckboxModule,
+    RouterLink
   ],
   templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.scss'
+  styleUrl: './calendar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarComponent implements OnInit {
   private taskService = inject(TaskService);
@@ -45,20 +47,46 @@ export class CalendarComponent implements OnInit {
 
   weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
+  // Filtres par type
+  showTasks = true;
+  showProjects = true;
+  showEpics = true;
+  showMilestones = true;
+
+  TaskType = TaskType;
+
   ngOnInit() {
     this.loadTasks();
   }
 
   loadTasks() {
     this.loading.set(true);
-    this.taskService.findAll({ limit: 1000 }).subscribe({
+
+    // Construire le filtre de types en fonction des checkboxes
+    const types: TaskType[] = [];
+    if (this.showTasks) types.push(TaskType.TASK);
+    if (this.showProjects) types.push(TaskType.PROJECT);
+    if (this.showEpics) types.push(TaskType.EPIC);
+    if (this.showMilestones) types.push(TaskType.MILESTONE);
+
+    this.taskService.findAll({
+      limit: 100,
+      types: types.length > 0 ? types : undefined
+    }).subscribe({
       next: (response) => {
-        this.allTasks.set(response.data);
+        // Handle both paginated and non-paginated responses
+        if (response && 'data' in response) {
+          this.allTasks.set(response.data || []);
+        } else {
+          this.allTasks.set((response as any) || []);
+        }
         this.generateCalendar();
         this.loading.set(false);
       },
       error: (err) => {
         console.error('Error loading tasks:', err);
+        this.allTasks.set([]);
+        this.generateCalendar(); // Generate calendar even on error
         this.loading.set(false);
       }
     });
@@ -154,5 +182,29 @@ export class CalendarComponent implements OnInit {
 
   getMonthName(): string {
     return this.currentDate().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  }
+
+  onFilterChange() {
+    this.loadTasks();
+  }
+
+  getTypeColor(type: string): string {
+    switch (type) {
+      case 'task': return '#1976d2';
+      case 'project': return '#7b1fa2';
+      case 'epic': return '#f57c00';
+      case 'milestone': return '#388e3c';
+      default: return '#666';
+    }
+  }
+
+  getTypeIcon(type: string): string {
+    switch (type) {
+      case 'task': return 'check_circle';
+      case 'project': return 'folder';
+      case 'epic': return 'workspaces';
+      case 'milestone': return 'flag';
+      default: return 'help';
+    }
   }
 }
