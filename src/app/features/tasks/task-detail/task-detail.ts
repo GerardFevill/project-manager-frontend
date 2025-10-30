@@ -18,9 +18,9 @@ import {
   TaskProgressBarComponent,
   CreateTaskDialogComponent,
   ConfirmDialogComponent,
-  TaskBlockDialogComponent
+  TaskBlockDialogComponent,
+  UserAvatarComponent
 } from '../../../shared/components';
-import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-badge/task-type-badge.component';
 
 @Component({
   selector: 'app-task-detail',
@@ -39,10 +39,10 @@ import { TaskTypeBadgeComponent } from '../../../shared/components/task-type-bad
     MatTabsModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent,
-    TaskTypeBadgeComponent
+    UserAvatarComponent
   ],
-  templateUrl: './task-detail.html',
-  styleUrl: './task-detail.scss',
+  templateUrl: './task-detail-jira.html',
+  styleUrl: './task-detail-jira.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskDetailComponent implements OnInit {
@@ -272,6 +272,28 @@ export class TaskDetailComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  getIssueTypeIcon(issueType: string): string {
+    switch (issueType) {
+      case 'epic': return 'bolt';
+      case 'story': return 'bookmark';
+      case 'task': return 'check_box';
+      case 'bug': return 'bug_report';
+      case 'subtask': return 'subdirectory_arrow_right';
+      default: return 'check_box';
+    }
+  }
+
+  getIssueTypeColor(issueType: string): string {
+    switch (issueType) {
+      case 'epic': return '#6554C0';
+      case 'story': return '#00875A';
+      case 'task': return '#0052CC';
+      case 'bug': return '#DE350B';
+      case 'subtask': return '#5E6C84';
+      default: return '#0052CC';
+    }
   }
 
   // Load history when history tab is selected
