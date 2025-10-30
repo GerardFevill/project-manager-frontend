@@ -73,8 +73,8 @@ export class CreateTaskDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CreateTaskDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data?: Task,
-    private taskService: TaskService
+    private taskService: TaskService,
+    @Inject(MAT_DIALOG_DATA) public data?: Task
   ) {
     if (data) {
       this.taskData = {
