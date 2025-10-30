@@ -57,7 +57,8 @@ mat-dialog-content {
   flex-direction: column;
   gap: 16px;
   padding: 0;
-  width: clamp(400px, 80vw, 700px);
+  width: clamp(320px, 90vw, 800px);
+  max-width: 100%;
   overflow-x: hidden !important;
 
   mat-expansion-panel {
@@ -208,9 +209,79 @@ mat-divider {
   margin: 8px 0 !important;
 }
 
+// Dark mode improvements
+:root.dark-mode {
+  app-create-task-dialog {
+    .dialog-header {
+      background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+
+      .required-indicator {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+
+    .mat-mdc-dialog-content,
+    mat-dialog-content {
+      background-color: var(--bg-color);
+    }
+
+    .form-content {
+      mat-expansion-panel {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+
+        .mat-expansion-panel-header {
+          background-color: var(--card-bg);
+
+          &:hover {
+            background-color: var(--hover-bg) !important;
+          }
+        }
+
+        .mat-expansion-panel-body {
+          background-color: var(--bg-color);
+        }
+
+        mat-panel-title {
+          color: var(--text-color);
+
+          mat-icon {
+            color: var(--primary-color);
+          }
+        }
+      }
+
+      mat-form-field {
+        .mat-mdc-text-field-wrapper {
+          background-color: var(--card-bg);
+        }
+
+        mat-icon[matIconPrefix] {
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    .mat-mdc-dialog-actions,
+    mat-dialog-actions {
+      background-color: var(--card-bg);
+      border-top-color: var(--border-color);
+    }
+
+    .required {
+      color: #ef5350;
+    }
+  }
+}
+
 // Responsive: single column on small screens
 @media (max-width: 700px) {
   .dialog-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
     h2 {
       font-size: 1.25rem;
 
@@ -220,10 +291,14 @@ mat-divider {
         height: 24px;
       }
     }
+
+    .required-indicator {
+      font-size: 0.75rem;
+    }
   }
 
   .form-content {
-    width: clamp(280px, 90vw, 700px);
+    width: clamp(280px, 95vw, 800px);
   }
 
   .row {
@@ -233,20 +308,5 @@ mat-divider {
   .mat-mdc-dialog-content,
   mat-dialog-content {
     max-height: calc(90vh - 180px);
-  }
-}
-
-// Dark mode improvements
-:root.dark-mode {
-  .dialog-header {
-    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
-  }
-
-  mat-expansion-panel {
-    .mat-expansion-panel-header {
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-      }
-    }
   }
 }
