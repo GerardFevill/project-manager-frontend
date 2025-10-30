@@ -1,38 +1,54 @@
 <div class="task-detail-container">
   @if (loading()) {
     <div class="loading">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
       <p>Chargement des détails...</p>
     </div>
   } @else if (task()) {
-    <!-- Header with actions -->
+    <!-- Enhanced Header with actions -->
     <div class="detail-header">
-      <button mat-icon-button routerLink="/tasks" matTooltip="Retour à la liste">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h1>
-        @if (task()!.type === 'project') {
-          <mat-icon class="header-type-icon project-icon">folder</mat-icon>
-          Détails du projet
-        } @else if (task()!.type === 'epic') {
-          <mat-icon class="header-type-icon epic-icon">workspaces</mat-icon>
-          Détails de l'epic
-        } @else if (task()!.type === 'milestone') {
-          <mat-icon class="header-type-icon milestone-icon">flag</mat-icon>
-          Détails du jalon
-        } @else {
-          <mat-icon class="header-type-icon task-icon">check_circle</mat-icon>
-          Détails de la tâche
-        }
-      </h1>
+      <div class="header-left">
+        <button mat-icon-button routerLink="/tasks" matTooltip="Retour à la liste" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-title">
+          @if (task()!.type === 'project') {
+            <mat-icon class="header-type-icon project-icon">folder</mat-icon>
+          } @else if (task()!.type === 'epic') {
+            <mat-icon class="header-type-icon epic-icon">workspaces</mat-icon>
+          } @else if (task()!.type === 'milestone') {
+            <mat-icon class="header-type-icon milestone-icon">flag</mat-icon>
+          } @else {
+            <mat-icon class="header-type-icon task-icon">check_circle</mat-icon>
+          }
+          <h1>{{ task()!.title }}</h1>
+        </div>
+      </div>
+
       <div class="header-actions">
-        <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Actions">
+        <!-- Quick Actions -->
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="editTask()"
+          class="quick-action-btn">
+          <mat-icon>edit</mat-icon>
+          Modifier
+        </button>
+
+        <button
+          mat-raised-button
+          [color]="task()!.status === TaskStatus.COMPLETED ? 'accent' : 'primary'"
+          (click)="toggleTask()"
+          class="quick-action-btn">
+          <mat-icon>{{ task()!.status === TaskStatus.COMPLETED ? 'undo' : 'check_circle' }}</mat-icon>
+          {{ task()!.status === TaskStatus.COMPLETED ? 'Réactiver' : 'Terminer' }}
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Plus d'actions" class="more-btn">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #actionMenu="matMenu">
-          <button mat-menu-item (click)="editTask()">
-            <mat-icon>edit</mat-icon>
-            <span>Modifier</span>
-          </button>
           @if (task()!.status === TaskStatus.BLOCKED) {
             <button mat-menu-item (click)="unblockTask()">
               <mat-icon>lock_open</mat-icon>
@@ -63,276 +79,296 @@
       </div>
     </div>
 
+    <!-- Status Badges Row -->
+    <div class="status-row">
+      <app-task-status-badge [status]="task()!.status"></app-task-status-badge>
+      <app-task-type-badge [type]="task()!.type"></app-task-type-badge>
+      <mat-chip class="priority-chip priority-{{ task()!.priority }}">
+        <mat-icon>flag</mat-icon>
+        {{ task()!.priority === 'low' ? 'Faible' :
+           task()!.priority === 'medium' ? 'Moyenne' :
+           task()!.priority === 'high' ? 'Haute' : 'Urgente' }}
+      </mat-chip>
+      @if (isOverdue(task()!)) {
+        <mat-chip class="overdue-chip">
+          <mat-icon>warning</mat-icon>
+          En retard
+        </mat-chip>
+      }
+    </div>
+
     <!-- Main content with tabs -->
     <mat-tab-group class="detail-tabs" (selectedIndexChange)="onTabChange($event)">
-      <!-- Tab 1: Details (existing content) -->
-      <mat-tab label="Détails">
+      <!-- Tab 1: Details -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>info</mat-icon>
+          Détails
+        </ng-template>
         <ng-template matTabContent>
           <div class="detail-content">
-      <!-- Title and Status Card -->
-      <mat-card class="title-card">
-        <mat-card-header>
-          <div class="title-header">
-            <h2>{{ task()!.title }}</h2>
-            <div class="badges">
-              <app-task-status-badge [status]="task()!.status"></app-task-status-badge>
-              <app-task-type-badge [type]="task()!.type"></app-task-type-badge>
-            </div>
-          </div>
-        </mat-card-header>
-        <mat-card-content>
-          @if (task()!.description) {
-            <p class="description">{{ task()!.description }}</p>
-          } @else {
-            <p class="no-description">Aucune description</p>
-          }
-        </mat-card-content>
-      </mat-card>
+            <!-- Description Card -->
+            @if (task()!.description) {
+              <mat-card class="description-card">
+                <mat-card-header>
+                  <mat-icon class="card-icon">description</mat-icon>
+                  <mat-card-title>Description</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="description">{{ task()!.description }}</p>
+                </mat-card-content>
+              </mat-card>
+            }
 
-      <!-- Two columns layout -->
-      <div class="columns">
-        <!-- Left column - Main info -->
-        <div class="left-column">
-          <!-- Progress Card -->
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Progression</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <app-task-progress-bar [progress]="task()!.progress"></app-task-progress-bar>
-              <p class="progress-text">{{ task()!.progress }}% complété</p>
+            <!-- Two columns layout -->
+            <div class="columns">
+              <!-- Left column - Main info -->
+              <div class="left-column">
+                <!-- Progress Card -->
+                <mat-card class="progress-card">
+                  <mat-card-header>
+                    <mat-icon class="card-icon">trending_up</mat-icon>
+                    <mat-card-title>Progression</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="progress-display">
+                      <app-task-progress-bar [progress]="task()!.progress"></app-task-progress-bar>
+                      <span class="progress-percentage">{{ task()!.progress }}%</span>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
 
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="toggleTask()"
-                class="toggle-btn"
-              >
-                @if (task()!.status === TaskStatus.COMPLETED) {
-                  <ng-container>
-                    <mat-icon>undo</mat-icon>
-                    Marquer comme active
-                  </ng-container>
-                } @else {
-                  <ng-container>
-                    <mat-icon>check_circle</mat-icon>
-                    Marquer comme terminée
-                  </ng-container>
-                }
-              </button>
-            </mat-card-content>
-          </mat-card>
+                <!-- Details Card -->
+                <mat-card class="info-card">
+                  <mat-card-header>
+                    <mat-icon class="card-icon">info</mat-icon>
+                    <mat-card-title>Informations</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <mat-icon>layers</mat-icon>
+                        <div>
+                          <span class="info-label">Niveau hiérarchique</span>
+                          <span class="info-value">Niveau {{ task()!.level }}</span>
+                        </div>
+                      </div>
 
-          <!-- Details Card -->
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Informations</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="info-grid">
-                <div class="info-item">
-                  <mat-icon>flag</mat-icon>
-                  <div>
-                    <span class="info-label">Priorité</span>
-                    <span class="priority priority-{{ task()!.priority }}">
-                      {{ task()!.priority }}
-                    </span>
-                  </div>
-                </div>
+                      @if (task()!.startDate) {
+                        <div class="info-item">
+                          <mat-icon>play_arrow</mat-icon>
+                          <div>
+                            <span class="info-label">Date de début</span>
+                            <span class="info-value">{{ formatDate(task()!.startDate) }}</span>
+                          </div>
+                        </div>
+                      }
 
-                <div class="info-item">
-                  <mat-icon>layers</mat-icon>
-                  <div>
-                    <span class="info-label">Niveau</span>
-                    <span class="info-value">Niveau {{ task()!.level }}</span>
-                  </div>
-                </div>
+                      @if (task()!.dueDate) {
+                        <div class="info-item" [class.overdue]="isOverdue(task()!)">
+                          <mat-icon>event</mat-icon>
+                          <div>
+                            <span class="info-label">Date d'échéance</span>
+                            <span class="info-value">{{ formatDate(task()!.dueDate) }}</span>
+                            @if (isOverdue(task()!)) {
+                              <span class="overdue-badge">En retard</span>
+                            }
+                          </div>
+                        </div>
+                      }
 
-                @if (task()!.dueDate) {
-                  <div class="info-item" [class.overdue]="isOverdue(task()!)">
-                    <mat-icon>event</mat-icon>
-                    <div>
-                      <span class="info-label">Échéance</span>
-                      <span class="info-value">{{ formatDate(task()!.dueDate) }}</span>
-                      @if (isOverdue(task()!)) {
-                        <span class="overdue-badge">En retard</span>
+                      @if (task()!.recurrence && task()!.recurrence !== 'none') {
+                        <div class="info-item">
+                          <mat-icon>repeat</mat-icon>
+                          <div>
+                            <span class="info-label">Récurrence</span>
+                            <span class="info-value">
+                              {{ task()!.recurrence === 'daily' ? 'Quotidienne' :
+                                 task()!.recurrence === 'weekly' ? 'Hebdomadaire' :
+                                 task()!.recurrence === 'monthly' ? 'Mensuelle' : 'Annuelle' }}
+                            </span>
+                          </div>
+                        </div>
+                      }
+
+                      @if (task()!.nextOccurrence) {
+                        <div class="info-item">
+                          <mat-icon>schedule</mat-icon>
+                          <div>
+                            <span class="info-label">Prochaine occurrence</span>
+                            <span class="info-value">{{ formatDateTime(task()!.nextOccurrence) }}</span>
+                          </div>
+                        </div>
                       }
                     </div>
-                  </div>
-                }
+                  </mat-card-content>
+                </mat-card>
 
-                @if (task()!.startDate) {
-                  <div class="info-item">
-                    <mat-icon>play_arrow</mat-icon>
-                    <div>
-                      <span class="info-label">Date de début</span>
-                      <span class="info-value">{{ formatDate(task()!.startDate) }}</span>
-                    </div>
-                  </div>
-                }
-
-                @if (task()!.recurrence && task()!.recurrence !== 'none') {
-                  <div class="info-item">
-                    <mat-icon>repeat</mat-icon>
-                    <div>
-                      <span class="info-label">Récurrence</span>
-                      <span class="info-value">{{ task()!.recurrence }}</span>
-                    </div>
-                  </div>
-                }
-
-                @if (task()!.nextOccurrence) {
-                  <div class="info-item">
-                    <mat-icon>schedule</mat-icon>
-                    <div>
-                      <span class="info-label">Prochaine occurrence</span>
-                      <span class="info-value">{{ formatDateTime(task()!.nextOccurrence) }}</span>
-                    </div>
-                  </div>
-                }
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Time Tracking Card -->
-          @if (task()!.estimatedHours || task()!.actualHours) {
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Suivi du temps</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="time-tracking">
-                  @if (task()!.estimatedHours) {
-                    <div class="time-item">
-                      <mat-icon>schedule</mat-icon>
-                      <span class="time-label">Estimé :</span>
-                      <span class="time-value">{{ task()!.estimatedHours }}h</span>
-                    </div>
-                  }
-                  @if (task()!.actualHours) {
-                    <div class="time-item">
-                      <mat-icon>timer</mat-icon>
-                      <span class="time-label">Réel :</span>
-                      <span class="time-value">{{ task()!.actualHours }}h</span>
-                    </div>
-                  }
-                  @if (task()!.estimatedHours && task()!.actualHours) {
-                    <div class="time-item">
-                      <mat-icon>trending_up</mat-icon>
-                      <span class="time-label">Écart :</span>
-                      <span class="time-value"
-                            [class.over-budget]="task()!.actualHours! > task()!.estimatedHours!">
-                        {{ (task()!.actualHours! - task()!.estimatedHours!).toFixed(1) }}h
-                      </span>
-                    </div>
-                  }
-                </div>
-              </mat-card-content>
-            </mat-card>
-          }
-        </div>
-
-        <!-- Right column - Tags, Dates, Metadata -->
-        <div class="right-column">
-          <!-- Tags Card -->
-          @if (task()!.tags && task()!.tags.length > 0) {
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Tags</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <mat-chip-set>
-                  @for (tag of task()!.tags; track tag) {
-                    <mat-chip>{{ tag }}</mat-chip>
-                  }
-                </mat-chip-set>
-              </mat-card-content>
-            </mat-card>
-          }
-
-          <!-- Metadata Card -->
-          @if (task()!.metadata) {
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Métadonnées</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="metadata">
-                  @for (entry of task()!.metadata | keyvalue; track entry.key) {
-                    <div class="metadata-item">
-                      <span class="metadata-key">{{ entry.key }}</span>
-                      <span class="metadata-value">{{ entry.value }}</span>
-                    </div>
-                  }
-                </div>
-              </mat-card-content>
-            </mat-card>
-          }
-
-          <!-- Timestamps Card -->
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>Historique</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="timestamps">
-                <div class="timestamp-item">
-                  <mat-icon>add_circle</mat-icon>
-                  <div>
-                    <span class="timestamp-label">Créée le</span>
-                    <span class="timestamp-value">{{ formatDateTime(task()!.createdAt) }}</span>
-                  </div>
-                </div>
-                <div class="timestamp-item">
-                  <mat-icon>update</mat-icon>
-                  <div>
-                    <span class="timestamp-label">Modifiée le</span>
-                    <span class="timestamp-value">{{ formatDateTime(task()!.updatedAt) }}</span>
-                  </div>
-                </div>
-                @if (task()!.completedAt) {
-                  <div class="timestamp-item">
-                    <mat-icon>check_circle</mat-icon>
-                    <div>
-                      <span class="timestamp-label">Terminée le</span>
-                      <span class="timestamp-value">{{ formatDateTime(task()!.completedAt) }}</span>
-                    </div>
-                  </div>
+                <!-- Time Tracking Card -->
+                @if (task()!.estimatedHours || task()!.actualHours) {
+                  <mat-card class="time-card">
+                    <mat-card-header>
+                      <mat-icon class="card-icon">schedule</mat-icon>
+                      <mat-card-title>Suivi du temps</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div class="time-tracking">
+                        @if (task()!.estimatedHours) {
+                          <div class="time-item">
+                            <mat-icon>schedule</mat-icon>
+                            <span class="time-label">Temps estimé</span>
+                            <span class="time-value">{{ task()!.estimatedHours }}h</span>
+                          </div>
+                        }
+                        @if (task()!.actualHours) {
+                          <div class="time-item">
+                            <mat-icon>timer</mat-icon>
+                            <span class="time-label">Temps réel</span>
+                            <span class="time-value">{{ task()!.actualHours }}h</span>
+                          </div>
+                        }
+                        @if (task()!.estimatedHours && task()!.actualHours) {
+                          <div class="time-item">
+                            <mat-icon>trending_up</mat-icon>
+                            <span class="time-label">Écart</span>
+                            <span class="time-value"
+                                  [class.over-budget]="task()!.actualHours! > task()!.estimatedHours!"
+                                  [class.under-budget]="task()!.actualHours! <= task()!.estimatedHours!">
+                              {{ (task()!.actualHours! - task()!.estimatedHours!).toFixed(1) }}h
+                              @if (task()!.actualHours! > task()!.estimatedHours!) {
+                                <mat-icon class="budget-icon">arrow_upward</mat-icon>
+                              } @else {
+                                <mat-icon class="budget-icon">arrow_downward</mat-icon>
+                              }
+                            </span>
+                          </div>
+                        }
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
                 }
               </div>
-            </mat-card-content>
-          </mat-card>
 
-          <!-- Hierarchy Card -->
-          @if (task()!.parent || (task()!.children && task()!.children!.length > 0)) {
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Hiérarchie</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                @if (task()!.parent) {
-                  <div class="hierarchy-item">
-                    <mat-icon>arrow_upward</mat-icon>
-                    <span>Tâche parente : {{ task()!.parent!.title }}</span>
-                  </div>
+              <!-- Right column - Tags, Dates, Metadata -->
+              <div class="right-column">
+                <!-- Tags Card -->
+                @if (task()!.tags && task()!.tags.length > 0) {
+                  <mat-card class="tags-card">
+                    <mat-card-header>
+                      <mat-icon class="card-icon">label</mat-icon>
+                      <mat-card-title>Tags</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <mat-chip-set>
+                        @for (tag of task()!.tags; track tag) {
+                          <mat-chip>
+                            <mat-icon>label</mat-icon>
+                            {{ tag }}
+                          </mat-chip>
+                        }
+                      </mat-chip-set>
+                    </mat-card-content>
+                  </mat-card>
                 }
-                @if (task()!.children && task()!.children!.length > 0) {
-                  <div class="hierarchy-item">
-                    <mat-icon>arrow_downward</mat-icon>
-                    <span>{{ task()!.children!.length }} sous-tâche(s)</span>
-                  </div>
+
+                <!-- Hierarchy Card -->
+                @if (task()!.parent || (task()!.children && task()!.children!.length > 0)) {
+                  <mat-card class="hierarchy-card">
+                    <mat-card-header>
+                      <mat-icon class="card-icon">account_tree</mat-icon>
+                      <mat-card-title>Hiérarchie</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      @if (task()!.parent) {
+                        <div class="hierarchy-item parent-item">
+                          <mat-icon>arrow_upward</mat-icon>
+                          <div>
+                            <span class="hierarchy-label">Tâche parente</span>
+                            <a [routerLink]="['/tasks', task()!.parent!.id]" class="hierarchy-link">
+                              {{ task()!.parent!.title }}
+                            </a>
+                          </div>
+                        </div>
+                      }
+                      @if (task()!.children && task()!.children!.length > 0) {
+                        <div class="hierarchy-item children-item">
+                          <mat-icon>arrow_downward</mat-icon>
+                          <div>
+                            <span class="hierarchy-label">Sous-tâches</span>
+                            <span class="hierarchy-count">{{ task()!.children!.length }} élément(s)</span>
+                          </div>
+                        </div>
+                      }
+                    </mat-card-content>
+                  </mat-card>
                 }
-              </mat-card-content>
-            </mat-card>
-          }
-        </div>
-      </div>
+
+                <!-- Metadata Card -->
+                @if (task()!.metadata) {
+                  <mat-card class="metadata-card">
+                    <mat-card-header>
+                      <mat-icon class="card-icon">data_object</mat-icon>
+                      <mat-card-title>Métadonnées</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div class="metadata">
+                        @for (entry of task()!.metadata | keyvalue; track entry.key) {
+                          <div class="metadata-item">
+                            <span class="metadata-key">{{ entry.key }}</span>
+                            <span class="metadata-value">{{ entry.value }}</span>
+                          </div>
+                        }
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                }
+
+                <!-- Timestamps Card -->
+                <mat-card class="timestamps-card">
+                  <mat-card-header>
+                    <mat-icon class="card-icon">history</mat-icon>
+                    <mat-card-title>Historique</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="timestamps">
+                      <div class="timestamp-item">
+                        <mat-icon>add_circle</mat-icon>
+                        <div>
+                          <span class="timestamp-label">Créée</span>
+                          <span class="timestamp-value">{{ formatDateTime(task()!.createdAt) }}</span>
+                        </div>
+                      </div>
+                      <div class="timestamp-item">
+                        <mat-icon>update</mat-icon>
+                        <div>
+                          <span class="timestamp-label">Modifiée</span>
+                          <span class="timestamp-value">{{ formatDateTime(task()!.updatedAt) }}</span>
+                        </div>
+                      </div>
+                      @if (task()!.completedAt) {
+                        <div class="timestamp-item completed">
+                          <mat-icon>check_circle</mat-icon>
+                          <div>
+                            <span class="timestamp-label">Terminée</span>
+                            <span class="timestamp-value">{{ formatDateTime(task()!.completedAt) }}</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
           </div>
         </ng-template>
       </mat-tab>
 
       <!-- Tab 2: History -->
-      <mat-tab label="Historique">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>history</mat-icon>
+          Historique
+        </ng-template>
         <ng-template matTabContent>
           <div class="tab-content">
             @if (loadingHistory()) {
@@ -348,10 +384,8 @@
             } @else {
               <mat-card class="history-card">
                 <mat-card-header>
-                  <mat-card-title>
-                    <mat-icon>history</mat-icon>
-                    Historique des actions
-                  </mat-card-title>
+                  <mat-icon class="card-icon">history</mat-icon>
+                  <mat-card-title>Historique des actions</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="history-timeline">
@@ -405,7 +439,11 @@
       </mat-tab>
 
       <!-- Tab 3: Progress Timeline -->
-      <mat-tab label="Timeline">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>timeline</mat-icon>
+          Timeline
+        </ng-template>
         <ng-template matTabContent>
           <div class="tab-content">
             @if (loadingProgress()) {
@@ -420,16 +458,16 @@
               </div>
             } @else {
               <!-- Current Progress Card -->
-              <mat-card class="progress-card">
+              <mat-card class="progress-summary-card">
                 <mat-card-header>
-                  <mat-card-title>
-                    <mat-icon>trending_up</mat-icon>
-                    Progression actuelle
-                  </mat-card-title>
+                  <mat-icon class="card-icon">trending_up</mat-icon>
+                  <mat-card-title>Progression actuelle</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                  <app-task-progress-bar [progress]="progress()!.currentProgress"></app-task-progress-bar>
-                  <p class="progress-value">{{ progress()!.currentProgress }}% complété</p>
+                  <div class="progress-display">
+                    <app-task-progress-bar [progress]="progress()!.currentProgress"></app-task-progress-bar>
+                    <span class="progress-percentage">{{ progress()!.currentProgress }}%</span>
+                  </div>
                 </mat-card-content>
               </mat-card>
 
@@ -437,10 +475,8 @@
               @if (progress()!.childrenProgress && progress()!.childrenProgress!.length > 0) {
                 <mat-card class="children-progress-card">
                   <mat-card-header>
-                    <mat-card-title>
-                      <mat-icon>account_tree</mat-icon>
-                      Progression des sous-tâches
-                    </mat-card-title>
+                    <mat-icon class="card-icon">account_tree</mat-icon>
+                    <mat-card-title>Progression des sous-tâches</mat-card-title>
                   </mat-card-header>
                   <mat-card-content>
                     <div class="children-list">
@@ -462,10 +498,8 @@
               @if (progress()!.timeline && progress()!.timeline!.length > 0) {
                 <mat-card class="timeline-card">
                   <mat-card-header>
-                    <mat-card-title>
-                      <mat-icon>timeline</mat-icon>
-                      Historique de progression
-                    </mat-card-title>
+                    <mat-icon class="card-icon">timeline</mat-icon>
+                    <mat-card-title>Historique de progression</mat-card-title>
                   </mat-card-header>
                   <mat-card-content>
                     <div class="progress-timeline">

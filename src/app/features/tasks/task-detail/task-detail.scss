@@ -2,88 +2,196 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
+  min-height: 100vh;
 }
 
+// Loading state
 .loading {
-  text-align: center;
-  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
   color: var(--text-secondary);
-  font-size: 16px;
+
+  .loading-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    animation: spin 2s linear infinite;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
 }
 
-// Header
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Enhanced Header
 .detail-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--border-color);
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: white;
 
-  h1 {
-    flex: 1;
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--text-color);
+  .header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
 
-    .header-type-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
+    .back-button {
+      flex-shrink: 0;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s;
 
-      &.project-icon {
-        color: #7b1fa2;
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-2px);
+      }
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+
+      .header-type-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+
+        &.project-icon, &.epic-icon, &.milestone-icon, &.task-icon {
+          color: #fff;
+        }
       }
 
-      &.epic-icon {
-        color: #f57c00;
-      }
-
-      &.milestone-icon {
-        color: #388e3c;
-      }
-
-      &.task-icon {
-        color: #1976d2;
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: white;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
     }
   }
 
   .header-actions {
-    button {
-      transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+
+    .quick-action-btn {
+      color: white;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+
+      mat-icon {
+        margin-right: 6px;
+      }
 
       &:hover {
-        background: var(--hover-bg);
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .more-btn {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
       }
     }
   }
 }
 
-// Dark mode icon colors
-:root.dark-mode .detail-header h1 {
-  .header-type-icon {
-    &.project-icon {
-      color: #ba68c8;
+// Status Row
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .priority-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+
+    &.priority-low {
+      background-color: #e3f2fd;
+      color: #1976d2;
     }
 
-    &.epic-icon {
-      color: #ffb74d;
+    &.priority-medium {
+      background-color: #fff3e0;
+      color: #f57c00;
     }
 
-    &.milestone-icon {
-      color: #81c784;
+    &.priority-high {
+      background-color: #ffebee;
+      color: #d32f2f;
     }
 
-    &.task-icon {
-      color: #64b5f6;
+    &.priority-urgent {
+      background-color: #f3e5f5;
+      color: #7b1fa2;
+      animation: pulse 2s infinite;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .overdue-chip {
+    background-color: #ffebee;
+    color: #d32f2f;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
     }
   }
 }
+
 
 // Menu styles
 .delete-menu-item {
