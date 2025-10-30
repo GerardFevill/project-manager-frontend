@@ -31,6 +31,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/calendar/calendar.component').then(m => m.CalendarComponent)
   },
   {
+    path: 'kanban',
+    loadComponent: () => import('./features/kanban/kanban').then(m => m.Kanban)
+  },
+  {
+    path: 'sprint-planning',
+    loadComponent: () => import('./features/sprint-planning/sprint-planning').then(m => m.SprintPlanning)
+  },
+  {
     path: 'settings',
     loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
   },

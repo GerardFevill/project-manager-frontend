@@ -33,29 +33,33 @@
         <mat-hint>Détails, objectifs, contexte</mat-hint>
       </mat-form-field>
 
-      <!-- Type & Parent -->
+      <!-- Issue Type & Parent -->
       <div class="row">
         <mat-form-field appearance="outline">
           <mat-label>Type <span class="required">*</span></mat-label>
-          <mat-select [(ngModel)]="taskData.type">
-            <mat-option [value]="TaskType.TASK">
-              <mat-icon [style.color]="'#1976d2'">{{ getTypeIcon(TaskType.TASK) }}</mat-icon>
-              Tâche
-            </mat-option>
-            <mat-option [value]="TaskType.PROJECT">
-              <mat-icon [style.color]="'#7b1fa2'">{{ getTypeIcon(TaskType.PROJECT) }}</mat-icon>
-              Projet
-            </mat-option>
-            <mat-option [value]="TaskType.EPIC">
-              <mat-icon [style.color]="'#f57c00'">{{ getTypeIcon(TaskType.EPIC) }}</mat-icon>
+          <mat-select [(ngModel)]="taskData.issueType">
+            <mat-option [value]="IssueType.EPIC">
+              <mat-icon [style.color]="getIssueTypeColor(IssueType.EPIC)">{{ getIssueTypeIcon(IssueType.EPIC) }}</mat-icon>
               Epic
             </mat-option>
-            <mat-option [value]="TaskType.MILESTONE">
-              <mat-icon [style.color]="'#388e3c'">{{ getTypeIcon(TaskType.MILESTONE) }}</mat-icon>
-              Jalon
+            <mat-option [value]="IssueType.STORY">
+              <mat-icon [style.color]="getIssueTypeColor(IssueType.STORY)">{{ getIssueTypeIcon(IssueType.STORY) }}</mat-icon>
+              Story
+            </mat-option>
+            <mat-option [value]="IssueType.TASK">
+              <mat-icon [style.color]="getIssueTypeColor(IssueType.TASK)">{{ getIssueTypeIcon(IssueType.TASK) }}</mat-icon>
+              Task
+            </mat-option>
+            <mat-option [value]="IssueType.BUG">
+              <mat-icon [style.color]="getIssueTypeColor(IssueType.BUG)">{{ getIssueTypeIcon(IssueType.BUG) }}</mat-icon>
+              Bug
+            </mat-option>
+            <mat-option [value]="IssueType.SUBTASK">
+              <mat-icon [style.color]="getIssueTypeColor(IssueType.SUBTASK)">{{ getIssueTypeIcon(IssueType.SUBTASK) }}</mat-icon>
+              Sub-task
             </mat-option>
           </mat-select>
-          <mat-hint>Type d'élément</mat-hint>
+          <mat-hint>Type d'issue Jira</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -65,8 +69,8 @@
             <mat-option [value]="undefined">Aucune (racine)</mat-option>
             @for (parent of availableParents(); track parent.id) {
               <mat-option [value]="parent.id">
-                <mat-icon [style.color]="parent.type === 'project' ? '#7b1fa2' : '#f57c00'" class="option-icon">
-                  {{ getTypeIcon(parent.type) }}
+                <mat-icon [style.color]="getIssueTypeColor(parent.issueType)" class="option-icon">
+                  {{ getIssueTypeIcon(parent.issueType) }}
                 </mat-icon>
                 {{ parent.title }}
               </mat-option>
@@ -75,6 +79,27 @@
           <mat-hint>Attacher à un projet ou epic existant</mat-hint>
         </mat-form-field>
       </div>
+
+      <!-- Assignee -->
+      <mat-form-field appearance="outline">
+        <mat-label>Assigné à</mat-label>
+        <mat-icon matIconPrefix>person</mat-icon>
+        <mat-select [(ngModel)]="taskData.assigneeId">
+          <mat-option [value]="undefined">
+            <span class="unassigned-option">Personne</span>
+          </mat-option>
+          @for (user of availableUsers(); track user.id) {
+            <mat-option [value]="user.id">
+              <div class="user-option">
+                <app-user-avatar [user]="user" size="small"></app-user-avatar>
+                <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="user-email">{{ user.email }}</span>
+              </div>
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint>Utilisateur responsable</mat-hint>
+      </mat-form-field>
     </mat-expansion-panel>
 
     <mat-divider></mat-divider>

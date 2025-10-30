@@ -26,71 +26,99 @@ html {
 }
 
 :root {
-  /* iOS Light theme colors */
-  --bg-color: #f2f2f7;
-  --text-color: #000000;
-  --text-secondary: #3c3c43;
-  --border-color: rgba(60, 60, 67, 0.18);
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --shadow: rgba(0, 0, 0, 0.1);
-  --hover-bg: rgba(0, 0, 0, 0.05);
-  --accent-color: #8250df;
-  --primary-color: #007AFF;
+  /* Jira Light theme colors */
+  --bg-color: #f4f5f7;
+  --surface-color: #f4f5f7;
+  --text-color: #172b4d;
+  --text-primary: #172b4d;
+  --text-secondary: #5e6c84;
+  --text-tertiary: #8993a4;
+  --border-color: #dfe1e6;
+  --card-bg: #ffffff;
+  --shadow: rgba(9, 30, 66, 0.25);
+  --hover-bg: #ebecf0;
+  --accent-color: #6554c0;
+  --primary-color: #0052cc;
+  --primary-rgb: 0, 82, 204;
 
-  /* iOS Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  /* Jira semantic colors */
+  --success-color: #36b37e;
+  --warning-color: #ffab00;
+  --error-color: #de350b;
+  --info-color: #0065ff;
 
-  /* iOS Spacing */
+  /* Jira priority colors */
+  --priority-urgent: #de350b;
+  --priority-high: #ff5630;
+  --priority-medium: #ffab00;
+  --priority-low: #36b37e;
+
+  /* Jira status colors */
+  --status-draft: #6c757d;
+  --status-active: #0052cc;
+  --status-blocked: #de350b;
+  --status-recurring: #6554c0;
+  --status-completed: #36b37e;
+  --status-archived: #6c757d;
+
+  /* Jira spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
-  /* iOS Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
+  /* Jira Border Radius */
+  --radius-sm: 3px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
+  --radius-full: 999px;
 
-  /* iOS Colors */
-  --ios-blue: #007AFF;
-  --ios-green: #34C759;
-  --ios-red: #FF3B30;
-  --ios-orange: #FF9500;
-  --ios-purple: #AF52DE;
-  --ios-pink: #FF2D55;
-  --ios-yellow: #FFCC00;
+  /* Jira tag colors */
+  --tag-bg: #dfe1e6;
+  --tag-color: #5e6c84;
 }
 
 :root.dark-mode {
-  /* iOS Dark theme colors */
-  --bg-color: #000000;
-  --text-color: #ffffff;
-  --text-secondary: #ebebf5;
-  --border-color: rgba(235, 235, 245, 0.18);
-  --card-bg: rgba(28, 28, 30, 0.8);
+  /* Jira Dark theme colors */
+  --bg-color: #1d2125;
+  --surface-color: #1d2125;
+  --text-color: #b6c2cf;
+  --text-primary: #b6c2cf;
+  --text-secondary: #8c9bab;
+  --text-tertiary: #626f86;
+  --border-color: #2c333a;
+  --card-bg: #22272b;
   --shadow: rgba(0, 0, 0, 0.5);
-  --hover-bg: rgba(255, 255, 255, 0.1);
-  --accent-color: #a371f7;
-  --primary-color: #0A84FF;
+  --hover-bg: #2c333a;
+  --accent-color: #8270db;
+  --primary-color: #579dff;
+  --primary-rgb: 87, 157, 255;
 
-  /* iOS Dark Glassmorphism */
-  --glass-bg: rgba(28, 28, 30, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  /* Jira Dark semantic colors */
+  --success-color: #4bce97;
+  --warning-color: #e2b203;
+  --error-color: #f87168;
+  --info-color: #579dff;
 
-  /* iOS Dark Colors */
-  --ios-blue: #0A84FF;
-  --ios-green: #30D158;
-  --ios-red: #FF453A;
-  --ios-orange: #FF9F0A;
-  --ios-purple: #BF5AF2;
-  --ios-pink: #FF375F;
-  --ios-yellow: #FFD60A;
+  /* Jira Dark priority colors */
+  --priority-urgent: #f87168;
+  --priority-high: #fd9891;
+  --priority-medium: #e2b203;
+  --priority-low: #4bce97;
+
+  /* Jira Dark status colors */
+  --status-draft: #8c9bab;
+  --status-active: #579dff;
+  --status-blocked: #f87168;
+  --status-recurring: #8270db;
+  --status-completed: #4bce97;
+  --status-archived: #8c9bab;
+
+  /* Jira Dark tag colors */
+  --tag-bg: #2c333a;
+  --tag-color: #8c9bab;
 }
 
 * {
@@ -106,27 +134,35 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* Dark mode body */
+html.dark-mode body {
+  background-color: var(--bg-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.125rem; }
-h5, h6 { font-size: 1rem; }
+h1 { font-size: 24px; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+h4 { font-size: 14px; }
+h5, h6 { font-size: 12px; font-weight: 600; text-transform: uppercase; }
 
 p {
   margin-bottom: 1rem;
@@ -137,64 +173,64 @@ button, input, select, textarea {
   font-size: inherit;
 }
 
-/* Snackbar/Toaster styles */
+/* Snackbar/Toaster styles - Jira */
 .snackbar-success {
-  --mdc-snackbar-container-color: #2da44e !important;
+  --mdc-snackbar-container-color: var(--success-color) !important;
   --mat-snack-bar-button-color: #ffffff !important;
   --mdc-snackbar-supporting-text-color: #ffffff !important;
 
   .mdc-snackbar__surface {
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(45, 164, 78, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
     min-width: 320px !important;
-    padding: 16px 20px !important;
-    font-weight: 500 !important;
-    font-size: 15px !important;
+    padding: 14px 16px !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
   }
 }
 
 .snackbar-error {
-  --mdc-snackbar-container-color: #cf222e !important;
+  --mdc-snackbar-container-color: var(--error-color) !important;
   --mat-snack-bar-button-color: #ffffff !important;
   --mdc-snackbar-supporting-text-color: #ffffff !important;
 
   .mdc-snackbar__surface {
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(207, 34, 46, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
     min-width: 320px !important;
-    padding: 16px 20px !important;
-    font-weight: 500 !important;
-    font-size: 15px !important;
+    padding: 14px 16px !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
   }
 }
 
 .snackbar-warning {
-  --mdc-snackbar-container-color: #bf8700 !important;
-  --mat-snack-bar-button-color: #ffffff !important;
-  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  --mdc-snackbar-container-color: var(--warning-color) !important;
+  --mat-snack-bar-button-color: #172b4d !important;
+  --mdc-snackbar-supporting-text-color: #172b4d !important;
 
   .mdc-snackbar__surface {
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(191, 135, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
     min-width: 320px !important;
-    padding: 16px 20px !important;
-    font-weight: 500 !important;
-    font-size: 15px !important;
+    padding: 14px 16px !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
   }
 }
 
 .snackbar-info {
-  --mdc-snackbar-container-color: #0969da !important;
+  --mdc-snackbar-container-color: var(--info-color) !important;
   --mat-snack-bar-button-color: #ffffff !important;
   --mdc-snackbar-supporting-text-color: #ffffff !important;
 
   .mdc-snackbar__surface {
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(9, 105, 218, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
     min-width: 320px !important;
-    padding: 16px 20px !important;
-    font-weight: 500 !important;
-    font-size: 15px !important;
+    padding: 14px 16px !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
   }
 }
 
@@ -204,136 +240,113 @@ button, input, select, textarea {
 }
 
 /* ========================================
-   iOS GLASSMORPHISM UTILITIES
+   JIRA STYLE UTILITIES
    ======================================== */
 
-/* Glass effect base */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
-/* Glass card */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
-  }
-}
-
-/* Glass button */
-.glass-button {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-full);
-  padding: 12px 24px;
-  color: var(--text-color);
-  font-weight: 600;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-
-  &:hover {
-    background: var(--hover-bg);
-    transform: scale(1.02);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
-/* iOS Style Cards */
+/* Jira card style */
 mat-card {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid var(--glass-border) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--glass-shadow) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 1px 2px var(--shadow) !important;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease !important;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25) !important;
+    box-shadow: 0 4px 8px var(--shadow) !important;
+  }
+
+  mat-card-title,
+  .mat-mdc-card-title {
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    font-size: 20px !important;
   }
 }
 
-/* iOS Buttons */
+/* Jira Buttons */
 .mdc-button,
 button[mat-raised-button],
 button[mat-button],
-button[mat-flat-button] {
-  border-radius: var(--radius-full) !important;
-  font-weight: 600 !important;
+button[mat-flat-button],
+button[mat-stroked-button] {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: background-color 0.1s ease !important;
+  height: 32px !important;
+  font-size: 14px !important;
 
   &:active {
-    transform: scale(0.96) !important;
+    transform: none !important;
   }
 }
 
-/* iOS Input Fields */
+button[mat-raised-button] {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+
+  &:hover:not(:disabled) {
+    background-color: #0747a6 !important;
+  }
+}
+
+button[mat-stroked-button] {
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+
+  &:hover:not(:disabled) {
+    background-color: var(--hover-bg) !important;
+  }
+}
+
+/* Jira Input Fields */
 .mat-mdc-form-field {
   .mat-mdc-text-field-wrapper {
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border-radius: var(--radius-md) !important;
-    border: 1px solid var(--glass-border) !important;
+    background: var(--card-bg) !important;
+    border-radius: var(--radius-sm) !important;
+    border: 2px solid var(--border-color) !important;
   }
 
   &.mat-focused {
     .mat-mdc-text-field-wrapper {
-      border-color: var(--ios-blue) !important;
-      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1) !important;
+      border-color: var(--primary-color) !important;
     }
   }
 }
 
-/* iOS Chips */
+/* Jira Chips */
 .mat-mdc-chip {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid var(--glass-border) !important;
-  border-radius: var(--radius-full) !important;
-  font-weight: 600 !important;
+  background: var(--tag-bg) !important;
+  color: var(--tag-color) !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  height: 20px !important;
 }
 
-/* iOS Tabs */
+/* Jira Tabs */
 .mat-mdc-tab-group {
   .mat-mdc-tab-header {
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border-bottom: 1px solid var(--glass-border) !important;
+    background: var(--card-bg) !important;
+    border-bottom: 2px solid var(--border-color) !important;
   }
 
   .mat-mdc-tab {
-    font-weight: 600 !important;
+    font-weight: 500 !important;
     letter-spacing: 0 !important;
+    color: var(--text-secondary) !important;
+
+    &.mdc-tab--active {
+      color: var(--primary-color) !important;
+    }
   }
 }
 
-/* iOS Divider */
+/* Jira Divider */
 mat-divider {
-  border-top-color: var(--glass-border) !important;
-  opacity: 0.6 !important;
+  border-top-color: var(--border-color) !important;
+  opacity: 1 !important;
 }
 
 /* iOS Spring Animation */
@@ -406,6 +419,38 @@ mat-divider {
     border: 1px solid var(--glass-border) !important;
     border-radius: var(--radius-xl) !important;
     box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .mat-mdc-dialog-title,
+  h1, h2, h3 {
+    color: var(--text-color) !important;
+  }
+}
+
+/* Dark mode dialog enhancement */
+html.dark-mode .mat-mdc-dialog-container {
+  .mdc-dialog__surface {
+    box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+/* Backdrop-filter fallback for unsupported browsers */
+@supports not (backdrop-filter: blur(20px)) {
+  .glass,
+  .glass-card,
+  mat-card,
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background: var(--card-bg) !important;
+  }
+
+  html.dark-mode {
+    .glass,
+    .glass-card,
+    mat-card,
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+      background: rgba(35, 35, 40, 0.95) !important;
+    }
   }
 }
 

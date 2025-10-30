@@ -1,0 +1,297 @@
+<div class="kanban-container">
+  <!-- Header with Sprint Selector -->
+  <div class="kanban-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">view_kanban</mat-icon>
+      <h1>Board</h1>
+
+      <!-- Sprint Selector -->
+      <mat-form-field appearance="outline" class="sprint-selector">
+        <mat-select
+          [value]="selectedSprintId() || 'backlog'"
+          (selectionChange)="onSprintChange($event.value)">
+          <mat-option value="backlog">
+            <mat-icon>inventory_2</mat-icon>
+            Backlog
+          </mat-option>
+          <mat-option value="all">
+            <mat-icon>view_list</mat-icon>
+            Toutes les tâches
+          </mat-option>
+          <mat-divider></mat-divider>
+          @for (sprint of sprints(); track sprint.id) {
+            <mat-option [value]="sprint.id">
+              <mat-icon [style.color]="getSprintStatusColor(sprint.status)">sprint</mat-icon>
+              {{ sprint.name }}
+              @if (sprint.status === 'active') {
+                <span class="active-badge">ACTIF</span>
+              }
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="header-actions">
+      <button mat-stroked-button (click)="router.navigate(['/sprint-planning'])">
+        <mat-icon>event_note</mat-icon>
+        Sprint Planning
+      </button>
+
+      <button mat-button [matMenuTriggerFor]="sprintMenu">
+        <mat-icon>more_vert</mat-icon>
+        Sprints
+      </button>
+
+      <mat-menu #sprintMenu="matMenu">
+        <button mat-menu-item (click)="openSprintDialog()">
+          <mat-icon>add</mat-icon>
+          <span>Créer un sprint</span>
+        </button>
+        @if (activeSprint()) {
+          <button mat-menu-item (click)="completeSprint(activeSprint()!)">
+            <mat-icon>check_circle</mat-icon>
+            <span>Terminer le sprint actif</span>
+          </button>
+        }
+        <mat-divider></mat-divider>
+        @for (sprint of sprints(); track sprint.id) {
+          <button mat-menu-item [matMenuTriggerFor]="sprintActions">
+            <mat-icon [style.color]="getSprintStatusColor(sprint.status)">sprint</mat-icon>
+            <span>{{ sprint.name }}</span>
+          </button>
+
+          <mat-menu #sprintActions="matMenu">
+            @if (sprint.status === 'planned') {
+              <button mat-menu-item (click)="startSprint(sprint)">
+                <mat-icon>play_arrow</mat-icon>
+                <span>Démarrer</span>
+              </button>
+            }
+            <button mat-menu-item (click)="openSprintDialog(sprint)">
+              <mat-icon>edit</mat-icon>
+              <span>Modifier</span>
+            </button>
+            @if (sprint.status === 'active') {
+              <button mat-menu-item (click)="completeSprint(sprint)">
+                <mat-icon>check_circle</mat-icon>
+                <span>Terminer</span>
+              </button>
+            }
+          </mat-menu>
+        }
+      </mat-menu>
+
+      <button mat-stroked-button (click)="loadSprints()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <p>Chargement...</p>
+    </div>
+  }
+
+  <!-- Backlog View -->
+  @if (!loading() && viewMode() === 'backlog') {
+    <div class="backlog-view">
+      <div class="backlog-header">
+        <h2>
+          <mat-icon>inventory_2</mat-icon>
+          Backlog
+          <span class="count">({{ backlogTasks().length }})</span>
+        </h2>
+        <p class="backlog-description">
+          Glissez les tâches vers un sprint pour les planifier
+        </p>
+      </div>
+
+      <div class="backlog-list">
+        @if (backlogTasks().length === 0) {
+          <div class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Le backlog est vide</p>
+          </div>
+        }
+
+        @for (task of backlogTasks(); track task.id) {
+          <div class="backlog-task" [attr.data-priority]="task.priority">
+            <div class="task-main" (click)="openTaskDetail(task.id)">
+              <div class="task-header">
+                <div class="task-type">
+                  <mat-icon class="type-icon" [style.color]="getTypeColor(task.issueType)">{{ getTypeIcon(task.issueType) }}</mat-icon>
+                  <span class="task-id">#{{ task.id }}</span>
+                </div>
+                <mat-icon
+                  class="priority-icon"
+                  [style.color]="getPriorityColor(task.priority)"
+                  [matTooltip]="task.priority + ' priority'">
+                  {{ getPriorityIcon(task.priority) }}
+                </mat-icon>
+              </div>
+
+              <h4 class="task-title">{{ task.title }}</h4>
+
+              <div class="task-meta">
+                @if (task.dueDate) {
+                  <div class="meta-item">
+                    <mat-icon>event</mat-icon>
+                    <span>{{ task.dueDate | date:'MMM d' }}</span>
+                  </div>
+                }
+                @if (task.estimatedHours) {
+                  <div class="meta-item">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{ task.estimatedHours }}h</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="task-actions">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="assignMenu"
+                matTooltip="Assigner à un sprint">
+                <mat-icon>add_circle_outline</mat-icon>
+              </button>
+
+              <mat-menu #assignMenu="matMenu">
+                @for (sprint of sprints(); track sprint.id) {
+                  @if (sprint.status !== 'completed') {
+                    <button mat-menu-item (click)="assignTaskToSprint(task.id, sprint.id)">
+                      <mat-icon [style.color]="getSprintStatusColor(sprint.status)">sprint</mat-icon>
+                      <span>{{ sprint.name }}</span>
+                    </button>
+                  }
+                }
+              </mat-menu>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Kanban Board (Sprint or All) -->
+  @if (!loading() && viewMode() !== 'backlog') {
+    <div class="kanban-board" cdkDropListGroup>
+      @for (column of columns(); track column.id) {
+        <div class="kanban-column">
+          <!-- Column Header -->
+          <div class="column-header">
+            <div class="column-title">
+              <mat-icon [style.color]="column.color">{{ column.icon }}</mat-icon>
+              <h3>{{ column.title }}</h3>
+              <span class="task-count">{{ column.tasks.length }}</span>
+            </div>
+            <button
+              mat-icon-button
+              class="add-button"
+              [matTooltip]="'Ajouter une tâche'"
+              (click)="openCreateDialog(column.id)">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <!-- Drop Zone -->
+          <div
+            class="column-content"
+            cdkDropList
+            [id]="column.id"
+            [cdkDropListData]="column.tasks"
+            [cdkDropListConnectedTo]="getConnectedLists()"
+            (cdkDropListDropped)="drop($event, column.id)">
+
+            @if (column.tasks.length === 0) {
+              <div class="empty-state">
+                <mat-icon>inbox</mat-icon>
+                <p>Aucune tâche</p>
+              </div>
+            }
+
+            @for (task of column.tasks; track task.id) {
+              <div class="task-card" cdkDrag [attr.data-priority]="task.priority">
+                <!-- Task Content -->
+                <div class="task-content" (click)="openTaskDetail(task.id)">
+                  <!-- Task Header -->
+                  <div class="task-header">
+                    <div class="task-type">
+                      <mat-icon class="type-icon" [style.color]="getTypeColor(task.issueType)">{{ getTypeIcon(task.issueType) }}</mat-icon>
+                      <span class="task-id">#{{ task.id }}</span>
+                    </div>
+                    <mat-icon
+                      class="priority-icon"
+                      [style.color]="getPriorityColor(task.priority)"
+                      [matTooltip]="task.priority + ' priority'">
+                      {{ getPriorityIcon(task.priority) }}
+                    </mat-icon>
+                  </div>
+
+                  <!-- Task Title -->
+                  <h4 class="task-title">{{ task.title }}</h4>
+
+                  <!-- Task Meta -->
+                  <div class="task-meta">
+                    @if (task.dueDate) {
+                      <div class="meta-item">
+                        <mat-icon>event</mat-icon>
+                        <span>{{ task.dueDate | date:'MMM d' }}</span>
+                      </div>
+                    }
+                    @if (task.estimatedHours) {
+                      <div class="meta-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ task.estimatedHours }}h</span>
+                      </div>
+                    }
+                    @if (task.progress > 0) {
+                      <div class="meta-item">
+                        <mat-icon>trending_up</mat-icon>
+                        <span>{{ task.progress }}%</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Task Footer: Tags + Assignee -->
+                  <div class="task-footer">
+                    <!-- Task Tags -->
+                    @if (task.tags && task.tags.length > 0) {
+                      <div class="task-tags">
+                        @for (tag of task.tags.slice(0, 2); track tag) {
+                          <span class="tag">{{ tag }}</span>
+                        }
+                        @if (task.tags.length > 2) {
+                          <span class="tag more">+{{ task.tags.length - 2 }}</span>
+                        }
+                      </div>
+                    }
+
+                    <!-- Assignee Avatar -->
+                    @if (task.assignee) {
+                      <app-user-avatar [user]="task.assignee" size="small" class="task-assignee"></app-user-avatar>
+                    }
+                  </div>
+                </div>
+
+                <!-- Drag Preview -->
+                <div class="drag-preview" *cdkDragPreview>
+                  <div class="task-card preview">
+                    <div class="task-content">
+                      <h4 class="task-title">{{ task.title }}</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

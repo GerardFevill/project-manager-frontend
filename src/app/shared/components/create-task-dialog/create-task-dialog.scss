@@ -310,3 +310,27 @@ mat-divider {
     max-height: calc(90vh - 180px);
   }
 }
+
+// User option styling in select
+.user-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+
+  .user-name {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .user-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+}
+
+.unassigned-option {
+  color: var(--text-secondary);
+  font-style: italic;
+}

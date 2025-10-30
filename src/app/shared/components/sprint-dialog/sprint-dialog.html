@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>
+  <mat-icon>sprint</mat-icon>
+  {{ data ? 'Modifier le Sprint' : 'Créer un Sprint' }}
+</h2>
+
+<mat-dialog-content>
+  <div class="sprint-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom du Sprint</mat-label>
+      <mat-icon matIconPrefix>label</mat-icon>
+      <input
+        matInput
+        [(ngModel)]="sprintData.name"
+        placeholder="Sprint 1"
+        required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Objectif du Sprint (optionnel)</mat-label>
+      <mat-icon matIconPrefix>flag</mat-icon>
+      <textarea
+        matInput
+        [(ngModel)]="sprintData.goal"
+        placeholder="Objectifs et livrables du sprint..."
+        rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="date-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <mat-icon matIconPrefix>event</mat-icon>
+        <input
+          matInput
+          type="date"
+          [(ngModel)]="sprintData.startDate"
+          required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin</mat-label>
+        <mat-icon matIconPrefix>event</mat-icon>
+        <input
+          matInput
+          type="date"
+          [(ngModel)]="sprintData.endDate"
+          required>
+      </mat-form-field>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+    Annuler
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!isFormValid()"
+    (click)="onSubmit()">
+    <mat-icon>{{ data ? 'save' : 'add' }}</mat-icon>
+    {{ data ? 'Mettre à jour' : 'Créer' }}
+  </button>
+</mat-dialog-actions>

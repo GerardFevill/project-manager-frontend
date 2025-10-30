@@ -1,5 +1,7 @@
 import { TaskStatus, TaskRecurrence } from './task-enums';
 import { TaskType } from './task-type.enum';
+import { IssueType } from './issue-type.enum';
+import { User } from './user.model';
 
 /**
  * Main Task Interface
@@ -16,6 +18,7 @@ export interface Task {
   progress: number; // 0-100
   priority: 'low' | 'medium' | 'high' | 'urgent';
   type: TaskType;
+  issueType: IssueType;
 
   // Dates
   dueDate: Date | null;
@@ -32,6 +35,13 @@ export interface Task {
   parentId: string | null;
   parent?: Task;
   children?: Task[];
+
+  // Sprint (Scrum)
+  sprintId: number | null;
+
+  // User assignment
+  assigneeId: string | null;
+  assignee?: User;
 
   // Flexible data
   tags: string[];
@@ -57,11 +67,13 @@ export interface CreateTaskDto {
   progress?: number;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   type?: TaskType;
+  issueType?: IssueType;
   dueDate?: string;
   startDate?: string;
   recurrence?: TaskRecurrence;
   nextOccurrence?: string;
   parentId?: string;
+  assigneeId?: string;
   tags?: string[];
   metadata?: Record<string, any>;
   estimatedHours?: number;
@@ -77,11 +89,14 @@ export interface UpdateTaskDto {
   progress?: number;
   priority?: 'low' | 'medium' | 'high' | 'urgent';
   type?: TaskType;
+  issueType?: IssueType;
   dueDate?: string;
   startDate?: string;
   recurrence?: TaskRecurrence;
   nextOccurrence?: string;
   parentId?: string;
+  assigneeId?: string | null;
+  sprintId?: number | null;
   tags?: string[];
   metadata?: Record<string, any>;
   estimatedHours?: number;

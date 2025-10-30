@@ -1,0 +1,52 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-color);
+  margin: 0 0 16px 0;
+
+  mat-icon {
+    color: var(--primary-color);
+  }
+}
+
+mat-dialog-content {
+  min-width: 500px;
+  padding: 24px !important;
+}
+
+.sprint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px !important;
+  gap: 12px !important;
+
+  button mat-icon {
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  mat-dialog-content {
+    min-width: auto;
+    width: 90vw;
+  }
+
+  .date-row {
+    grid-template-columns: 1fr !important;
+  }
+}
