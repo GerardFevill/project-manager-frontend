@@ -19,26 +19,61 @@
 
     <!-- Navigation Menu - Jira Style -->
     <mat-nav-list class="nav-list">
+      <!-- PLANNING Section -->
+      @if (sidenavOpened()) {
+        <div class="nav-section-header">PLANNING</div>
+      }
+
+      <a mat-list-item routerLink="/kanban" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Board' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>view_kanban</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Board</span>
+        }
+      </a>
+
+      <a mat-list-item routerLink="/sprint-planning" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Backlog' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>inventory_2</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Backlog</span>
+        }
+      </a>
+
+      <a mat-list-item routerLink="/calendar" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Timeline' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>timeline</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Timeline</span>
+        }
+      </a>
+
+      <a mat-list-item routerLink="/analytics" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Reports' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>assessment</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Reports</span>
+        }
+      </a>
+
+      <mat-divider></mat-divider>
+
       <!-- WORK Section -->
       @if (sidenavOpened()) {
         <div class="nav-section-header">WORK</div>
       }
 
-      <a mat-list-item routerLink="/tasks" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Your work' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>assignment</mat-icon>
+      <a mat-list-item routerLink="/tasks" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Your work' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>checklist</mat-icon>
         @if (sidenavOpened()) {
           <span matListItemTitle>Your work</span>
         }
       </a>
 
-      <a mat-list-item routerLink="/projects" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Projects' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>folder</mat-icon>
+      <a mat-list-item routerLink="/projects" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Projects' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>folder_open</mat-icon>
         @if (sidenavOpened()) {
           <span matListItemTitle>Projects</span>
         }
       </a>
 
-      <a mat-list-item routerLink="/analytics" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Dashboards' : ''" matTooltipPosition="right">
+      <a mat-list-item routerLink="/analytics" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Dashboards' : ''" matTooltipPosition="right" class="nav-item">
         <mat-icon matListItemIcon>dashboard</mat-icon>
         @if (sidenavOpened()) {
           <span matListItemTitle>Dashboards</span>
@@ -47,57 +82,57 @@
 
       <mat-divider></mat-divider>
 
-      <!-- PLANNING Section -->
+      <!-- PEOPLE Section -->
       @if (sidenavOpened()) {
-        <div class="nav-section-header">PLANNING</div>
+        <div class="nav-section-header">PEOPLE</div>
       }
 
-      <a mat-list-item routerLink="/sprint-planning" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Backlog' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>inventory_2</mat-icon>
+      <a mat-list-item routerLink="/team" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Team' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>groups</mat-icon>
         @if (sidenavOpened()) {
-          <span matListItemTitle>Backlog</span>
-        }
-      </a>
-
-      <a mat-list-item routerLink="/kanban" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Board' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>view_kanban</mat-icon>
-        @if (sidenavOpened()) {
-          <span matListItemTitle>Board</span>
-        }
-      </a>
-
-      <a mat-list-item routerLink="/calendar" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Timeline' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>timeline</mat-icon>
-        @if (sidenavOpened()) {
-          <span matListItemTitle>Timeline</span>
-        }
-      </a>
-
-      <a mat-list-item routerLink="/analytics" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Reports' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>bar_chart</mat-icon>
-        @if (sidenavOpened()) {
-          <span matListItemTitle>Reports</span>
+          <span matListItemTitle>Team</span>
         }
       </a>
 
       <mat-divider></mat-divider>
 
-      <!-- SETTINGS Section -->
+      <!-- APPS Section -->
       @if (sidenavOpened()) {
-        <div class="nav-section-header">SETTINGS</div>
+        <div class="nav-section-header">APPS</div>
       }
 
-      <a mat-list-item routerLink="/settings" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Project settings' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>settings</mat-icon>
+      <a mat-list-item routerLink="/apps" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Apps' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>apps</mat-icon>
         @if (sidenavOpened()) {
-          <span matListItemTitle>Project settings</span>
+          <span matListItemTitle>Apps</span>
         }
       </a>
 
-      <a mat-list-item routerLink="/help" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Help' : ''" matTooltipPosition="right">
-        <mat-icon matListItemIcon>help_outline</mat-icon>
+      <mat-divider></mat-divider>
+
+      <!-- PROJECT SETTINGS Section -->
+      @if (sidenavOpened()) {
+        <div class="nav-section-header">PROJECT SETTINGS</div>
+      }
+
+      <a mat-list-item routerLink="/settings/details" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Details' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>info</mat-icon>
         @if (sidenavOpened()) {
-          <span matListItemTitle>Help</span>
+          <span matListItemTitle>Details</span>
+        }
+      </a>
+
+      <a mat-list-item routerLink="/settings/access" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Access' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>lock</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Access</span>
+        }
+      </a>
+
+      <a mat-list-item routerLink="/settings/features" routerLinkActive="active-link" [matTooltip]="!sidenavOpened() ? 'Features' : ''" matTooltipPosition="right" class="nav-item">
+        <mat-icon matListItemIcon>extension</mat-icon>
+        @if (sidenavOpened()) {
+          <span matListItemTitle>Features</span>
         }
       </a>
     </mat-nav-list>
