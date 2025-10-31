@@ -276,25 +276,87 @@
             </div>
           }
 
-          @if (task()!.estimatedHours || task()!.actualHours) {
-            <div class="sidebar-item">
-              <label class="sidebar-label">Time tracking</label>
-              <div class="time-tracking">
-                @if (task()!.estimatedHours) {
-                  <div class="time-row">
-                    <span class="time-label">Estimated:</span>
-                    <span class="time-value">{{ task()!.estimatedHours }}h</span>
+          <div class="sidebar-item">
+            <label class="sidebar-label">Time tracking</label>
+            <div class="time-tracking-widget">
+              @if (loadingTimeSummary()) {
+                <div class="time-loading">
+                  <mat-icon>hourglass_empty</mat-icon>
+                  <span>Loading...</span>
+                </div>
+              } @else {
+                <!-- Progress Bar -->
+                @if ((task()?.estimatedHours ?? 0) > 0) {
+                  <div class="time-progress-bar">
+                    <div class="time-progress-fill" [style.width.%]="getTimePercentage()"></div>
+                  </div>
+                  <div class="time-stats">
+                    <span class="time-logged">{{ formatTimeHours(timeSummary().totalLogged) }}</span>
+                    <span class="time-separator">/</span>
+                    <span class="time-estimated">{{ task()!.estimatedHours }}h</span>
+                  </div>
+                } @else {
+                  <div class="time-no-estimate">
+                    <div class="time-stats-single">
+                      <mat-icon>schedule</mat-icon>
+                      <span class="time-logged">{{ formatTimeHours(timeSummary().totalLogged) }} logged</span>
+                    </div>
+                    <span class="time-hint">No time estimate</span>
                   </div>
                 }
-                @if (task()!.actualHours) {
-                  <div class="time-row">
-                    <span class="time-label">Logged:</span>
-                    <span class="time-value">{{ task()!.actualHours }}h</span>
+
+                <!-- Log Work Button -->
+                <button mat-stroked-button class="log-work-btn" (click)="openLogWorkDialog()">
+                  <mat-icon>add</mat-icon>
+                  Log Work
+                </button>
+
+                <!-- Work Logs List -->
+                @if (workLogs().length > 0) {
+                  <div class="work-logs-section">
+                    <div class="work-logs-header" (click)="toggleWorkLogs()">
+                      <span>Work logs ({{ workLogs().length }})</span>
+                      <mat-icon>{{ showWorkLogs() ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </div>
+                    @if (showWorkLogs()) {
+                      <div class="work-logs-list">
+                        @for (log of workLogs(); track log.id) {
+                          <div class="work-log-item">
+                            <div class="work-log-header">
+                              <app-user-avatar [user]="log.user || null" size="small"></app-user-avatar>
+                              <div class="work-log-info">
+                                <span class="work-log-user">{{ log.user ? (log.user.firstName + ' ' + log.user.lastName) : 'Unknown' }}</span>
+                                <span class="work-log-time">{{ formatTimeHours(log.timeSpent) }}</span>
+                              </div>
+                              @if (canEditWorkLog(log)) {
+                                <button mat-icon-button [matMenuTriggerFor]="logMenu" class="work-log-menu">
+                                  <mat-icon>more_horiz</mat-icon>
+                                </button>
+                                <mat-menu #logMenu="matMenu">
+                                  <button mat-menu-item (click)="editWorkLog(log)">
+                                    <mat-icon>edit</mat-icon>
+                                    <span>Edit</span>
+                                  </button>
+                                  <button mat-menu-item (click)="deleteWorkLog(log.id)">
+                                    <mat-icon>delete</mat-icon>
+                                    <span>Delete</span>
+                                  </button>
+                                </mat-menu>
+                              }
+                            </div>
+                            <div class="work-log-date">{{ formatWorkDate(log.workDate) }}</div>
+                            @if (log.description) {
+                              <div class="work-log-description">{{ log.description }}</div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                   </div>
                 }
-              </div>
+              }
             </div>
-          }
+          </div>
         </div>
 
         <!-- Progress Section -->

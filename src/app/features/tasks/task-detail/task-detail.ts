@@ -10,8 +10,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TaskService, NotificationService, CommentService } from '../../../core/services';
-import { Task, TaskStatus, TaskHistory, TaskProgress, Comment, User } from '../../../core/models';
+import { TaskService, NotificationService, CommentService, WorkLogService } from '../../../core/services';
+import { Task, TaskStatus, TaskHistory, TaskProgress, Comment, User, WorkLog, TimeTrackingSummary, formatHours } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
 import { FormsModule } from '@angular/forms';
 import {
@@ -21,7 +21,8 @@ import {
   ConfirmDialogComponent,
   TaskBlockDialogComponent,
   UserAvatarComponent,
-  TaskCommentComponent
+  TaskCommentComponent,
+  LogWorkDialogComponent
 } from '../../../shared/components';
 
 @Component({
@@ -55,6 +56,7 @@ export class TaskDetailComponent implements OnInit {
   private taskService = inject(TaskService);
   private notificationService = inject(NotificationService);
   private commentService = inject(CommentService);
+  private workLogService = inject(WorkLogService);
   private dialog = inject(MatDialog);
 
   task = signal<Task | null>(null);
@@ -86,6 +88,12 @@ export class TaskDetailComponent implements OnInit {
     updatedAt: new Date(),
   });
 
+  // Time tracking data
+  workLogs = signal<WorkLog[]>([]);
+  timeSummary = signal<TimeTrackingSummary>({ totalLogged: 0, logCount: 0, lastLogDate: null });
+  loadingTimeSummary = signal(false);
+  showWorkLogs = signal(false);
+
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
     if (taskId) {
@@ -99,8 +107,9 @@ export class TaskDetailComponent implements OnInit {
       next: (task) => {
         this.task.set(task);
         this.loading.set(false);
-        // Load comments
+        // Load comments and time tracking
         this.loadComments(id);
+        this.loadTimeTracking(id);
       },
       error: (err) => {
         console.error('Error loading task:', err);
@@ -489,5 +498,205 @@ export class TaskDetailComponent implements OnInit {
    */
   setFilter(filter: 'all' | 'comments' | 'history') {
     this.activeFilter.set(filter);
+  }
+
+  // ============================================================================
+  // TIME TRACKING METHODS
+  // ============================================================================
+
+  /**
+   * Load time tracking data for the current task
+   */
+  loadTimeTracking(taskId: string) {
+    this.loadingTimeSummary.set(true);
+
+    // Load work logs
+    this.workLogService.findByTask(taskId).subscribe({
+      next: (logs) => {
+        this.workLogs.set(logs);
+      },
+      error: (err) => {
+        console.error('Error loading work logs:', err);
+      }
+    });
+
+    // Load summary
+    this.workLogService.getTaskSummary(taskId).subscribe({
+      next: (summary) => {
+        this.timeSummary.set(summary);
+        this.loadingTimeSummary.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading time summary:', err);
+        this.loadingTimeSummary.set(false);
+      }
+    });
+  }
+
+  /**
+   * Open log work dialog
+   */
+  openLogWorkDialog(workLog?: WorkLog) {
+    const currentTask = this.task();
+    if (!currentTask) return;
+
+    const dialogRef = this.dialog.open(LogWorkDialogComponent, {
+      width: '600px',
+      data: {
+        taskId: currentTask.id,
+        workLog: workLog
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const user = this.currentUser();
+        if (!user) return;
+
+        if (workLog) {
+          // Update existing work log
+          this.workLogService.update(workLog.id, result, user.id).subscribe({
+            next: (updated) => {
+              this.workLogs.update(logs => logs.map(l => l.id === workLog.id ? updated : l));
+              this.refreshTimeSummary();
+              this.notificationService.success('Work log updated successfully');
+            },
+            error: (err) => {
+              console.error('Error updating work log:', err);
+              this.notificationService.error('Error updating work log');
+            }
+          });
+        } else {
+          // Create new work log
+          this.workLogService.create({
+            ...result,
+            taskId: currentTask.id,
+            userId: user.id
+          }).subscribe({
+            next: (created) => {
+              this.workLogs.update(logs => [created, ...logs]);
+              this.refreshTimeSummary();
+              this.notificationService.success('Work logged successfully');
+            },
+            error: (err) => {
+              console.error('Error logging work:', err);
+              this.notificationService.error('Error logging work');
+            }
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * Edit work log
+   */
+  editWorkLog(workLog: WorkLog) {
+    this.openLogWorkDialog(workLog);
+  }
+
+  /**
+   * Delete work log
+   */
+  deleteWorkLog(workLogId: string) {
+    const user = this.currentUser();
+    if (!user) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete Work Log',
+        message: 'Are you sure you want to delete this work log? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.workLogService.remove(workLogId, user.id).subscribe({
+          next: () => {
+            this.workLogs.update(logs => logs.filter(l => l.id !== workLogId));
+            this.refreshTimeSummary();
+            this.notificationService.success('Work log deleted successfully');
+          },
+          error: (err) => {
+            console.error('Error deleting work log:', err);
+            this.notificationService.error('Error deleting work log');
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Check if current user can edit a work log
+   */
+  canEditWorkLog(workLog: WorkLog): boolean {
+    const user = this.currentUser();
+    return user !== null && workLog.userId === user.id;
+  }
+
+  /**
+   * Toggle work logs visibility
+   */
+  toggleWorkLogs() {
+    this.showWorkLogs.update(show => !show);
+  }
+
+  /**
+   * Refresh time summary
+   */
+  refreshTimeSummary() {
+    const currentTask = this.task();
+    if (!currentTask) return;
+
+    this.workLogService.getTaskSummary(currentTask.id).subscribe({
+      next: (summary) => {
+        this.timeSummary.set(summary);
+      }
+    });
+  }
+
+  /**
+   * Get time tracking percentage
+   */
+  getTimePercentage(): number {
+    const task = this.task();
+    if (!task || !task.estimatedHours || task.estimatedHours === 0) return 0;
+
+    const percentage = (this.timeSummary().totalLogged / task.estimatedHours) * 100;
+    return Math.min(percentage, 100);
+  }
+
+  /**
+   * Format hours to human readable
+   */
+  formatTimeHours(hours: number): string {
+    return formatHours(hours);
+  }
+
+  /**
+   * Format work date
+   */
+  formatWorkDate(date: string): string {
+    const workDate = new Date(date);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const workDateOnly = new Date(workDate.getFullYear(), workDate.getMonth(), workDate.getDate());
+
+    if (workDateOnly.getTime() === today.getTime()) {
+      return 'Today';
+    } else if (workDateOnly.getTime() === yesterday.getTime()) {
+      return 'Yesterday';
+    } else {
+      return workDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: workDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      });
+    }
   }
 }

@@ -7,3 +7,4 @@ export * from './task-tags-input/task-tags-input';
 export * from './task-block-dialog/task-block-dialog';
 export * from './user-avatar/user-avatar';
 export * from './task-comment/task-comment';
+export * from './log-work-dialog/log-work-dialog';
