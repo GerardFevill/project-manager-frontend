@@ -106,53 +106,98 @@
           <div class="section-header">
             <span class="section-title">Activity</span>
             <div class="activity-filters">
-              <button mat-button class="filter-btn active">All</button>
-              <button mat-button class="filter-btn">Comments</button>
-              <button mat-button class="filter-btn">History</button>
+              <button mat-button class="filter-btn" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+                All
+              </button>
+              <button mat-button class="filter-btn" [class.active]="activeFilter() === 'comments'" (click)="setFilter('comments')">
+                Comments ({{ comments().length }})
+              </button>
+              <button mat-button class="filter-btn" [class.active]="activeFilter() === 'history'" (click)="setFilter('history')">
+                History
+              </button>
             </div>
           </div>
           <div class="section-content">
             <!-- Add Comment -->
-            <div class="add-comment">
-              <app-user-avatar [user]="null" size="small"></app-user-avatar>
-              <div class="comment-input-wrapper">
-                <textarea
-                  class="comment-input"
-                  placeholder="Add a comment..."
-                  rows="3"
-                ></textarea>
-                <div class="comment-actions">
-                  <button mat-button color="primary">Save</button>
-                  <button mat-button>Cancel</button>
+            @if (activeFilter() === 'all' || activeFilter() === 'comments') {
+              <div class="add-comment">
+                <app-user-avatar [user]="currentUser()" size="medium"></app-user-avatar>
+                <div class="comment-input-wrapper">
+                  <textarea
+                    [(ngModel)]="newCommentContent"
+                    class="comment-input"
+                    placeholder="Add a comment..."
+                    rows="3"
+                  ></textarea>
+                  <div class="comment-actions">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="addComment()"
+                      [disabled]="!newCommentContent.trim() || savingComment()">
+                      {{ savingComment() ? 'Saving...' : 'Save' }}
+                    </button>
+                    <button mat-button (click)="newCommentContent = ''" [disabled]="savingComment()">
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            }
 
-            <!-- Activity Timeline -->
-            @if (history().length > 0) {
-              <div class="activity-timeline">
-                @for (entry of history(); track entry.id) {
-                  <div class="activity-item">
-                    <app-user-avatar [user]="null" size="small"></app-user-avatar>
-                    <div class="activity-content">
-                      <div class="activity-header">
-                        <span class="activity-author">System</span>
-                        <span class="activity-action">{{ entry.action }}</span>
-                        <span class="activity-time">{{ formatDateTime(entry.executedAt) }}</span>
-                      </div>
-                      <div class="activity-details">
-                        <span>Status: {{ entry.statusAtExecution }}</span>
-                        <span>Progress: {{ entry.progressAtExecution }}%</span>
+            <!-- Comments List -->
+            @if (activeFilter() === 'all' || activeFilter() === 'comments') {
+              @if (loadingComments()) {
+                <div class="loading-comments">
+                  <mat-icon>hourglass_empty</mat-icon>
+                  <p>Loading comments...</p>
+                </div>
+              } @else if (comments().length > 0) {
+                <div class="comments-list">
+                  @for (comment of comments(); track comment.id) {
+                    <app-task-comment
+                      [comment]="comment"
+                      [canEdit]="canEditComment(comment)"
+                      (edit)="updateComment($event)"
+                      (delete)="deleteComment($event)">
+                    </app-task-comment>
+                  }
+                </div>
+              } @else {
+                <div class="empty-comments">
+                  <mat-icon>chat_bubble_outline</mat-icon>
+                  <p>No comments yet. Be the first to comment!</p>
+                </div>
+              }
+            }
+
+            <!-- History Timeline -->
+            @if (activeFilter() === 'all' || activeFilter() === 'history') {
+              @if (history().length > 0) {
+                <div class="activity-timeline">
+                  @for (entry of history(); track entry.id) {
+                    <div class="activity-item">
+                      <app-user-avatar [user]="null" size="small"></app-user-avatar>
+                      <div class="activity-content">
+                        <div class="activity-header">
+                          <span class="activity-author">System</span>
+                          <span class="activity-action">{{ entry.action }}</span>
+                          <span class="activity-time">{{ formatDateTime(entry.executedAt) }}</span>
+                        </div>
+                        <div class="activity-details">
+                          <span>Status: {{ entry.statusAtExecution }}</span>
+                          <span>Progress: {{ entry.progressAtExecution }}%</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                }
-              </div>
-            } @else {
-              <div class="empty-activity">
-                <mat-icon>chat_bubble_outline</mat-icon>
-                <p>No activity yet</p>
-              </div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-activity">
+                  <mat-icon>history</mat-icon>
+                  <p>No history yet</p>
+                </div>
+              }
             }
           </div>
         </div>

@@ -10,16 +10,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TaskService, NotificationService } from '../../../core/services';
-import { Task, TaskStatus, TaskHistory, TaskProgress } from '../../../core/models';
+import { TaskService, NotificationService, CommentService } from '../../../core/services';
+import { Task, TaskStatus, TaskHistory, TaskProgress, Comment, User } from '../../../core/models';
 import { TASK_MESSAGES } from '../../../core/constants/messages';
+import { FormsModule } from '@angular/forms';
 import {
   TaskStatusBadgeComponent,
   TaskProgressBarComponent,
   CreateTaskDialogComponent,
   ConfirmDialogComponent,
   TaskBlockDialogComponent,
-  UserAvatarComponent
+  UserAvatarComponent,
+  TaskCommentComponent
 } from '../../../shared/components';
 
 @Component({
@@ -28,6 +30,7 @@ import {
   imports: [
     CommonModule,
     RouterLink,
+    FormsModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -39,7 +42,8 @@ import {
     MatTabsModule,
     TaskStatusBadgeComponent,
     TaskProgressBarComponent,
-    UserAvatarComponent
+    UserAvatarComponent,
+    TaskCommentComponent
   ],
   templateUrl: './task-detail-jira.html',
   styleUrl: './task-detail-jira.scss',
@@ -50,6 +54,7 @@ export class TaskDetailComponent implements OnInit {
   private router = inject(Router);
   private taskService = inject(TaskService);
   private notificationService = inject(NotificationService);
+  private commentService = inject(CommentService);
   private dialog = inject(MatDialog);
 
   task = signal<Task | null>(null);
@@ -61,6 +66,25 @@ export class TaskDetailComponent implements OnInit {
   progress = signal<TaskProgress | null>(null);
   loadingHistory = signal(false);
   loadingProgress = signal(false);
+
+  // Comments data
+  comments = signal<Comment[]>([]);
+  loadingComments = signal(false);
+  savingComment = signal(false);
+  newCommentContent = '';
+  activeFilter = signal<'all' | 'comments' | 'history'>('all');
+
+  // Current user (mock - in real app, get from auth service)
+  currentUser = signal<User | null>({
+    id: '00000000-0000-0000-0000-000000000001',
+    email: 'john.doe@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    role: 'developer' as any,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -75,6 +99,8 @@ export class TaskDetailComponent implements OnInit {
       next: (task) => {
         this.task.set(task);
         this.loading.set(false);
+        // Load comments
+        this.loadComments(id);
       },
       error: (err) => {
         console.error('Error loading task:', err);
@@ -343,5 +369,125 @@ export class TaskDetailComponent implements OnInit {
       // Progress tab
       this.loadProgressDetails();
     }
+  }
+
+  // ============================================================================
+  // COMMENTS METHODS
+  // ============================================================================
+
+  /**
+   * Load comments for the current task
+   */
+  loadComments(taskId: string) {
+    this.loadingComments.set(true);
+    this.commentService.findByTask(taskId).subscribe({
+      next: (comments) => {
+        this.comments.set(comments);
+        this.loadingComments.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading comments:', err);
+        this.notificationService.error('Error loading comments');
+        this.loadingComments.set(false);
+      }
+    });
+  }
+
+  /**
+   * Add a new comment
+   */
+  addComment() {
+    const currentTask = this.task();
+    const user = this.currentUser();
+    if (!currentTask || !user || !this.newCommentContent.trim()) return;
+
+    this.savingComment.set(true);
+    this.commentService.create({
+      content: this.newCommentContent,
+      taskId: currentTask.id,
+      authorId: user.id
+    }).subscribe({
+      next: (comment) => {
+        this.comments.update(comments => [comment, ...comments]);
+        this.newCommentContent = '';
+        this.savingComment.set(false);
+        this.notificationService.success('Comment added successfully');
+      },
+      error: (err) => {
+        console.error('Error adding comment:', err);
+        this.notificationService.error('Error adding comment');
+        this.savingComment.set(false);
+      }
+    });
+  }
+
+  /**
+   * Update an existing comment
+   */
+  updateComment(event: { id: string; content: string }) {
+    const user = this.currentUser();
+    if (!user) return;
+
+    this.commentService.update(event.id, { content: event.content }, user.id).subscribe({
+      next: (updatedComment) => {
+        this.comments.update(comments =>
+          comments.map(c => c.id === event.id ? updatedComment : c)
+        );
+        this.notificationService.success('Comment updated successfully');
+      },
+      error: (err) => {
+        console.error('Error updating comment:', err);
+        this.notificationService.error('Error updating comment');
+      }
+    });
+  }
+
+  /**
+   * Delete a comment
+   */
+  deleteComment(commentId: string) {
+    const user = this.currentUser();
+    if (!user) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete Comment',
+        message: 'Are you sure you want to delete this comment? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentService.remove(commentId, user.id).subscribe({
+          next: () => {
+            this.comments.update(comments =>
+              comments.filter(c => c.id !== commentId)
+            );
+            this.notificationService.success('Comment deleted successfully');
+          },
+          error: (err) => {
+            console.error('Error deleting comment:', err);
+            this.notificationService.error('Error deleting comment');
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Check if current user can edit a comment
+   */
+  canEditComment(comment: Comment): boolean {
+    const user = this.currentUser();
+    return user !== null && comment.authorId === user.id;
+  }
+
+  /**
+   * Set the active filter
+   */
+  setFilter(filter: 'all' | 'comments' | 'history') {
+    this.activeFilter.set(filter);
   }
 }
