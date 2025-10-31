@@ -7,3 +7,4 @@ export * from './paginated-response.model';
 export * from './sprint.model';
 export * from './comment.model';
 export * from './work-log.model';
+export * from './report.model';

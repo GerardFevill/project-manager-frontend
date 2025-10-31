@@ -1,0 +1,355 @@
+<div class="reports-container">
+  <!-- Page Header -->
+  <div class="reports-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">assessment</mat-icon>
+      <div class="header-text">
+        <h1>Reports & Analytics</h1>
+        <p>Comprehensive project insights and metrics</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="refreshAllReports()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group class="reports-tabs" animationDuration="200ms">
+    <!-- Overview Tab -->
+    <mat-tab label="Overview">
+      <div class="tab-content">
+        @if (loadingOverview()) {
+          <div class="loading-state">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading overview...</p>
+          </div>
+        } @else if (overviewReport()) {
+          <!-- Key Metrics Cards -->
+          <div class="metrics-grid">
+            <!-- Total Tasks -->
+            <mat-card class="metric-card">
+              <mat-card-content>
+                <div class="metric-icon" style="background: #deebff;">
+                  <mat-icon style="color: #0052cc;">task_alt</mat-icon>
+                </div>
+                <div class="metric-value">{{ overviewReport()!.tasks.total }}</div>
+                <div class="metric-label">Total Tasks</div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Overdue Tasks -->
+            <mat-card class="metric-card">
+              <mat-card-content>
+                <div class="metric-icon" style="background: #ffebe6;">
+                  <mat-icon style="color: #de350b;">event_busy</mat-icon>
+                </div>
+                <div class="metric-value">{{ overviewReport()!.tasks.overdue }}</div>
+                <div class="metric-label">Overdue Tasks</div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Completed This Week -->
+            <mat-card class="metric-card">
+              <mat-card-content>
+                <div class="metric-icon" style="background: #e3fcef;">
+                  <mat-icon style="color: #36b37e;">check_circle</mat-icon>
+                </div>
+                <div class="metric-value">{{ overviewReport()!.tasks.completedThisWeek }}</div>
+                <div class="metric-label">Completed This Week</div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Total Hours Logged -->
+            <mat-card class="metric-card">
+              <mat-card-content>
+                <div class="metric-icon" style="background: #fff4e6;">
+                  <mat-icon style="color: #ffab00;">schedule</mat-icon>
+                </div>
+                <div class="metric-value">{{ formatHours(overviewReport()!.workLogs.totalHours) }}</div>
+                <div class="metric-label">Total Hours Logged</div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-row">
+            <!-- Tasks by Priority -->
+            <mat-card class="chart-card full-width">
+              <mat-card-header>
+                <mat-card-title>Tasks by Priority</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="priority-breakdown">
+                  @for (entry of getPriorityEntries(); track entry.priority) {
+                    <div class="priority-item">
+                      <div class="priority-color" [style.background-color]="getPriorityColor(entry.priority)"></div>
+                      <div class="priority-info">
+                        <span class="priority-name">{{ getPriorityDisplayName(entry.priority) }}</span>
+                        <span class="priority-count">{{ entry.count }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Activity Summary -->
+          <mat-card class="activity-card">
+            <mat-card-header>
+              <mat-card-title>Recent Activity (This Week)</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="activity-grid">
+                <div class="activity-item">
+                  <mat-icon>add_task</mat-icon>
+                  <div class="activity-details">
+                    <div class="activity-value">{{ overviewReport()!.activity.tasksCreated }}</div>
+                    <div class="activity-label">Tasks Created</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <mat-icon>task_alt</mat-icon>
+                  <div class="activity-details">
+                    <div class="activity-value">{{ overviewReport()!.activity.tasksCompleted }}</div>
+                    <div class="activity-label">Tasks Completed</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <mat-icon>comment</mat-icon>
+                  <div class="activity-details">
+                    <div class="activity-value">{{ overviewReport()!.activity.commentsAdded }}</div>
+                    <div class="activity-label">Comments Added</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <mat-icon>schedule</mat-icon>
+                  <div class="activity-details">
+                    <div class="activity-value">{{ overviewReport()!.activity.workLogsAdded }}</div>
+                    <div class="activity-label">Work Logs Added</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Time Tracking Tab -->
+    <mat-tab label="Time Tracking">
+      <div class="tab-content">
+        @if (loadingTimeTracking()) {
+          <div class="loading-state">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading time tracking data...</p>
+          </div>
+        } @else if (timeTrackingReport()) {
+          <!-- Time by Task -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Time Logged by Task</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="timeTrackingReport()!.byTask" class="report-table">
+                <ng-container matColumnDef="taskTitle">
+                  <th mat-header-cell *matHeaderCellDef>Task</th>
+                  <td mat-cell *matCellDef="let element">{{ element.taskTitle }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="hours">
+                  <th mat-header-cell *matHeaderCellDef>Time Logged</th>
+                  <td mat-cell *matCellDef="let element">{{ formatHours(element.hours) }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="estimated">
+                  <th mat-header-cell *matHeaderCellDef>Estimated</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.estimated > 0 ? element.estimated + 'h' : 'N/A' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="percentage">
+                  <th mat-header-cell *matHeaderCellDef>Progress</th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (element.estimated > 0) {
+                      <div class="progress-indicator" [class.over-budget]="element.percentage > 100">
+                        {{ element.percentage }}%
+                      </div>
+                    } @else {
+                      <span class="text-muted">N/A</span>
+                    }
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="timeByTaskColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: timeByTaskColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Time by User -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Time Logged by User</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="timeTrackingReport()!.byUser" class="report-table">
+                <ng-container matColumnDef="userName">
+                  <th mat-header-cell *matHeaderCellDef>User</th>
+                  <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="hours">
+                  <th mat-header-cell *matHeaderCellDef>Time Logged</th>
+                  <td mat-cell *matCellDef="let element">{{ formatHours(element.hours) }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="taskCount">
+                  <th mat-header-cell *matHeaderCellDef>Tasks Worked On</th>
+                  <td mat-cell *matCellDef="let element">{{ element.taskCount }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="timeByUserColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: timeByUserColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- User Productivity Tab -->
+    <mat-tab label="User Productivity">
+      <div class="tab-content">
+        @if (loadingProductivity()) {
+          <div class="loading-state">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading productivity data...</p>
+          </div>
+        } @else if (productivityReport().length > 0) {
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>User Performance Metrics</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="productivityReport()" class="report-table">
+                <ng-container matColumnDef="userName">
+                  <th mat-header-cell *matHeaderCellDef>User</th>
+                  <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="tasksAssigned">
+                  <th mat-header-cell *matHeaderCellDef>Tasks Assigned</th>
+                  <td mat-cell *matCellDef="let element">{{ element.tasksAssigned }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="tasksCompleted">
+                  <th mat-header-cell *matHeaderCellDef>Tasks Completed</th>
+                  <td mat-cell *matCellDef="let element">{{ element.tasksCompleted }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="completionRate">
+                  <th mat-header-cell *matHeaderCellDef>Completion Rate</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="completion-rate" [class.high]="element.completionRate >= 75">
+                      {{ element.completionRate }}%
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="hoursLogged">
+                  <th mat-header-cell *matHeaderCellDef>Hours Logged</th>
+                  <td mat-cell *matCellDef="let element">{{ formatHours(element.hoursLogged) }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="productivityColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: productivityColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Task Distribution Tab -->
+    <mat-tab label="Task Distribution">
+      <div class="tab-content">
+        @if (loadingDistribution()) {
+          <div class="loading-state">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading distribution data...</p>
+          </div>
+        } @else if (distributionReport()) {
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Tasks by Assignee</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="distributionReport()!.byAssignee" class="report-table">
+                <ng-container matColumnDef="userName">
+                  <th mat-header-cell *matHeaderCellDef>User</th>
+                  <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="count">
+                  <th mat-header-cell *matHeaderCellDef>Tasks Assigned</th>
+                  <td mat-cell *matCellDef="let element">{{ element.count }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="distributionByAssigneeColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: distributionByAssigneeColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Trends Tab -->
+    <mat-tab label="Trends">
+      <div class="tab-content">
+        <div class="trend-controls">
+          <mat-form-field appearance="outline">
+            <mat-label>Time Period</mat-label>
+            <mat-select [(value)]="trendPeriod" (selectionChange)="loadTrendReport()">
+              <mat-option value="week">Last Week</mat-option>
+              <mat-option value="month">Last Month</mat-option>
+              <mat-option value="quarter">Last Quarter</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @if (loadingTrends()) {
+          <div class="loading-state">
+            <mat-spinner diameter="48"></mat-spinner>
+            <p>Loading trend data...</p>
+          </div>
+        } @else if (trendReport()) {
+          <!-- Velocity Metric -->
+          <mat-card class="velocity-card">
+            <mat-card-content>
+              <div class="velocity-content">
+                <div class="velocity-icon">
+                  <mat-icon>speed</mat-icon>
+                </div>
+                <div class="velocity-details">
+                  <div class="velocity-value">{{ trendReport()!.velocity }}</div>
+                  <div class="velocity-label">Tasks Completed per Day</div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Trend Charts Info -->
+          <mat-card class="info-card">
+            <mat-card-content>
+              <p><mat-icon>info</mat-icon> Advanced charting visualizations coming soon. Chart library integration in progress.</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

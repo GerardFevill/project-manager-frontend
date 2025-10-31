@@ -1,0 +1,545 @@
+// ============================================================================
+// REPORTS DASHBOARD - JIRA STYLE
+// ============================================================================
+
+.reports-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0;
+  background: #f4f5f7;
+  min-height: 100vh;
+}
+
+// ============================================================================
+// HEADER
+// ============================================================================
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: white;
+  border-bottom: 2px solid #dfe1e6;
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .header-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #0052cc;
+    }
+
+    .header-text {
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 500;
+        color: #172b4d;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 4px 0 0 0;
+        font-size: 14px;
+        color: #5e6c84;
+      }
+    }
+  }
+
+  button {
+    text-transform: none;
+    font-weight: 500;
+
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+// ============================================================================
+// TABS
+// ============================================================================
+
+.reports-tabs {
+  ::ng-deep .mat-mdc-tab-labels {
+    background: white;
+    border-bottom: 2px solid #dfe1e6;
+  }
+
+  ::ng-deep .mat-mdc-tab {
+    font-size: 14px;
+    font-weight: 500;
+    color: #5e6c84;
+    text-transform: none;
+
+    &.mdc-tab--active {
+      color: #0052cc;
+    }
+  }
+}
+
+.tab-content {
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ============================================================================
+// LOADING STATE
+// ============================================================================
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+
+  mat-spinner {
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #5e6c84;
+  }
+}
+
+// ============================================================================
+// METRICS GRID
+// ============================================================================
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  ::ng-deep .mat-mdc-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px !important;
+    text-align: center;
+  }
+
+  .metric-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .metric-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #172b4d;
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5e6c84;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ============================================================================
+// CHARTS ROW
+// ============================================================================
+
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.chart-card {
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+  ::ng-deep .mat-mdc-card-header {
+    padding: 16px 20px;
+    border-bottom: 2px solid #f4f5f7;
+  }
+
+  ::ng-deep .mat-mdc-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+  }
+
+  ::ng-deep .mat-mdc-card-content {
+    padding: 20px !important;
+  }
+}
+
+.status-breakdown,
+.priority-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-item,
+.priority-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 3px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f4f5f7;
+  }
+
+  .status-color,
+  .priority-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .status-info,
+  .priority-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .status-name,
+    .priority-name {
+      font-size: 14px;
+      color: #172b4d;
+      font-weight: 500;
+    }
+
+    .status-count,
+    .priority-count {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0052cc;
+    }
+  }
+}
+
+// ============================================================================
+// ACTIVITY CARD
+// ============================================================================
+
+.activity-card {
+  ::ng-deep .mat-mdc-card-header {
+    padding: 16px 20px;
+    border-bottom: 2px solid #f4f5f7;
+  }
+
+  ::ng-deep .mat-mdc-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+  }
+
+  ::ng-deep .mat-mdc-card-content {
+    padding: 20px !important;
+  }
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f4f5f7;
+  border-radius: 3px;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #0052cc;
+  }
+
+  .activity-details {
+    .activity-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #172b4d;
+    }
+
+    .activity-label {
+      font-size: 12px;
+      color: #5e6c84;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+// ============================================================================
+// TABLE CARD
+// ============================================================================
+
+.table-card {
+  ::ng-deep .mat-mdc-card-header {
+    padding: 16px 20px;
+    border-bottom: 2px solid #f4f5f7;
+  }
+
+  ::ng-deep .mat-mdc-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+  }
+
+  ::ng-deep .mat-mdc-card-content {
+    padding: 0 !important;
+  }
+}
+
+.report-table {
+  width: 100%;
+
+  th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5e6c84;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+  }
+
+  td {
+    font-size: 14px;
+    color: #172b4d;
+    padding: 16px 20px;
+  }
+
+  tr:hover {
+    background: #f4f5f7;
+  }
+}
+
+.progress-indicator {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #e3fcef;
+  color: #36b37e;
+  font-weight: 600;
+  font-size: 13px;
+
+  &.over-budget {
+    background: #ffebe6;
+    color: #de350b;
+  }
+}
+
+.completion-rate {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #f4f5f7;
+  color: #5e6c84;
+  font-weight: 600;
+  font-size: 13px;
+
+  &.high {
+    background: #e3fcef;
+    color: #36b37e;
+  }
+}
+
+.text-muted {
+  color: #97a0af;
+  font-style: italic;
+}
+
+// ============================================================================
+// TREND CONTROLS
+// ============================================================================
+
+.trend-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+
+  mat-form-field {
+    width: 200px;
+  }
+}
+
+// ============================================================================
+// VELOCITY CARD
+// ============================================================================
+
+.velocity-card {
+  ::ng-deep .mat-mdc-card-content {
+    padding: 32px !important;
+  }
+}
+
+.velocity-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  .velocity-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0052cc 0%, #0065ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+  }
+
+  .velocity-details {
+    .velocity-value {
+      font-size: 48px;
+      font-weight: 600;
+      color: #172b4d;
+      line-height: 1;
+    }
+
+    .velocity-label {
+      font-size: 16px;
+      color: #5e6c84;
+      margin-top: 8px;
+    }
+  }
+}
+
+// ============================================================================
+// INFO CARD
+// ============================================================================
+
+.info-card {
+  ::ng-deep .mat-mdc-card-content {
+    padding: 20px !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #5e6c84;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      color: #0052cc;
+    }
+  }
+}
+
+// ============================================================================
+// DARK MODE
+// ============================================================================
+
+html.dark-mode {
+  .reports-container {
+    background: #1d2125;
+  }
+
+  .reports-header {
+    background: #22272b;
+    border-color: #2c333a;
+
+    .header-text h1 {
+      color: #b6c2cf;
+    }
+
+    .header-text p {
+      color: #9fadbc;
+    }
+  }
+
+  .reports-tabs ::ng-deep .mat-mdc-tab-labels {
+    background: #22272b;
+    border-color: #2c333a;
+  }
+
+  .metric-card,
+  .chart-card,
+  .activity-card,
+  .table-card,
+  .velocity-card,
+  .info-card {
+    background: #22272b;
+    border-color: #2c333a;
+  }
+
+  .metric-value,
+  .activity-value,
+  .velocity-value {
+    color: #b6c2cf;
+  }
+
+  .report-table {
+    th {
+      color: #9fadbc;
+    }
+
+    td {
+      color: #b6c2cf;
+    }
+
+    tr:hover {
+      background: #2c333a;
+    }
+  }
+
+  .activity-item {
+    background: #2c333a;
+  }
+
+  .status-item:hover,
+  .priority-item:hover {
+    background: #2c333a;
+  }
+
+  .status-name,
+  .priority-name {
+    color: #b6c2cf !important;
+  }
+
+  .info-card p {
+    color: #9fadbc;
+  }
+}
