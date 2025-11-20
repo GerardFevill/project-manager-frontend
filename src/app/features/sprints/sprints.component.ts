@@ -4,12 +4,14 @@ import { Subject, takeUntil } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SprintCardComponent } from './sprint-card/sprint-card.component';
+import { SprintFormDialogComponent, CreateSprintDto } from '../../shared/components/sprint-form/sprint-form-dialog.component';
 import { SprintService, Sprint } from '../../core/services/sprint.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-sprints',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, IconComponent, SprintCardComponent],
+  imports: [CommonModule, ButtonComponent, IconComponent, SprintCardComponent, SprintFormDialogComponent],
   template: `
     <div class="sprints-page">
       <!-- Header -->
@@ -132,6 +134,13 @@ import { SprintService, Sprint } from '../../core/services/sprint.service';
         </div>
       </div>
     </div>
+
+    <!-- Sprint Form Dialog -->
+    <app-sprint-form-dialog
+      *ngIf="showSprintDialog()"
+      (submit)="onSprintSubmit($event)"
+      (cancel)="showSprintDialog.set(false)"
+    />
   `,
   styles: [`
     .sprints-page {
@@ -273,6 +282,7 @@ export class SprintsComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
   showAllCompleted = signal(false);
+  showSprintDialog = signal(false);
 
   // Computed sprints by status
   activeSprints = computed(() =>
@@ -289,7 +299,10 @@ export class SprintsComponent implements OnInit, OnDestroy {
       .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
   );
 
-  constructor(private sprintService: SprintService) {}
+  constructor(
+    private sprintService: SprintService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.loadSprints();
@@ -324,8 +337,23 @@ export class SprintsComponent implements OnInit, OnDestroy {
   }
 
   createSprint(): void {
-    console.log('Create sprint clicked');
-    // TODO: Phase 3.2 - Open create sprint dialog
+    this.showSprintDialog.set(true);
+  }
+
+  onSprintSubmit(dto: CreateSprintDto | any): void {
+    this.sprintService.createSprint(dto as CreateSprintDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (newSprint) => {
+          this.toastService.success('Sprint created successfully', `${newSprint.name} has been created`);
+          this.showSprintDialog.set(false);
+          this.loadSprints(); // Reload to show new sprint
+        },
+        error: (err) => {
+          console.error('Failed to create sprint:', err);
+          this.toastService.error('Failed to create sprint', 'Please try again');
+        }
+      });
   }
 
   onStartSprint(sprint: Sprint): void {
