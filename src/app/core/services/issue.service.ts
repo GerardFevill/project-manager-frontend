@@ -337,6 +337,52 @@ export class IssueService {
   }
 
   /**
+   * Get issue detail with all relations (for detail view)
+   * This bypasses cache to ensure fresh data
+   */
+  getIssueDetail(id: string): Observable<Issue> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    const params = new HttpParams().set('include', 'all');
+
+    return this.http.get<Issue>(`${this.API_URL}/${id}`, { params }).pipe(
+      tap(issue => {
+        this.issuesCache.set(issue.id, issue);
+        this.loading.set(false);
+      }),
+      catchError(error => {
+        this.error.set('Failed to load issue detail');
+        this.loading.set(false);
+        console.error('Error loading issue detail:', error);
+        throw error;
+      })
+    );
+  }
+
+  /**
+   * Refresh an issue from the backend (bypass cache)
+   */
+  refreshIssue(id: string): Observable<Issue> {
+    this.issuesCache.delete(id);
+    return this.getIssue(id);
+  }
+
+  /**
+   * Invalidate cache for a specific issue
+   */
+  invalidateCache(id: string): void {
+    this.issuesCache.delete(id);
+  }
+
+  /**
+   * Get issue from cache if available
+   */
+  getCachedIssue(id: string): Issue | undefined {
+    return this.issuesCache.get(id);
+  }
+
+  /**
    * Clear cache
    */
   clearCache(): void {
