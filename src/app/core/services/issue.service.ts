@@ -68,6 +68,31 @@ export interface PaginatedResponse<T> {
   pageSize: number;
 }
 
+export interface CreateIssueDto {
+  type: IssueType;
+  summary: string;
+  description?: string;
+  priority: IssuePriority;
+  assigneeId?: string;
+  sprintId?: string;
+  storyPoints?: number;
+  timeEstimate?: number;
+  labels?: string[];
+}
+
+export interface UpdateIssueDto {
+  type?: IssueType;
+  summary?: string;
+  description?: string;
+  priority?: IssuePriority;
+  status?: IssueStatus;
+  assigneeId?: string;
+  sprintId?: string;
+  storyPoints?: number;
+  timeEstimate?: number;
+  labels?: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -192,11 +217,11 @@ export class IssueService {
   /**
    * Create a new issue
    */
-  createIssue(issue: Partial<Issue>): Observable<Issue> {
+  createIssue(dto: CreateIssueDto): Observable<Issue> {
     this.loading.set(true);
     this.error.set(null);
 
-    return this.http.post<Issue>(this.API_URL, issue).pipe(
+    return this.http.post<Issue>(this.API_URL, dto).pipe(
       tap(newIssue => {
         this.issuesCache.set(newIssue.id, newIssue);
         this.issues.update(issues => [...issues, newIssue]);
@@ -214,11 +239,11 @@ export class IssueService {
   /**
    * Update an existing issue
    */
-  updateIssue(id: string, updates: Partial<Issue>): Observable<Issue> {
+  updateIssue(id: string, dto: UpdateIssueDto): Observable<Issue> {
     this.loading.set(true);
     this.error.set(null);
 
-    return this.http.patch<Issue>(`${this.API_URL}/${id}`, updates).pipe(
+    return this.http.patch<Issue>(`${this.API_URL}/${id}`, dto).pipe(
       tap(updatedIssue => {
         this.issuesCache.set(updatedIssue.id, updatedIssue);
         this.issues.update(issues =>
