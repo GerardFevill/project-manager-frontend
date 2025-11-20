@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
+import { ToastContainerComponent } from '../../../shared/components/toast/toast-container.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, TopbarComponent],
+  imports: [CommonModule, RouterOutlet, SidebarComponent, TopbarComponent, ToastContainerComponent],
   template: `
     <div class="layout">
       <app-sidebar
@@ -22,6 +23,9 @@ import { TopbarComponent } from '../topbar/topbar.component';
           <router-outlet />
         </main>
       </div>
+
+      <!-- Toast Notifications -->
+      <app-toast-container />
     </div>
   `,
   styles: [`

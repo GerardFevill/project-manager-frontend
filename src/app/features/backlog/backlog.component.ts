@@ -2,12 +2,15 @@ import { Component, OnInit, signal, OnDestroy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Router } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { IssueListItemComponent } from './issue-list-item/issue-list-item.component';
 import { EpicGroupComponent, EpicGroup } from './epic-group/epic-group.component';
-import { IssueService, Issue, Sprint as IssueSprint } from '../../core/services/issue.service';
+import { IssueFormDialogComponent } from '../../shared/components/issue-form/issue-form-dialog.component';
+import { IssueService, Issue, Sprint as IssueSprint, CreateIssueDto, User } from '../../core/services/issue.service';
 import { SprintService, Sprint } from '../../core/services/sprint.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-backlog',
@@ -18,6 +21,7 @@ import { SprintService, Sprint } from '../../core/services/sprint.service';
     IconComponent,
     IssueListItemComponent,
     EpicGroupComponent,
+    IssueFormDialogComponent,
     DragDropModule
   ],
   template: `
@@ -181,6 +185,15 @@ import { SprintService, Sprint } from '../../core/services/sprint.service';
         </div>
       </div>
     </div>
+
+    <!-- Issue Form Dialog -->
+    <app-issue-form-dialog
+      *ngIf="showIssueDialog()"
+      [availableUsers]="availableUsers"
+      [availableSprints]="availableSprints"
+      (submit)="onIssueSubmit($event)"
+      (cancel)="showIssueDialog.set(false)"
+    />
   `,
   styles: [`
     .backlog-page {
@@ -443,6 +456,11 @@ export class BacklogComponent implements OnInit, OnDestroy {
   selectedIssueIds = signal<Set<string>>(new Set());
   showFilters = signal(false);
 
+  // Issue form dialog
+  showIssueDialog = signal(false);
+  availableUsers = signal<User[]>([]);
+  availableSprints = signal<Sprint[]>([]);
+
   // Computed sprint points
   sprintPoints = computed(() => {
     return this.sprintIssues().reduce((sum, issue) => sum + (issue.storyPoints || 0), 0);
@@ -514,12 +532,32 @@ export class BacklogComponent implements OnInit, OnDestroy {
 
   constructor(
     private issueService: IssueService,
-    private sprintService: SprintService
+    private sprintService: SprintService,
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.loadIssues();
     this.loadActiveSprint();
+    this.loadAvailableData();
+  }
+
+  loadAvailableData(): void {
+    // Load available sprints
+    this.sprintService.getSprints()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (sprints) => this.availableSprints.set(sprints),
+        error: () => console.error('Failed to load sprints')
+      });
+
+    // TODO: Load users from UserService when available
+    // For now, set mock data
+    this.availableUsers.set([
+      { id: '1', name: 'John Doe', email: 'john@example.com' },
+      { id: '2', name: 'Jane Smith', email: 'jane@example.com' }
+    ]);
   }
 
   ngOnDestroy(): void {
@@ -552,13 +590,27 @@ export class BacklogComponent implements OnInit, OnDestroy {
   }
 
   createIssue(): void {
-    console.log('Create issue clicked');
-    // TODO: Phase 1.4 - Open create issue dialog
+    this.showIssueDialog.set(true);
+  }
+
+  onIssueSubmit(dto: CreateIssueDto | any): void {
+    this.issueService.createIssue(dto as CreateIssueDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (newIssue) => {
+          this.toastService.success('Issue created successfully', `${newIssue.key} has been created`);
+          this.showIssueDialog.set(false);
+          this.loadIssues(); // Reload to show new issue
+        },
+        error: (err) => {
+          console.error('Failed to create issue:', err);
+          this.toastService.error('Failed to create issue', 'Please try again');
+        }
+      });
   }
 
   onIssueClick(issue: Issue): void {
-    console.log('Issue clicked:', issue);
-    // TODO: Navigate to issue detail
+    this.router.navigate(['/issues', issue.id]);
   }
 
   onIssueEdit(issue: Issue): void {
