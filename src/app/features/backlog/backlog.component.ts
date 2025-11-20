@@ -8,8 +8,9 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { IssueListItemComponent } from './issue-list-item/issue-list-item.component';
 import { EpicGroupComponent, EpicGroup } from './epic-group/epic-group.component';
 import { IssueFormDialogComponent } from '../../shared/components/issue-form/issue-form-dialog.component';
-import { IssueService, Issue, Sprint as IssueSprint, CreateIssueDto, User } from '../../core/services/issue.service';
+import { IssueService, Issue, Sprint as IssueSprint, CreateIssueDto } from '../../core/services/issue.service';
 import { SprintService, Sprint } from '../../core/services/sprint.service';
+import { UserService, User } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
 
 @Component({
@@ -533,6 +534,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
   constructor(
     private issueService: IssueService,
     private sprintService: SprintService,
+    private userService: UserService,
     private router: Router,
     private toastService: ToastService
   ) {}
@@ -552,12 +554,13 @@ export class BacklogComponent implements OnInit, OnDestroy {
         error: () => console.error('Failed to load sprints')
       });
 
-    // TODO: Load users from UserService when available
-    // For now, set mock data
-    this.availableUsers.set([
-      { id: '1', name: 'John Doe', email: 'john@example.com' },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com' }
-    ]);
+    // Load available users
+    this.userService.getUsers(1, 100)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => this.availableUsers.set(response.items),
+        error: () => console.error('Failed to load users')
+      });
   }
 
   ngOnDestroy(): void {
