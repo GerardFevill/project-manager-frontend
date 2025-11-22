@@ -558,7 +558,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
     this.userService.getUsers(1, 100)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => this.availableUsers.set(response.items),
+        next: (response) => this.availableUsers.set(response.data),
         error: () => console.error('Failed to load users')
       });
   }

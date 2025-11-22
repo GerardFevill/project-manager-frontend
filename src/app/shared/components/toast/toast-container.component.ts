@@ -14,7 +14,6 @@ import { IconName } from '../icon/icon.component';
         *ngFor="let toast of toastService.toasts()"
         class="toast"
         [class]="'toast-' + toast.type"
-        [@slideIn]
       >
         <div class="toast-icon">
           <jira-icon [name]="getIcon(toast.type)" [size]="18" />
@@ -50,9 +49,10 @@ import { IconName } from '../icon/icon.component';
       align-items: flex-start;
       gap: var(--spacing-sm);
       padding: var(--spacing-md);
-      background: white;
+      background: var(--jira-neutral-0);
+      border: 1px solid var(--jira-neutral-200);
       border-radius: var(--radius-md);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-lg);
       min-width: 300px;
       max-width: 500px;
       pointer-events: auto;
@@ -96,7 +96,7 @@ import { IconName } from '../icon/icon.component';
     }
 
     .toast-info .toast-icon {
-      background: var(--jira-brand-bg);
+      background: var(--jira-info-bg);
       color: var(--jira-brand-primary);
     }
 
@@ -111,13 +111,13 @@ import { IconName } from '../icon/icon.component';
       margin: 0;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-semibold);
-      color: var(--jira-neutral-900);
+      color: var(--jira-neutral-1000);
     }
 
     .toast-message {
       margin: 0;
       font-size: var(--font-size-sm);
-      color: var(--jira-neutral-700);
+      color: var(--jira-neutral-800);
       line-height: 1.4;
     }
 
@@ -127,14 +127,14 @@ import { IconName } from '../icon/icon.component';
       background: transparent;
       cursor: pointer;
       padding: 4px;
-      color: var(--jira-neutral-500);
+      color: var(--jira-neutral-600);
       display: flex;
       align-items: center;
       transition: color 0.2s;
     }
 
     .toast-close:hover {
-      color: var(--jira-neutral-900);
+      color: var(--jira-neutral-1000);
     }
 
     @media (max-width: 640px) {

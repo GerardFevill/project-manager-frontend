@@ -114,7 +114,7 @@ import {
               >
                 <option [ngValue]="null">Unassigned</option>
                 <option *ngFor="let user of availableUsers()" [ngValue]="user.id">
-                  {{ user.name }}
+                  {{ getUserDisplayName(user) }}
                 </option>
               </select>
             </div>
@@ -399,5 +399,11 @@ export class IssueFormDialogComponent implements OnInit {
     if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
     if (hours > 0) return `${hours}h`;
     return `${mins}m`;
+  }
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

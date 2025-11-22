@@ -5,35 +5,51 @@ import { environment } from '../../../environments/environment';
 
 export interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
   avatar?: string;
-  role: 'admin' | 'developer' | 'viewer';
-  active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  timezone?: string;
+  locale?: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  emailVerified: boolean;
+  lastLogin?: Date;
+  createdDate: Date;
+  updatedDate: Date;
+  roles?: any[];
+  groups?: any[];
 }
 
 export interface CreateUserDto {
-  name: string;
+  username: string;
   email: string;
-  role: 'admin' | 'developer' | 'viewer';
-  avatar?: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface UpdateUserDto {
-  name?: string;
+  username?: string;
   email?: string;
-  role?: 'admin' | 'developer' | 'viewer';
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
   avatar?: string;
-  active?: boolean;
+  timezone?: string;
+  locale?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
 }
 
 export interface PaginatedUsers {
-  items: User[];
+  data: User[];
   total: number;
   page: number;
-  pageSize: number;
+  lastPage: number;
 }
 
 @Injectable({
@@ -67,16 +83,17 @@ export class UserService {
 
     return this.http.get<PaginatedUsers>(this.API_URL, { params }).pipe(
       tap(response => {
-        response.items.forEach(user => this.usersCache.set(user.id, user));
-        this.users.set(response.items);
-        this.usersSubject.next(response.items);
+        const users = response?.data || [];
+        users.forEach(user => this.usersCache.set(user.id, user));
+        this.users.set(users);
+        this.usersSubject.next(users);
         this.loading.set(false);
       }),
       catchError(error => {
         this.error.set('Failed to load users');
         this.loading.set(false);
         console.error('Error loading users:', error);
-        throw error;
+        return of({ data: [], total: 0, page: 1, lastPage: 1 });
       })
     );
   }
@@ -185,14 +202,14 @@ export class UserService {
    * Deactivate a user (soft delete)
    */
   deactivateUser(id: string): Observable<User> {
-    return this.updateUser(id, { active: false });
+    return this.updateUser(id, { isActive: false });
   }
 
   /**
    * Activate a user
    */
   activateUser(id: string): Observable<User> {
-    return this.updateUser(id, { active: true });
+    return this.updateUser(id, { isActive: true });
   }
 
   /**

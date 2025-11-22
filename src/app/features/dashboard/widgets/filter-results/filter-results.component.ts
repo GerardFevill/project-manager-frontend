@@ -38,7 +38,7 @@ import { FilterService } from '../../../../core/services/filter.service';
               <span class="issue-status">{{ issue.status }}</span>
               <span class="issue-assignee" *ngIf="issue.assignee">
                 <jira-icon name="user" [size]="12" />
-                {{ issue.assignee.name }}
+                {{ getUserDisplayName(issue.assignee) }}
               </span>
             </div>
           </div>
@@ -338,5 +338,12 @@ export class FilterResultsComponent implements OnInit, OnDestroy {
       highest: 'danger'
     };
     return variants[priority] || 'default';
+  }
+
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

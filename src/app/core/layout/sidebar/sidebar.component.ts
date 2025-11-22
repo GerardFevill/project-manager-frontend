@@ -9,9 +9,14 @@ import { ProjectService } from '../../services/project.service';
 interface MenuItem {
   id: string;
   label: string;
-  icon: 'dashboard' | 'kanban' | 'backlog' | 'sprint' | 'reports' | 'settings';
+  icon: 'dashboard' | 'kanban' | 'backlog' | 'sprint' | 'reports' | 'settings' | 'folder' | 'user';
   route: string;
   badge?: number;
+}
+
+interface MenuSection {
+  title?: string;
+  items: MenuItem[];
 }
 
 @Component({
@@ -55,31 +60,31 @@ interface MenuItem {
 
       <!-- Navigation Menu -->
       <nav class="sidebar-nav">
-        <ul class="nav-list">
-          <li
-            *ngFor="let item of menuItems"
-            class="nav-item"
-            [class.active]="isActive(item.route)"
-            [title]="collapsed ? item.label : ''"
-          >
-            <a [routerLink]="item.route" class="nav-link">
-              <jira-icon [name]="item.icon" [size]="20" />
-              <span *ngIf="!collapsed" class="nav-label">{{ item.label }}</span>
-              <span *ngIf="item.badge && !collapsed" class="nav-badge">{{ item.badge }}</span>
-            </a>
-          </li>
-        </ul>
+        <div *ngFor="let section of menuSections; let isLast = last">
+          <!-- Section Title -->
+          <div *ngIf="section.title && !collapsed" class="section-title">
+            {{ section.title }}
+          </div>
 
-        <div class="nav-divider"></div>
+          <!-- Section Items -->
+          <ul class="nav-list">
+            <li
+              *ngFor="let item of section.items"
+              class="nav-item"
+              [class.active]="isActive(item.route)"
+              [title]="collapsed ? item.label : ''"
+            >
+              <a [routerLink]="item.route" class="nav-link">
+                <jira-icon [name]="item.icon" [size]="20" />
+                <span *ngIf="!collapsed" class="nav-label">{{ item.label }}</span>
+                <span *ngIf="item.badge && !collapsed" class="nav-badge">{{ item.badge }}</span>
+              </a>
+            </li>
+          </ul>
 
-        <ul class="nav-list">
-          <li class="nav-item" [title]="collapsed ? 'Settings' : ''">
-            <a [routerLink]="'/settings'" class="nav-link">
-              <jira-icon name="settings" [size]="20" />
-              <span *ngIf="!collapsed" class="nav-label">Settings</span>
-            </a>
-          </li>
-        </ul>
+          <!-- Divider -->
+          <div *ngIf="!isLast" class="nav-divider"></div>
+        </div>
       </nav>
 
       <!-- User Profile (Bottom) -->
@@ -201,6 +206,16 @@ interface MenuItem {
       list-style: none;
       padding: 0;
       margin: 0;
+    }
+
+    .section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--jira-neutral-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-top: var(--spacing-sm);
     }
 
     .nav-divider {
@@ -334,12 +349,28 @@ export class SidebarComponent {
   currentUser;
   currentProject;
 
-  menuItems: MenuItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-    { id: 'kanban', label: 'Kanban Board', icon: 'kanban', route: '/kanban' },
-    { id: 'backlog', label: 'Backlog', icon: 'backlog', route: '/backlog' },
-    { id: 'sprints', label: 'Sprints', icon: 'sprint', route: '/sprints' },
-    { id: 'reports', label: 'Reports', icon: 'reports', route: '/reports' },
+  menuSections: MenuSection[] = [
+    {
+      items: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+        { id: 'kanban', label: 'Kanban Board', icon: 'kanban', route: '/kanban' },
+        { id: 'backlog', label: 'Backlog', icon: 'backlog', route: '/backlog' },
+        { id: 'sprints', label: 'Sprints', icon: 'sprint', route: '/sprints' },
+        { id: 'reports', label: 'Reports', icon: 'reports', route: '/reports' },
+      ]
+    },
+    {
+      title: 'Administration',
+      items: [
+        { id: 'projects', label: 'Projects', icon: 'folder', route: '/projects' },
+        { id: 'users', label: 'Users', icon: 'user', route: '/users' },
+      ]
+    },
+    {
+      items: [
+        { id: 'settings', label: 'Settings', icon: 'settings', route: '/settings' },
+      ]
+    }
   ];
 
   constructor(

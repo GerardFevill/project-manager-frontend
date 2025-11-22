@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface User {
+export interface AuthUser {
   id: string;
   username: string;
   email: string;
@@ -21,7 +21,7 @@ export interface LoginRequest {
 
 export interface AuthResponse {
   access_token: string;
-  user: User;
+  user: AuthUser;
 }
 
 @Injectable({
@@ -32,7 +32,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'jira_token';
   private readonly USER_KEY = 'jira_user';
 
-  currentUser = signal<User | null>(this.getUserFromStorage());
+  currentUser = signal<AuthUser | null>(this.getUserFromStorage());
   isAuthenticated = signal<boolean>(!!this.getToken());
 
   constructor(private http: HttpClient) {}
@@ -63,17 +63,17 @@ export class AuthService {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  private setUser(user: User): void {
+  private setUser(user: AuthUser): void {
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
-  private getUserFromStorage(): User | null {
+  private getUserFromStorage(): AuthUser | null {
     const userJson = localStorage.getItem(this.USER_KEY);
     return userJson ? JSON.parse(userJson) : null;
   }
 
-  getMe(): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/me`).pipe(
+  getMe(): Observable<AuthUser> {
+    return this.http.get<AuthUser>(`${this.API_URL}/me`).pipe(
       tap(user => {
         this.setUser(user);
         this.currentUser.set(user);

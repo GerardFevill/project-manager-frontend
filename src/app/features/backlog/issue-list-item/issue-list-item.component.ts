@@ -37,11 +37,11 @@ import { Issue } from '../../../core/services/issue.service';
 
           <div class="issue-assignee" *ngIf="issue.assignee">
             <jira-avatar
-              [name]="issue.assignee.name"
+              [name]="getUserDisplayName(issue.assignee)"
               [src]="issue.assignee.avatar"
               size="xsmall"
             />
-            <span>{{ issue.assignee.name }}</span>
+            <span>{{ getUserDisplayName(issue.assignee) }}</span>
           </div>
 
           <span class="story-points" *ngIf="issue.storyPoints">
@@ -274,5 +274,12 @@ export class IssueListItemComponent {
       highest: 'danger'
     };
     return variants[priority] || 'default';
+  }
+
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

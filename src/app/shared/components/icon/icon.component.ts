@@ -38,6 +38,13 @@ import {
   faCheckCircle,
   faSun,
   faMoon,
+  faCode,
+  faBriefcase,
+  faList,
+  faFolder,
+  faShield,
+  faEnvelope,
+  faLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
@@ -47,7 +54,9 @@ export type IconName =
   | 'chevron-up' | 'chevron-left' | 'chevron-right' | 'close' | 'menu'
   | 'edit' | 'delete' | 'more' | 'filter' | 'calendar' | 'clock'
   | 'check' | 'star' | 'attachment' | 'comment' | 'link' | 'arrow-up'
-  | 'arrow-down' | 'info' | 'warning' | 'error' | 'success' | 'sun' | 'moon';
+  | 'arrow-down' | 'info' | 'warning' | 'error' | 'success' | 'sun' | 'moon'
+  | 'code' | 'briefcase' | 'list' | 'folder' | 'cog' | 'bell' | 'shield'
+  | 'envelope' | 'lock';
 
 @Component({
   selector: 'jira-icon',
@@ -57,7 +66,7 @@ export type IconName =
     <fa-icon
       [icon]="iconMap[name]"
       [style.font-size.px]="size"
-      [style.color]="color"
+      [style.color]="color || 'currentColor'"
     ></fa-icon>
   `,
   styles: [`
@@ -110,5 +119,14 @@ export class IconComponent {
     'success': faCheckCircle,
     'sun': faSun,
     'moon': faMoon,
+    'code': faCode,
+    'briefcase': faBriefcase,
+    'list': faList,
+    'folder': faFolder,
+    'cog': faCog,
+    'bell': faBell,
+    'shield': faShield,
+    'envelope': faEnvelope,
+    'lock': faLock,
   };
 }

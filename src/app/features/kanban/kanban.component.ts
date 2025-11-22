@@ -306,7 +306,7 @@ export class KanbanComponent implements OnInit, OnDestroy {
 
       if (groupByType === 'assignee') {
         groupKey = issue.assignee?.id || 'unassigned';
-        groupName = issue.assignee?.name || 'Unassigned';
+        groupName = this.getUserDisplayName(issue.assignee) || 'Unassigned';
       } else if (groupByType === 'priority') {
         groupKey = issue.priority;
         groupName = issue.priority.charAt(0).toUpperCase() + issue.priority.slice(1);
@@ -324,7 +324,7 @@ export class KanbanComponent implements OnInit, OnDestroy {
     return Array.from(groupsMap.entries()).map(([key, groupIssues]) => {
       const firstIssue = groupIssues[0];
       const name = groupByType === 'assignee'
-        ? (firstIssue.assignee?.name || 'Unassigned')
+        ? (this.getUserDisplayName(firstIssue.assignee) || 'Unassigned')
         : firstIssue.priority.charAt(0).toUpperCase() + firstIssue.priority.slice(1);
 
       return {
@@ -478,5 +478,12 @@ export class KanbanComponent implements OnInit, OnDestroy {
 
   trackBySwimlaneId(index: number, swimlane: Swimlane): string {
     return swimlane.id;
+  }
+
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

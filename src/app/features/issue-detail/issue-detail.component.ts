@@ -94,12 +94,12 @@ import { TimeTracking } from '../../core/models/work-log.model';
 
             <div class="detail-group">
               <label>Assignee</label>
-              <span>{{ issue()!.assignee?.name || 'Unassigned' }}</span>
+              <span>{{ getUserDisplayName(issue()!.assignee) || 'Unassigned' }}</span>
             </div>
 
             <div class="detail-group">
               <label>Reporter</label>
-              <span>{{ issue()!.reporter.name }}</span>
+              <span>{{ getUserDisplayName(issue()!.reporter) }}</span>
             </div>
 
             <div class="detail-group" *ngIf="issue()!.sprint">
@@ -257,5 +257,12 @@ export class IssueDetailComponent implements OnInit, OnDestroy {
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleDateString();
+  }
+
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

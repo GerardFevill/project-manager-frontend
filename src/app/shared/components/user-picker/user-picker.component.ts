@@ -14,11 +14,11 @@ import { User } from '../../../core/services/issue.service';
       <div class="selected-user" (click)="toggleDropdown()">
         <div class="user-display" *ngIf="selectedUser(); else unassigned">
           <jira-avatar
-            [name]="selectedUser()!.name"
+            [name]="getUserDisplayName(selectedUser()!)"
             [src]="selectedUser()!.avatar"
             size="small"
           />
-          <span class="user-name">{{ selectedUser()!.name }}</span>
+          <span class="user-name">{{ getUserDisplayName(selectedUser()!) }}</span>
         </div>
         <ng-template #unassigned>
           <div class="unassigned">
@@ -65,12 +65,12 @@ import { User } from '../../../core/services/issue.service';
             (click)="selectUser(user.id)"
           >
             <jira-avatar
-              [name]="user.name"
+              [name]="getUserDisplayName(user)"
               [src]="user.avatar"
               size="small"
             />
             <div class="user-info">
-              <span class="user-name">{{ user.name }}</span>
+              <span class="user-name">{{ getUserDisplayName(user) }}</span>
               <span class="user-email">{{ user.email }}</span>
             </div>
           </button>
@@ -127,8 +127,9 @@ export class UserPickerComponent {
     const query = this.searchQuery().toLowerCase().trim();
     if (!query) return this.users;
     return this.users.filter(user =>
-      user.name.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query)
+      this.getUserDisplayName(user).toLowerCase().includes(query) ||
+      user.email?.toLowerCase().includes(query) ||
+      user.username?.toLowerCase().includes(query)
     );
   });
 
@@ -148,5 +149,11 @@ export class UserPickerComponent {
 
   onSearchChange(): void {
     // Trigger computed signal update
+  }
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

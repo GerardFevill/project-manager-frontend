@@ -1,0 +1,170 @@
+<div class="users-page">
+  <!-- Header -->
+  <div class="users-header">
+    <div class="header-title">
+      <h1>User Management</h1>
+      <span class="user-count" *ngIf="!loading()">
+        {{ users().length }} users
+      </span>
+    </div>
+
+    <div class="header-actions">
+      <jira-button
+        variant="subtle"
+        size="medium"
+        (clicked)="refreshUsers()"
+        [disabled]="loading()"
+      >
+        <jira-icon leftIcon name="arrow-up" [size]="16" />
+        Refresh
+      </jira-button>
+
+      <jira-button
+        variant="primary"
+        size="medium"
+        (clicked)="createUser()"
+      >
+        <jira-icon leftIcon name="plus" [size]="16" />
+        Add User
+      </jira-button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" *ngIf="!loading()">
+    <div class="search-bar">
+      <jira-icon name="search" [size]="16" />
+      <input
+        type="text"
+        placeholder="Search users by name, email or username..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading() && error()" class="error-state">
+    <jira-icon name="warning" [size]="48" color="var(--jira-danger)" />
+    <p>{{ error() }}</p>
+    <jira-button variant="primary" (clicked)="refreshUsers()">
+      Retry
+    </jira-button>
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!loading() && !error()" class="users-table-container">
+    <table class="users-table" *ngIf="filteredUsers().length > 0">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Username</th>
+          <th>Admin</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers()" [class.inactive]="!user.isActive">
+          <td>
+            <div class="user-cell">
+              <jira-avatar
+                [name]="getUserDisplayName(user)"
+                [src]="user.avatar"
+                size="small"
+              />
+              <span class="user-name">{{ getUserDisplayName(user) }}</span>
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.username }}</td>
+          <td>
+            <jira-badge [variant]="user.isAdmin ? 'danger' : 'default'">
+              {{ user.isAdmin ? 'Yes' : 'No' }}
+            </jira-badge>
+          </td>
+          <td>
+            <jira-badge [variant]="user.isActive ? 'success' : 'default'">
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </jira-badge>
+          </td>
+          <td>{{ formatDate(user.createdDate) }}</td>
+          <td class="actions-col">
+            <div class="action-buttons">
+              <button class="action-btn" (click)="editUser(user)" title="Edit">
+                <jira-icon name="edit" [size]="14" />
+              </button>
+              <button
+                class="action-btn"
+                (click)="toggleUserStatus(user)"
+                [title]="user.isActive ? 'Deactivate' : 'Activate'"
+              >
+                <jira-icon [name]="user.isActive ? 'close' : 'check'" [size]="14" />
+              </button>
+              <button class="action-btn danger" (click)="deleteUser(user)" title="Delete">
+                <jira-icon name="delete" [size]="14" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredUsers().length === 0">
+      <jira-icon name="user" [size]="64" color="var(--jira-neutral-400)" />
+      <h3>No users found</h3>
+      <p>Try adjusting your filters or create a new user</p>
+      <jira-button variant="primary" (clicked)="createUser()">
+        <jira-icon leftIcon name="plus" [size]="16" />
+        Add User
+      </jira-button>
+    </div>
+  </div>
+</div>
+
+<!-- User Form Dialog -->
+<app-user-form-dialog
+  *ngIf="showUserDialog()"
+  [user]="selectedUser()"
+  (submit)="onUserSubmit($event)"
+  (cancel)="closeDialog()"
+/>
+
+<!-- Deactivate/Activate Confirmation Dialog -->
+<app-confirm-dialog
+  *ngIf="showDeactivateDialog()"
+  [type]="'warning'"
+  [title]="userToAction()?.isActive ? 'Deactivate User' : 'Activate User'"
+  [message]="userToAction()?.isActive
+    ? 'Are you sure you want to deactivate ' + getUserDisplayName(userToAction()!) + '?'
+    : 'Are you sure you want to activate ' + getUserDisplayName(userToAction()!) + '?'"
+  [subMessage]="userToAction()?.isActive
+    ? 'This user will no longer be able to access the system.'
+    : 'This user will regain access to the system.'"
+  [confirmText]="userToAction()?.isActive ? 'Deactivate' : 'Activate'"
+  cancelText="Cancel"
+  (confirm)="confirmToggleUserStatus()"
+  (cancel)="closeConfirmDialogs()"
+/>
+
+<!-- Delete Confirmation Dialog -->
+<app-confirm-dialog
+  *ngIf="showDeleteDialog()"
+  type="danger"
+  title="Delete User"
+  [message]="'Are you sure you want to permanently delete ' + getUserDisplayName(userToAction()!) + '?'"
+  subMessage="This action cannot be undone. All user data will be permanently deleted."
+  confirmText="Delete User"
+  cancelText="Cancel"
+  (confirm)="confirmDeleteUser()"
+  (cancel)="closeConfirmDialogs()"
+/>

@@ -38,7 +38,7 @@ import { Issue } from '../../../core/services/issue.service';
 
         <jira-avatar
           *ngIf="issue.assignee"
-          [name]="issue.assignee.name"
+          [name]="getUserDisplayName(issue.assignee)"
           [src]="issue.assignee.avatar"
           size="xsmall"
         />
@@ -179,5 +179,12 @@ export class KanbanCardComponent {
       lowest: 'P5'
     };
     return labels[priority] || priority;
+  }
+
+  getUserDisplayName(user: any): string {
+    if (!user) return 'Unknown';
+    if (user.displayName) return user.displayName;
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    return fullName || user.username || user.email;
   }
 }

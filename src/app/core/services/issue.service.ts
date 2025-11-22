@@ -2,6 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, of, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { User } from './user.service';
+
+// Re-export User for backwards compatibility
+export type { User } from './user.service';
 
 export interface Issue {
   id: string;
@@ -27,13 +31,6 @@ export interface Issue {
 export type IssueStatus = 'todo' | 'in-progress' | 'review' | 'done' | 'blocked';
 export type IssuePriority = 'highest' | 'high' | 'medium' | 'low' | 'lowest';
 export type IssueType = 'story' | 'task' | 'bug' | 'epic' | 'subtask';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-}
 
 export interface Sprint {
   id: string;
