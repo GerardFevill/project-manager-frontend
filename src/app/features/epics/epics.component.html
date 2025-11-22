@@ -1,0 +1,187 @@
+<div class="epics-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <jira-icon name="zap" [size]="32" class="page-icon" />
+        <div>
+          <h1>Epics</h1>
+          <p class="page-subtitle">Organize large bodies of work into manageable pieces</p>
+        </div>
+      </div>
+
+      <jira-button variant="primary" (clicked)="openCreateDialog()">
+        <jira-icon leftIcon name="plus" [size]="16" />
+        Create Epic
+      </jira-button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-total">
+        <jira-icon name="list" [size]="20" />
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats().total }}</div>
+        <div class="stat-label">Total Epics</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-active">
+        <jira-icon name="play" [size]="20" />
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats().active }}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-completed">
+        <jira-icon name="check" [size]="20" />
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats().completed }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-planned">
+        <jira-icon name="calendar" [size]="20" />
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats().planned }}</div>
+        <div class="stat-label">Planned</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <jira-icon name="search" [size]="16" />
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search epics by name, key, or description..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($any($event.target).value)"
+      />
+      <button
+        *ngIf="searchQuery()"
+        type="button"
+        class="clear-search"
+        (click)="onSearchChange('')"
+      >
+        <jira-icon name="times" [size]="14" />
+      </button>
+    </div>
+
+    <jira-dropdown
+      [options]="statusFilterOptions"
+      [(ngModel)]="statusFilter"
+      (selectionChange)="onStatusFilterChange($event)"
+      placeholder="Filter by status"
+    />
+
+    <jira-button
+      *ngIf="searchQuery() || statusFilter() !== 'all'"
+      variant="subtle"
+      (clicked)="clearFilters()"
+    >
+      <jira-icon leftIcon name="times" [size]="14" />
+      Clear Filters
+    </jira-button>
+  </div>
+
+  <!-- Results Count -->
+  <div *ngIf="!loading() && filteredEpics().length > 0" class="results-count">
+    Showing {{ filteredEpics().length }} of {{ epics().length }} epics
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading epics...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <jira-icon name="exclamation-triangle" [size]="48" color="var(--jira-danger)" />
+    <h2>Failed to load epics</h2>
+    <p>{{ error() }}</p>
+    <jira-button variant="primary" (clicked)="loadEpics()">
+      <jira-icon leftIcon name="sync" [size]="16" />
+      Retry
+    </jira-button>
+  </div>
+
+  <!-- Empty State (No Epics) -->
+  <div *ngIf="!loading() && !error() && epics().length === 0" class="empty-state">
+    <jira-icon name="zap" [size]="64" color="var(--jira-neutral-400)" />
+    <h2>No epics yet</h2>
+    <p>Create your first epic to organize large features and track progress</p>
+    <jira-button variant="primary" (clicked)="openCreateDialog()">
+      <jira-icon leftIcon name="plus" [size]="16" />
+      Create Your First Epic
+    </jira-button>
+  </div>
+
+  <!-- Empty State (No Results) -->
+  <div *ngIf="!loading() && !error() && epics().length > 0 && filteredEpics().length === 0" class="empty-state">
+    <jira-icon name="search" [size]="64" color="var(--jira-neutral-400)" />
+    <h2>No epics found</h2>
+    <p>Try adjusting your search or filters</p>
+    <jira-button variant="subtle" (clicked)="clearFilters()">
+      Clear Filters
+    </jira-button>
+  </div>
+
+  <!-- Epics Grid -->
+  <div *ngIf="!loading() && !error() && filteredEpics().length > 0" class="epics-grid">
+    <jira-epic-card
+      *ngFor="let epic of filteredEpics(); trackBy: trackByEpicId"
+      [epic]="epic"
+      (edit)="openEditDialog($event)"
+      (delete)="openDeleteDialog($event)"
+    />
+  </div>
+
+  <!-- Create Epic Dialog -->
+  <jira-epic-form-dialog
+    [isOpen]="showCreateDialog"
+    mode="create"
+    (closed)="showCreateDialog.set(false)"
+    (epicCreated)="onEpicCreated($event)"
+  />
+
+  <!-- Edit Epic Dialog -->
+  <jira-epic-form-dialog
+    *ngIf="selectedEpic()"
+    [isOpen]="showEditDialog"
+    [epic]="selectedEpic()!"
+    mode="edit"
+    (closed)="showEditDialog.set(false); selectedEpic.set(null)"
+    (epicUpdated)="onEpicUpdated($event)"
+  />
+
+  <!-- Delete Confirmation Dialog -->
+  <div *ngIf="showDeleteDialog()" class="modal-overlay" (click)="showDeleteDialog.set(false); selectedEpic.set(null)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <h3>Delete Epic</h3>
+      <p>Are you sure you want to delete "{{ selectedEpic()?.name || '' }}"? This action cannot be undone.</p>
+      <div class="dialog-actions">
+        <jira-button variant="subtle" (clicked)="showDeleteDialog.set(false); selectedEpic.set(null)">
+          Cancel
+        </jira-button>
+        <jira-button variant="danger" (clicked)="confirmDelete()">
+          Delete
+        </jira-button>
+      </div>
+    </div>
+  </div>
+</div>

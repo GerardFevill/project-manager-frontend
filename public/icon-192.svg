@@ -1,32 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1976d2;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#5e35b1;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#7b1fa2;stop-opacity:1" />
+    <linearGradient id="blueGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2684FF;stop-opacity:1" />
     </linearGradient>
   </defs>
 
-  <!-- Background circle with shadow -->
-  <circle cx="96" cy="96" r="88" fill="url(#grad2)"/>
+  <!-- Background -->
+  <rect width="192" height="192" fill="url(#blueGrad192)" rx="38"/>
 
-  <!-- Main checkmark -->
-  <path d="M55 95 L80 120 L137 63"
-        stroke="white"
-        stroke-width="16"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        fill="none"/>
-
-  <!-- Folder icon -->
-  <g transform="translate(115, 120) scale(0.8)">
-    <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+  <!-- Jira-style icon (simplified mountain/peak shape) -->
+  <g transform="translate(96, 96)">
+    <!-- Bottom triangle -->
+    <path d="M -38 29 L 0 -10 L 38 29 Z"
           fill="white"
-          opacity="0.95"/>
+          opacity="0.9"/>
+
+    <!-- Top triangle -->
+    <path d="M -23 -10 L 0 -38 L 23 -10 Z"
+          fill="white"/>
   </g>
 
-  <!-- Decorative dots -->
-  <circle cx="30" cy="30" r="4" fill="white" opacity="0.3"/>
-  <circle cx="162" cy="30" r="4" fill="white" opacity="0.3"/>
-  <circle cx="30" cy="162" r="4" fill="white" opacity="0.3"/>
+  <!-- Optional: Small dot for variation -->
+  <circle cx="96" cy="144" r="6" fill="white" opacity="0.8"/>
 </svg>

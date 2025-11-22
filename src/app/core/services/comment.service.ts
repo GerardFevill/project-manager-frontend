@@ -1,63 +1,137 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { Comment, CreateCommentDto, UpdateCommentDto } from '../models';
+import {
+  Comment,
+  CreateCommentDto,
+  UpdateCommentDto,
+  CommentListResponse
+} from '../models/comment.model';
 
-/**
- * Comment Service - Handles all comment-related API calls
- */
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
-  private readonly apiUrl = `${environment.apiUrl}/comments`;
+  private apiUrl = `${environment.apiUrl}/issues`;
+  private commentsCache = new Map<string, BehaviorSubject<Comment[]>>();
 
   constructor(private http: HttpClient) {}
 
   /**
+   * Get all comments for an issue
+   */
+  getComments(issueId: string, page = 1, pageSize = 50): Observable<CommentListResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<CommentListResponse>(
+      `${this.apiUrl}/${issueId}/comments`,
+      { params }
+    ).pipe(
+      tap(response => {
+        // Update cache
+        if (!this.commentsCache.has(issueId)) {
+          this.commentsCache.set(issueId, new BehaviorSubject<Comment[]>([]));
+        }
+        this.commentsCache.get(issueId)!.next(response.items);
+      })
+    );
+  }
+
+  /**
+   * Get a single comment
+   */
+  getComment(issueId: string, commentId: string): Observable<Comment> {
+    return this.http.get<Comment>(
+      `${this.apiUrl}/${issueId}/comments/${commentId}`
+    );
+  }
+
+  /**
    * Create a new comment
    */
-  create(createDto: CreateCommentDto): Observable<Comment> {
-    return this.http.post<Comment>(this.apiUrl, createDto);
+  createComment(issueId: string, dto: CreateCommentDto): Observable<Comment> {
+    return this.http.post<Comment>(
+      `${this.apiUrl}/${issueId}/comments`,
+      dto
+    ).pipe(
+      tap(comment => {
+        // Add to cache
+        if (this.commentsCache.has(issueId)) {
+          const current = this.commentsCache.get(issueId)!.value;
+          this.commentsCache.get(issueId)!.next([...current, comment]);
+        }
+      })
+    );
   }
 
   /**
-   * Get all comments for a task
+   * Update an existing comment
    */
-  findByTask(taskId: string): Observable<Comment[]> {
-    const params = new HttpParams().set('taskId', taskId);
-    return this.http.get<Comment[]>(this.apiUrl, { params });
-  }
-
-  /**
-   * Get a single comment by ID
-   */
-  findOne(id: string): Observable<Comment> {
-    return this.http.get<Comment>(`${this.apiUrl}/${id}`);
-  }
-
-  /**
-   * Update a comment
-   */
-  update(id: string, updateDto: UpdateCommentDto, userId: string): Observable<Comment> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.put<Comment>(`${this.apiUrl}/${id}`, updateDto, { params });
+  updateComment(
+    issueId: string,
+    commentId: string,
+    dto: UpdateCommentDto
+  ): Observable<Comment> {
+    return this.http.patch<Comment>(
+      `${this.apiUrl}/${issueId}/comments/${commentId}`,
+      dto
+    ).pipe(
+      tap(updatedComment => {
+        // Update cache
+        if (this.commentsCache.has(issueId)) {
+          const current = this.commentsCache.get(issueId)!.value;
+          const updated = current.map(c =>
+            c.id === commentId ? updatedComment : c
+          );
+          this.commentsCache.get(issueId)!.next(updated);
+        }
+      })
+    );
   }
 
   /**
    * Delete a comment
    */
-  remove(id: string, userId: string): Observable<void> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { params });
+  deleteComment(issueId: string, commentId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${issueId}/comments/${commentId}`
+    ).pipe(
+      tap(() => {
+        // Remove from cache
+        if (this.commentsCache.has(issueId)) {
+          const current = this.commentsCache.get(issueId)!.value;
+          const filtered = current.filter(c => c.id !== commentId);
+          this.commentsCache.get(issueId)!.next(filtered);
+        }
+      })
+    );
   }
 
   /**
-   * Get comment count for a task
+   * Get cached comments for an issue (as observable)
    */
-  countByTask(taskId: string): Observable<{ count: number }> {
-    const params = new HttpParams().set('taskId', taskId);
-    return this.http.get<{ count: number }>(`${this.apiUrl}/count/task`, { params });
+  getCachedComments(issueId: string): Observable<Comment[]> {
+    if (!this.commentsCache.has(issueId)) {
+      this.commentsCache.set(issueId, new BehaviorSubject<Comment[]>([]));
+    }
+    return this.commentsCache.get(issueId)!.asObservable();
+  }
+
+  /**
+   * Clear cache for an issue
+   */
+  clearCache(issueId: string): void {
+    this.commentsCache.delete(issueId);
+  }
+
+  /**
+   * Clear all caches
+   */
+  clearAllCaches(): void {
+    this.commentsCache.clear();
   }
 }

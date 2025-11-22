@@ -1,10 +1,7 @@
-export * from './confirm-dialog/confirm-dialog';
-export * from './create-task-dialog/create-task-dialog';
-export * from './task-status-badge/task-status-badge';
-export * from './task-progress-bar/task-progress-bar';
-export * from './task-recurrence-selector/task-recurrence-selector';
-export * from './task-tags-input/task-tags-input';
-export * from './task-block-dialog/task-block-dialog';
-export * from './user-avatar/user-avatar';
-export * from './task-comment/task-comment';
-export * from './log-work-dialog/log-work-dialog';
+// Barrel export for shared components
+export * from './button/button.component';
+export * from './card/card.component';
+export * from './badge/badge.component';
+export * from './avatar/avatar.component';
+export * from './input/input.component';
+export * from './icon/icon.component';

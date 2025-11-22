@@ -1,58 +1,32 @@
-/**
- * User Roles - Jira style
- */
-export enum UserRole {
-  ADMIN = 'admin',
-  DEVELOPER = 'developer',
-  MANAGER = 'manager',
-  VIEWER = 'viewer',
-}
-
 export interface User {
   id: string;
+  name: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl?: string;
-  role: UserRole;
-  jobTitle?: string;
-  department?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  avatar?: string;
+  role?: 'admin' | 'developer' | 'viewer';
+  active?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface UserListResponse {
+  items: User[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 export interface CreateUserDto {
+  name: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl?: string;
-  role?: UserRole;
-  jobTitle?: string;
-  department?: string;
+  role?: 'admin' | 'developer' | 'viewer';
+  avatar?: string;
 }
 
 export interface UpdateUserDto {
+  name?: string;
   email?: string;
-  firstName?: string;
-  lastName?: string;
-  avatarUrl?: string;
-  role?: UserRole;
-  jobTitle?: string;
-  department?: string;
-  isActive?: boolean;
-}
-
-/**
- * Get full name of user
- */
-export function getUserFullName(user: User): string {
-  return `${user.firstName} ${user.lastName}`;
-}
-
-/**
- * Get initials for avatar display
- */
-export function getUserInitials(user: User): string {
-  return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+  role?: 'admin' | 'developer' | 'viewer';
+  avatar?: string;
+  active?: boolean;
 }

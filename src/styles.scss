@@ -1,466 +1,262 @@
-/* You can add global styles to this file, and also import other style files */
-@use '@angular/material' as mat;
+/* ============================================
+   JIRA MODERN DESIGN SYSTEM - 2024+
+   ============================================ */
 
-@include mat.core();
-
-$light-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$violet-palette,
-  ),
-));
-
-$dark-theme: mat.define-theme((
-  color: (
-    theme-type: dark,
-    primary: mat.$violet-palette,
-  ),
-));
-
-html {
-  @include mat.all-component-themes($light-theme);
-
-  &.dark-mode {
-    @include mat.all-component-colors($dark-theme);
-  }
-}
-
+/* CSS Variables - Atlassian Design Tokens */
 :root {
-  /* Jira Light theme colors */
-  --bg-color: #f4f5f7;
-  --surface-color: #f4f5f7;
-  --text-color: #172b4d;
-  --text-primary: #172b4d;
-  --text-secondary: #5e6c84;
-  --text-tertiary: #8993a4;
-  --border-color: #dfe1e6;
-  --card-bg: #ffffff;
-  --shadow: rgba(9, 30, 66, 0.25);
-  --hover-bg: #ebecf0;
-  --accent-color: #6554c0;
-  --primary-color: #0052cc;
-  --primary-rgb: 0, 82, 204;
+  /* Brand Colors */
+  --jira-brand-primary: #0052CC;
+  --jira-brand-primary-hover: #0747A6;
+  --jira-brand-primary-active: #003884;
 
-  /* Jira semantic colors */
-  --success-color: #36b37e;
-  --warning-color: #ffab00;
-  --error-color: #de350b;
-  --info-color: #0065ff;
+  /* Neutral Colors */
+  --jira-neutral-0: #FFFFFF;
+  --jira-neutral-50: #FAFBFC;
+  --jira-neutral-100: #F4F5F7;
+  --jira-neutral-200: #EBECF0;
+  --jira-neutral-300: #DFE1E6;
+  --jira-neutral-400: #C1C7D0;
+  --jira-neutral-500: #B3BAC5;
+  --jira-neutral-600: #A5ADBA;
+  --jira-neutral-700: #7A869A;
+  --jira-neutral-800: #42526E;
+  --jira-neutral-900: #253858;
+  --jira-neutral-1000: #091E42;
 
-  /* Jira priority colors */
-  --priority-urgent: #de350b;
-  --priority-high: #ff5630;
-  --priority-medium: #ffab00;
-  --priority-low: #36b37e;
+  /* Status Colors */
+  --jira-success: #00875A;
+  --jira-success-bg: #E3FCEF;
+  --jira-warning: #FF991F;
+  --jira-warning-bg: #FFFAE6;
+  --jira-danger: #DE350B;
+  --jira-danger-bg: #FFEBE6;
+  --jira-info: #0065FF;
+  --jira-info-bg: #DEEBFF;
 
-  /* Jira status colors */
-  --status-draft: #6c757d;
-  --status-active: #0052cc;
-  --status-blocked: #de350b;
-  --status-recurring: #6554c0;
-  --status-completed: #36b37e;
-  --status-archived: #6c757d;
+  /* Issue Type Colors */
+  --jira-story: #63BA3C;
+  --jira-task: #4BADE8;
+  --jira-bug: #E5493A;
+  --jira-epic: #904EE2;
 
-  /* Jira spacing */
+  /* Spacing Scale */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
 
-  /* Jira Border Radius */
+  /* Border Radius */
   --radius-sm: 3px;
-  --radius-md: 3px;
-  --radius-lg: 3px;
-  --radius-xl: 3px;
-  --radius-full: 999px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
-  /* Jira tag colors */
-  --tag-bg: #dfe1e6;
-  --tag-color: #5e6c84;
+  /* Shadows */
+  --shadow-sm: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+  --shadow-md: 0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+  --shadow-lg: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+  --shadow-xl: 0 12px 24px -6px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 29px;
+  --font-size-4xl: 35px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4286;
+  --line-height-relaxed: 1.6;
+
+  /* Transitions */
+  --transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
+  --transition-slow: 300ms cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layout */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+  --topbar-height: 56px;
+
+  /* Z-index Scale */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
 }
 
-:root.dark-mode {
-  /* Jira Dark theme colors */
-  --bg-color: #1d2125;
-  --surface-color: #1d2125;
-  --text-color: #b6c2cf;
-  --text-primary: #b6c2cf;
-  --text-secondary: #8c9bab;
-  --text-tertiary: #626f86;
-  --border-color: #2c333a;
-  --card-bg: #22272b;
-  --shadow: rgba(0, 0, 0, 0.5);
-  --hover-bg: #2c333a;
-  --accent-color: #8270db;
-  --primary-color: #579dff;
-  --primary-rgb: 87, 157, 255;
+/* Dark Mode Theme */
+[data-theme="dark"] {
+  /* Neutral Colors - Dark Mode */
+  --jira-neutral-0: #1D2125;
+  --jira-neutral-50: #22272B;
+  --jira-neutral-100: #282E33;
+  --jira-neutral-200: #2C333A;
+  --jira-neutral-300: #38414A;
+  --jira-neutral-400: #596773;
+  --jira-neutral-500: #738496;
+  --jira-neutral-600: #8C9BAB;
+  --jira-neutral-700: #9FADBC;
+  --jira-neutral-800: #B6C2CF;
+  --jira-neutral-900: #C7D1DB;
+  --jira-neutral-1000: #DEE4EA;
 
-  /* Jira Dark semantic colors */
-  --success-color: #4bce97;
-  --warning-color: #e2b203;
-  --error-color: #f87168;
-  --info-color: #579dff;
+  /* Brand Colors - Adjusted for dark */
+  --jira-brand-primary: #579DFF;
+  --jira-brand-primary-hover: #85B8FF;
+  --jira-brand-primary-active: #388BFF;
 
-  /* Jira Dark priority colors */
-  --priority-urgent: #f87168;
-  --priority-high: #fd9891;
-  --priority-medium: #e2b203;
-  --priority-low: #4bce97;
+  /* Status Colors - Adjusted for dark */
+  --jira-success: #4BCE97;
+  --jira-success-bg: #1F3A2E;
+  --jira-warning: #F5CD47;
+  --jira-warning-bg: #332E1B;
+  --jira-danger: #F87168;
+  --jira-danger-bg: #3D2621;
+  --jira-info: #579DFF;
+  --jira-info-bg: #1C2B41;
 
-  /* Jira Dark status colors */
-  --status-draft: #8c9bab;
-  --status-active: #579dff;
-  --status-blocked: #f87168;
-  --status-recurring: #8270db;
-  --status-completed: #4bce97;
-  --status-archived: #8c9bab;
+  /* Issue Type Colors - Adjusted for dark */
+  --jira-story: #4BCE97;
+  --jira-task: #579DFF;
+  --jira-bug: #F87168;
+  --jira-epic: #9F8FEF;
 
-  /* Jira Dark tag colors */
-  --tag-bg: #2c333a;
-  --tag-color: #8c9bab;
+  /* Shadows - Darker for dark mode */
+  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.31);
+  --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 0, 0, 0.31);
+  --shadow-lg: 0 8px 16px -4px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.31);
+  --shadow-xl: 0 12px 24px -6px rgba(0, 0, 0, 0.45), 0 0 1px rgba(0, 0, 0, 0.31);
 }
 
-* {
+/* Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-html {
+html, body {
+  width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif;
-  font-size: 14px;
-  line-height: 1.42857;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.2s ease, color 0.2s ease;
-  min-height: 100%;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--jira-neutral-1000);
+  background-color: var(--jira-neutral-50);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  position: relative;
 }
 
-/* Dark mode body */
-html.dark-mode body {
-  background-color: var(--bg-color);
-}
-
+/* Typography Utilities */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--text-primary);
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-md); }
+
+p {
   margin: 0;
 }
 
-h1 { font-size: 24px; }
-h2 { font-size: 20px; }
-h3 { font-size: 16px; }
-h4 { font-size: 14px; }
-h5, h6 { font-size: 12px; font-weight: 600; text-transform: uppercase; }
-
-p {
-  margin-bottom: 1rem;
-}
-
-button, input, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-}
-
-/* Snackbar/Toaster styles - Jira */
-.snackbar-success {
-  --mdc-snackbar-container-color: var(--success-color) !important;
-  --mat-snack-bar-button-color: #ffffff !important;
-  --mdc-snackbar-supporting-text-color: #ffffff !important;
-
-  .mdc-snackbar__surface {
-    border-radius: 3px !important;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
-    min-width: 320px !important;
-    padding: 14px 16px !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-  }
-}
-
-.snackbar-error {
-  --mdc-snackbar-container-color: var(--error-color) !important;
-  --mat-snack-bar-button-color: #ffffff !important;
-  --mdc-snackbar-supporting-text-color: #ffffff !important;
-
-  .mdc-snackbar__surface {
-    border-radius: 3px !important;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
-    min-width: 320px !important;
-    padding: 14px 16px !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-  }
-}
-
-.snackbar-warning {
-  --mdc-snackbar-container-color: var(--warning-color) !important;
-  --mat-snack-bar-button-color: #172b4d !important;
-  --mdc-snackbar-supporting-text-color: #172b4d !important;
-
-  .mdc-snackbar__surface {
-    border-radius: 3px !important;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
-    min-width: 320px !important;
-    padding: 14px 16px !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-  }
-}
-
-.snackbar-info {
-  --mdc-snackbar-container-color: var(--info-color) !important;
-  --mat-snack-bar-button-color: #ffffff !important;
-  --mdc-snackbar-supporting-text-color: #ffffff !important;
-
-  .mdc-snackbar__surface {
-    border-radius: 3px !important;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25) !important;
-    min-width: 320px !important;
-    padding: 14px 16px !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-  }
-}
-
-/* Global snackbar positioning */
-.mat-mdc-snack-bar-container {
-  margin: 16px !important;
-}
-
-/* ========================================
-   JIRA STYLE UTILITIES
-   ======================================== */
-
-/* Jira card style */
-mat-card {
-  background: var(--card-bg) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: 0 1px 2px var(--shadow) !important;
-  transition: box-shadow 0.2s ease, background-color 0.2s ease !important;
+a {
+  color: var(--jira-brand-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
 
   &:hover {
-    box-shadow: 0 4px 8px var(--shadow) !important;
-  }
-
-  mat-card-title,
-  .mat-mdc-card-title {
-    color: var(--text-primary) !important;
-    font-weight: 500 !important;
-    font-size: 20px !important;
+    color: var(--jira-brand-primary-hover);
+    text-decoration: underline;
   }
 }
 
-/* Jira Buttons */
-.mdc-button,
-button[mat-raised-button],
-button[mat-button],
-button[mat-flat-button],
-button[mat-stroked-button] {
-  border-radius: var(--radius-sm) !important;
-  font-weight: 500 !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  transition: background-color 0.1s ease !important;
-  height: 32px !important;
-  font-size: 14px !important;
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-  &:active {
-    transform: none !important;
+::-webkit-scrollbar-track {
+  background: var(--jira-neutral-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--jira-neutral-400);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--jira-neutral-500);
   }
 }
 
-button[mat-raised-button] {
-  background-color: var(--primary-color) !important;
-  color: white !important;
+/* Utility Classes */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
 
-  &:hover:not(:disabled) {
-    background-color: #0747a6 !important;
-  }
+.font-regular { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.text-primary { color: var(--jira-brand-primary); }
+.text-success { color: var(--jira-success); }
+.text-warning { color: var(--jira-warning); }
+.text-danger { color: var(--jira-danger); }
+.text-muted { color: var(--jira-neutral-700); }
+
+/* Loading Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-button[mat-stroked-button] {
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
-
-  &:hover:not(:disabled) {
-    background-color: var(--hover-bg) !important;
-  }
+.spinner {
+  animation: spin 1s linear infinite;
 }
 
-/* Jira Input Fields */
-.mat-mdc-form-field {
-  .mat-mdc-text-field-wrapper {
-    background: var(--card-bg) !important;
-    border-radius: var(--radius-sm) !important;
-    border: 2px solid var(--border-color) !important;
-  }
-
-  &.mat-focused {
-    .mat-mdc-text-field-wrapper {
-      border-color: var(--primary-color) !important;
-    }
-  }
+/* Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Jira Chips */
-.mat-mdc-chip {
-  background: var(--tag-bg) !important;
-  color: var(--tag-color) !important;
-  border-radius: var(--radius-sm) !important;
-  font-weight: 400 !important;
-  font-size: 11px !important;
-  height: 20px !important;
+.fade-in {
+  animation: fadeIn var(--transition-normal);
 }
 
-/* Jira Tabs */
-.mat-mdc-tab-group {
-  .mat-mdc-tab-header {
-    background: var(--card-bg) !important;
-    border-bottom: 2px solid var(--border-color) !important;
-  }
 
-  .mat-mdc-tab {
-    font-weight: 500 !important;
-    letter-spacing: 0 !important;
-    color: var(--text-secondary) !important;
+/* ============================================
+   ANIMATIONS - Imported from animations.scss
+   ============================================ */
+@import './styles/animations.scss';
 
-    &.mdc-tab--active {
-      color: var(--primary-color) !important;
-    }
-  }
-}
-
-/* Jira Divider */
-mat-divider {
-  border-top-color: var(--border-color) !important;
-  opacity: 1 !important;
-}
-
-/* iOS Spring Animation */
-@keyframes spring-in {
-  0% {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.spring-in {
-  animation: spring-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* iOS Haptic Feedback Visual */
-@keyframes haptic {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.96);
-  }
-}
-
-.haptic {
-  animation: haptic 0.15s ease-out;
-}
-
-/* iOS List Style */
-.ios-list {
-  background: transparent;
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-
-  .ios-list-item {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:hover {
-      background: var(--hover-bg);
-      transform: translateX(4px);
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
-  }
-}
-
-/* iOS Modal/Dialog */
-.mat-mdc-dialog-container {
-  .mdc-dialog__surface {
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(40px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: var(--radius-xl) !important;
-    box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.3) !important;
-  }
-
-  .mat-mdc-dialog-title,
-  h1, h2, h3 {
-    color: var(--text-color) !important;
-  }
-}
-
-/* Dark mode dialog enhancement */
-html.dark-mode .mat-mdc-dialog-container {
-  .mdc-dialog__surface {
-    box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-}
-
-/* Backdrop-filter fallback for unsupported browsers */
-@supports not (backdrop-filter: blur(20px)) {
-  .glass,
-  .glass-card,
-  mat-card,
-  .mat-mdc-dialog-container .mdc-dialog__surface {
-    background: var(--card-bg) !important;
-  }
-
-  html.dark-mode {
-    .glass,
-    .glass-card,
-    mat-card,
-    .mat-mdc-dialog-container .mdc-dialog__surface {
-      background: rgba(35, 35, 40, 0.95) !important;
-    }
-  }
-}
-
-/* Smooth Scrolling iOS */
-* {
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-/* iOS Safe Area */
-body {
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}

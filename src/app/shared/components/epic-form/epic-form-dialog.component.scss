@@ -1,0 +1,152 @@
+.epic-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--jira-neutral-800);
+  margin-bottom: var(--spacing-xs);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-md);
+  color: var(--jira-neutral-800);
+  background: var(--jira-neutral-0);
+  border: 1px solid var(--jira-neutral-300);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: var(--jira-neutral-400);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--jira-brand-primary);
+    box-shadow: 0 0 0 1px var(--jira-brand-primary);
+  }
+
+  &:disabled {
+    background: var(--jira-neutral-100);
+    color: var(--jira-neutral-500);
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: var(--jira-neutral-500);
+  }
+
+  &-error {
+    border-color: var(--jira-danger);
+
+    &:focus {
+      border-color: var(--jira-danger);
+      box-shadow: 0 0 0 1px var(--jira-danger);
+    }
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: var(--line-height-normal);
+}
+
+.form-error {
+  font-size: var(--font-size-sm);
+  color: var(--jira-danger);
+  margin-top: var(--spacing-xs);
+}
+
+.form-info {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--jira-info-bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--jira-neutral-800);
+
+  jira-icon {
+    color: var(--jira-info);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  span {
+    line-height: var(--line-height-normal);
+  }
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+
+    jira-button {
+      width: 100%;
+    }
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .form-label {
+    color: var(--jira-neutral-200);
+  }
+
+  .form-input,
+  .form-textarea {
+    background: var(--jira-neutral-900);
+    border-color: var(--jira-neutral-700);
+    color: var(--jira-neutral-100);
+
+    &:hover:not(:disabled) {
+      border-color: var(--jira-neutral-600);
+    }
+
+    &:disabled {
+      background: var(--jira-neutral-800);
+      color: var(--jira-neutral-500);
+    }
+  }
+
+  .form-info {
+    background: rgba(0, 101, 255, 0.1);
+    color: var(--jira-neutral-200);
+
+    jira-icon {
+      color: var(--jira-info);
+    }
+  }
+}

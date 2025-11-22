@@ -1,0 +1,80 @@
+<div class="color-picker" [class.color-picker-disabled]="disabled">
+  <!-- Label -->
+  <label *ngIf="label" class="color-picker-label">
+    {{ label }}
+  </label>
+
+  <!-- Color swatches -->
+  <div class="color-swatches">
+    <button
+      *ngFor="let color of colors"
+      type="button"
+      class="color-swatch"
+      [class.color-swatch-selected]="isSelected(color.hex)"
+      [style.background-color]="color.hex"
+      [title]="color.name"
+      [disabled]="disabled"
+      (click)="selectColor(color.hex)"
+    >
+      <jira-icon
+        *ngIf="isSelected(color.hex)"
+        name="check"
+        [size]="16"
+        class="color-swatch-check"
+      />
+    </button>
+
+    <!-- Custom color button -->
+    <button
+      *ngIf="showInput"
+      type="button"
+      class="color-swatch color-swatch-custom"
+      [class.color-swatch-active]="showCustomInput()"
+      [disabled]="disabled"
+      (click)="toggleCustomInput()"
+      title="Custom color"
+    >
+      <jira-icon name="palette" [size]="16" />
+    </button>
+
+    <!-- Clear button -->
+    <button
+      *ngIf="selectedColor()"
+      type="button"
+      class="color-swatch color-swatch-clear"
+      [disabled]="disabled"
+      (click)="clearSelection()"
+      title="Clear selection"
+    >
+      <jira-icon name="times" [size]="16" />
+    </button>
+  </div>
+
+  <!-- Custom color input -->
+  <div *ngIf="showCustomInput() && showInput" class="custom-color-input">
+    <div class="input-group">
+      <span class="input-prefix">#</span>
+      <input
+        type="text"
+        class="custom-color-field"
+        placeholder="FF5733"
+        [value]="customColor().replace('#', '')"
+        (input)="onCustomColorInput($event)"
+        [disabled]="disabled"
+        maxlength="6"
+      />
+      <div
+        *ngIf="selectedColor() && showCustomInput()"
+        class="color-preview"
+        [style.background-color]="selectedColor()"
+      ></div>
+    </div>
+    <span class="input-hint">Enter a hex color code (e.g., FF5733)</span>
+  </div>
+
+  <!-- Selected color display -->
+  <div *ngIf="selectedColor()" class="selected-color">
+    <div class="selected-color-preview" [style.background-color]="selectedColor()"></div>
+    <span class="selected-color-value">{{ selectedColor() }}</span>
+  </div>
+</div>

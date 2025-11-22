@@ -1,11 +1,11 @@
 {
-  "name": "Project Manager - Gestion de Tâches",
-  "short_name": "TaskManager",
-  "description": "Application de gestion de projets et tâches avec système fractal hiérarchique",
+  "name": "Jira Project Manager",
+  "short_name": "Jira PM",
+  "description": "Jira-style project management and issue tracking application",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1976d2",
+  "theme_color": "#0052CC",
   "orientation": "portrait-primary",
   "icons": [
     {
