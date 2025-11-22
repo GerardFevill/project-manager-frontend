@@ -1,0 +1,85 @@
+<a [routerLink]="['/epics', epic.id]" class="epic-card">
+  <!-- Epic Color Bar -->
+  <div
+    class="epic-color-bar"
+    [style.background-color]="epic.color || 'var(--jira-epic)'"
+  ></div>
+
+  <!-- Card Header -->
+  <div class="epic-header">
+    <div class="epic-key-name">
+      <jira-icon name="zap" [size]="20" class="epic-icon" />
+      <div class="epic-key">{{ epic.key }}</div>
+      <h3 class="epic-name">{{ epic.name }}</h3>
+    </div>
+
+    <div class="epic-actions">
+      <button
+        type="button"
+        class="action-button"
+        (click)="onEdit($event)"
+        title="Edit epic"
+      >
+        <jira-icon name="edit" [size]="16" />
+      </button>
+      <button
+        type="button"
+        class="action-button action-button-danger"
+        (click)="onDelete($event)"
+        title="Delete epic"
+      >
+        <jira-icon name="trash" [size]="16" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Epic Description -->
+  <p *ngIf="epic.description" class="epic-description">
+    {{ epic.description }}
+  </p>
+
+  <!-- Epic Stats -->
+  <div class="epic-stats">
+    <div class="stat">
+      <jira-icon name="list" [size]="14" />
+      <span>{{ epic.totalIssues || 0 }} issues</span>
+    </div>
+
+    <div *ngIf="epic.totalPoints" class="stat">
+      <jira-icon name="chart-bar" [size]="14" />
+      <span>{{ epic.completedPoints || 0 }}/{{ epic.totalPoints }} pts</span>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Progress</span>
+      <span class="progress-percentage">{{ progress }}%</span>
+    </div>
+    <div class="progress-bar">
+      <div
+        class="progress-fill"
+        [style.width.%]="progress"
+        [style.background-color]="progressColor"
+      ></div>
+    </div>
+    <div class="progress-details">
+      <span class="progress-detail">{{ epic.completedIssues || 0 }} Done</span>
+      <span class="progress-detail">{{ epic.inProgressIssues || 0 }} In Progress</span>
+      <span class="progress-detail">{{ epic.todoIssues || 0 }} To Do</span>
+    </div>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="epic-footer">
+    <jira-badge [variant]="getStatusVariant()">
+      {{ statusConfig.label }}
+    </jira-badge>
+
+    <div *ngIf="epic.targetDate" class="epic-date">
+      <jira-icon name="calendar" [size]="14" />
+      <span>{{ formatDate(epic.targetDate) }}</span>
+    </div>
+  </div>
+</a>

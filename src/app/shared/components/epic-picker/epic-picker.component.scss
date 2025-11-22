@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.epic-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.create-epic-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--jira-brand-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  align-self: flex-start;
+
+  &:hover {
+    background: var(--jira-info-bg);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.loading-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--jira-neutral-600);
+  padding: var(--spacing-xs);
+}
+
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .create-epic-button {
+    color: var(--jira-info);
+
+    &:hover {
+      background: rgba(0, 101, 255, 0.2);
+    }
+  }
+
+  .loading-hint {
+    color: var(--jira-neutral-400);
+  }
+}

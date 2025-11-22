@@ -1,0 +1,27 @@
+<div class="epic-picker">
+  <jira-dropdown
+    [label]="label"
+    [options]="epicOptions()"
+    [placeholder]="placeholder"
+    [(ngModel)]="selectedEpicId"
+    [disabled]="disabled || loading()"
+    [error]="error"
+    [searchable]="true"
+    (selectionChange)="onSelectionChange($event)"
+  />
+
+  <button
+    *ngIf="showCreateOption && !disabled"
+    type="button"
+    class="create-epic-button"
+    (click)="onCreateClick()"
+  >
+    <jira-icon name="plus" [size]="14" />
+    <span>Create New Epic</span>
+  </button>
+
+  <div *ngIf="loading()" class="loading-hint">
+    <jira-icon name="sync" [size]="14" class="loading-icon" />
+    <span>Loading epics...</span>
+  </div>
+</div>

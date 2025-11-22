@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
@@ -18,6 +18,7 @@ import { TimeTracking } from '../../core/models/work-log.model';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     IconComponent,
     BadgeComponent,
     ButtonComponent,
@@ -107,6 +108,14 @@ import { TimeTracking } from '../../core/models/work-log.model';
               <span>{{ issue()!.sprint?.name }}</span>
             </div>
 
+            <div class="detail-group" *ngIf="issue()!.epic">
+              <label>Epic</label>
+              <a [routerLink]="['/epics', issue()!.epic!.id]" class="epic-link">
+                <div class="epic-color" [style.background-color]="issue()!.epic!.color"></div>
+                <span>{{ issue()!.epic!.key }} - {{ issue()!.epic!.name }}</span>
+              </a>
+            </div>
+
             <div class="detail-group">
               <label>Created</label>
               <span>{{ formatDate(issue()!.createdAt) }}</span>
@@ -159,6 +168,9 @@ import { TimeTracking } from '../../core/models/work-log.model';
     .detail-group:last-child { border-bottom: none; }
     .detail-group label { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--jira-neutral-600); text-transform: uppercase; }
     .detail-group span { font-size: var(--font-size-sm); color: var(--jira-neutral-1000); }
+    .epic-link { display: flex; align-items: center; gap: var(--spacing-xs); text-decoration: none; color: var(--jira-neutral-1000); font-size: var(--font-size-sm); transition: color var(--transition-fast); }
+    .epic-link:hover { color: var(--jira-brand-primary); }
+    .epic-color { width: 4px; height: 16px; border-radius: 2px; flex-shrink: 0; }
     .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--spacing-3xl); gap: var(--spacing-md); }
     .spinner { width: 48px; height: 48px; border: 4px solid var(--jira-neutral-200); border-top-color: var(--jira-brand-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }

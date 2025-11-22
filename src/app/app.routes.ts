@@ -27,6 +27,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/sprints/sprints.component').then(m => m.SprintsComponent)
       },
       {
+        path: 'epics',
+        loadComponent: () => import('./features/epics/epics.component').then(m => m.EpicsComponent)
+      },
+      {
+        path: 'epics/:id',
+        loadComponent: () => import('./features/epics/epic-detail/epic-detail.component').then(m => m.EpicDetailComponent)
+      },
+      {
         path: 'reports',
         loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent)
       },

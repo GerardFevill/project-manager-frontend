@@ -20,6 +20,13 @@ export interface Issue {
   labels?: string[];
   sprint?: Sprint;
   project: Project;
+  epicId?: string;
+  epic?: {
+    id: string;
+    key: string;
+    name: string;
+    color?: string;
+  };
   storyPoints?: number;
   timeEstimate?: number;
   timeSpent?: number;
@@ -55,6 +62,7 @@ export interface IssueFilters {
   labels?: string[];
   sprint?: string;
   project?: string;
+  epic?: string;
   search?: string;
 }
 
@@ -72,6 +80,7 @@ export interface CreateIssueDto {
   priority: IssuePriority;
   assigneeId?: string;
   sprintId?: string;
+  epicId?: string;
   storyPoints?: number;
   timeEstimate?: number;
   labels?: string[];
@@ -85,6 +94,7 @@ export interface UpdateIssueDto {
   status?: IssueStatus;
   assigneeId?: string;
   sprintId?: string;
+  epicId?: string;
   storyPoints?: number;
   timeEstimate?: number;
   labels?: string[];

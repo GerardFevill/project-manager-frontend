@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon/icon.component';
@@ -12,6 +12,8 @@ import {
   User,
   Sprint
 } from '../../../core/services/issue.service';
+import { Epic } from '../../../core/models/epic.model';
+import { EpicService } from '../../../core/services/epic.service';
 
 @Component({
   selector: 'app-issue-form-dialog',
@@ -130,6 +132,21 @@ import {
                 <option [ngValue]="null">No Sprint</option>
                 <option *ngFor="let sprint of availableSprints()" [ngValue]="sprint.id">
                   {{ sprint.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Epic -->
+            <div class="form-group">
+              <label>Epic</label>
+              <select
+                [(ngModel)]="formData.epicId"
+                name="epicId"
+                class="form-select"
+              >
+                <option [ngValue]="null">No Epic</option>
+                <option *ngFor="let epic of availableEpics()" [ngValue]="epic.id">
+                  {{ epic.key }} - {{ epic.name }}
                 </option>
               </select>
             </div>
@@ -258,6 +275,9 @@ export class IssueFormDialogComponent implements OnInit {
 
   submitting = signal(false);
   newLabel = '';
+  availableEpics = signal<Epic[]>([]);
+
+  private epicService = inject(EpicService);
 
   issueTypes: IssueType[] = ['story', 'task', 'bug', 'epic'];
   priorities: IssuePriority[] = ['highest', 'high', 'medium', 'low', 'lowest'];
@@ -270,6 +290,7 @@ export class IssueFormDialogComponent implements OnInit {
     status?: IssueStatus;
     assigneeId: string | null;
     sprintId: string | null;
+    epicId: string | null;
     storyPoints: number | null;
     timeEstimate: string;
     labels: string[];
@@ -280,12 +301,19 @@ export class IssueFormDialogComponent implements OnInit {
     priority: 'medium',
     assigneeId: null,
     sprintId: null,
+    epicId: null,
     storyPoints: null,
     timeEstimate: '',
     labels: []
   };
 
   ngOnInit(): void {
+    // Load epics
+    this.epicService.getEpics(1, 100).subscribe({
+      next: (response) => this.availableEpics.set(response.items || []),
+      error: () => console.error('Failed to load epics')
+    });
+
     if (this.issue) {
       // Edit mode - populate form with existing data
       this.formData = {
@@ -296,6 +324,7 @@ export class IssueFormDialogComponent implements OnInit {
         status: this.issue.status as IssueStatus,
         assigneeId: this.issue.assignee?.id || null,
         sprintId: this.issue.sprint?.id || null,
+        epicId: this.issue.epicId || null,
         storyPoints: this.issue.storyPoints || null,
         timeEstimate: this.formatTimeEstimate(this.issue.timeEstimate),
         labels: this.issue.labels ? [...this.issue.labels] : []
@@ -337,6 +366,7 @@ export class IssueFormDialogComponent implements OnInit {
       priority: this.formData.priority,
       assigneeId: this.formData.assigneeId || undefined,
       sprintId: this.formData.sprintId || undefined,
+      epicId: this.formData.epicId || undefined,
       storyPoints: this.formData.storyPoints || undefined,
       timeEstimate: timeEstimate || undefined,
       labels: this.formData.labels.length > 0 ? this.formData.labels : undefined

@@ -1,0 +1,230 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(9, 30, 66, 0.54);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: var(--spacing-lg);
+  animation: backdropFadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
+}
+
+.modal-container {
+  background: var(--jira-neutral-0);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  width: 100%;
+  animation: modalSlideIn 0.3s cubic-bezier(0.2, 0, 0, 1);
+  z-index: var(--z-modal);
+
+  &.modal-small {
+    max-width: 400px;
+  }
+
+  &.modal-medium {
+    max-width: 600px;
+  }
+
+  &.modal-large {
+    max-width: 800px;
+  }
+
+  &.modal-xlarge {
+    max-width: 1000px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100% !important;
+    max-height: 95vh;
+    border-radius: var(--radius-lg);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid var(--jira-neutral-200);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+  }
+}
+
+.modal-title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--jira-neutral-900);
+  line-height: var(--line-height-tight);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--jira-neutral-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--jira-neutral-100);
+    color: var(--jira-neutral-800);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.modal-body {
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--jira-neutral-100);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--jira-neutral-400);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--jira-neutral-500);
+    }
+  }
+}
+
+.modal-footer {
+  padding: var(--spacing-xl);
+  border-top: 1px solid var(--jira-neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+
+    ::ng-deep jira-button {
+      width: 100%;
+    }
+  }
+
+  // Hide footer if empty
+  &:empty {
+    display: none;
+  }
+}
+
+// Animations
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .modal-backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal-container {
+    background: var(--jira-neutral-900);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: var(--jira-neutral-700);
+  }
+
+  .modal-title {
+    color: var(--jira-neutral-100);
+  }
+
+  .modal-close {
+    color: var(--jira-neutral-400);
+
+    &:hover {
+      background: var(--jira-neutral-800);
+      color: var(--jira-neutral-200);
+    }
+  }
+
+  .modal-body {
+    &::-webkit-scrollbar-track {
+      background: var(--jira-neutral-800);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--jira-neutral-600);
+
+      &:hover {
+        background: var(--jira-neutral-500);
+      }
+    }
+  }
+}

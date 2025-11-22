@@ -1,0 +1,132 @@
+<div class="dropdown" [class.dropdown-disabled]="disabled" [class.dropdown-error]="error">
+  <!-- Label -->
+  <label *ngIf="label" class="dropdown-label">
+    {{ label }}
+  </label>
+
+  <!-- Dropdown trigger -->
+  <div
+    class="dropdown-trigger"
+    [class.dropdown-trigger-open]="isOpen()"
+    [class.dropdown-trigger-small]="size === 'small'"
+    [class.dropdown-trigger-large]="size === 'large'"
+    (click)="toggleDropdown()"
+  >
+    <span class="dropdown-trigger-text">
+      {{ selectedLabel() }}
+    </span>
+
+    <div class="dropdown-trigger-icons">
+      <button
+        *ngIf="clearable && (selectedValue() !== null || selectedValues().length > 0)"
+        type="button"
+        class="dropdown-clear"
+        (click)="clearSelection(); $event.stopPropagation()"
+      >
+        <jira-icon name="times" [size]="14" />
+      </button>
+
+      <jira-icon
+        name="chevron-down"
+        [size]="16"
+        [class.icon-rotated]="isOpen()"
+      />
+    </div>
+  </div>
+
+  <!-- Dropdown menu -->
+  <div *ngIf="isOpen()" class="dropdown-menu">
+    <!-- Search input -->
+    <div *ngIf="searchable" class="dropdown-search">
+      <jira-icon name="search" [size]="14" />
+      <input
+        type="text"
+        class="dropdown-search-input"
+        placeholder="Search..."
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+
+    <!-- Options -->
+    <div class="dropdown-options">
+      <ng-container *ngIf="filteredOptions().length > 0; else noResults">
+        <!-- Ungrouped options -->
+        <ng-container *ngIf="!hasGroups(); else groupedView">
+          <div
+            *ngFor="let option of filteredOptions(); trackBy: trackByValue"
+            class="dropdown-option"
+            [class.dropdown-option-selected]="isSelected(option)"
+            [class.dropdown-option-disabled]="option.disabled"
+            (click)="selectOption(option)"
+          >
+            <div class="dropdown-option-content">
+              <jira-icon [name]="$any(option.icon)" [size]="16" *ngIf="option.icon" />
+              <span
+                *ngIf="option.color"
+                class="dropdown-option-color"
+                [style.background-color]="option.color"
+              ></span>
+              <span class="dropdown-option-label">{{ option.label }}</span>
+            </div>
+
+            <jira-icon
+              *ngIf="isSelected(option)"
+              name="check"
+              [size]="16"
+              class="dropdown-option-check"
+            />
+          </div>
+        </ng-container>
+
+        <!-- Grouped options -->
+        <ng-template #groupedView>
+          <div *ngFor="let group of groupedOptions()" class="dropdown-group">
+            <div *ngIf="group[0] !== 'default'" class="dropdown-group-label">
+              {{ group[0] }}
+            </div>
+
+            <div
+              *ngFor="let option of group[1]; trackBy: trackByValue"
+              class="dropdown-option"
+              [class.dropdown-option-selected]="isSelected(option)"
+              [class.dropdown-option-disabled]="option.disabled"
+              (click)="selectOption(option)"
+            >
+              <div class="dropdown-option-content">
+                <jira-icon [name]="$any(option.icon)" [size]="16" *ngIf="option.icon" />
+                <span
+                  *ngIf="option.color"
+                  class="dropdown-option-color"
+                  [style.background-color]="option.color"
+                ></span>
+                <span class="dropdown-option-label">{{ option.label }}</span>
+              </div>
+
+              <jira-icon
+                *ngIf="isSelected(option)"
+                name="check"
+                [size]="16"
+                class="dropdown-option-check"
+              />
+            </div>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <!-- No results -->
+      <ng-template #noResults>
+        <div class="dropdown-no-results">
+          <jira-icon name="search" [size]="24" />
+          <p>No results found</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="dropdown-error-message">
+    {{ error }}
+  </div>
+</div>

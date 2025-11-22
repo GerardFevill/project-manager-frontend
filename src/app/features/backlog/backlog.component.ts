@@ -12,6 +12,8 @@ import { IssueService, Issue, Sprint as IssueSprint, CreateIssueDto } from '../.
 import { SprintService, Sprint } from '../../core/services/sprint.service';
 import { UserService, User } from '../../core/services/user.service';
 import { ToastService } from '../../core/services/toast.service';
+import { Epic } from '../../core/models/epic.model';
+import { EpicService } from '../../core/services/epic.service';
 
 @Component({
   selector: 'app-backlog',
@@ -452,6 +454,9 @@ export class BacklogComponent implements OnInit, OnDestroy {
   activeSprint = signal<Sprint | null>(null);
   sprintIssues = signal<Issue[]>([]);
 
+  // Epic state
+  epics = signal<Epic[]>([]);
+
   // Filters and selection
   searchQuery = signal<string>('');
   selectedIssueIds = signal<Set<string>>(new Set());
@@ -482,37 +487,56 @@ export class BacklogComponent implements OnInit, OnDestroy {
   // Computed signal to group issues by epic
   epicGroups = computed(() => {
     const allIssues = this.filteredIssues();
+    const loadedEpics = this.epics();
     const groups: Map<string, EpicGroup> = new Map();
 
-    // Separate epics from other issues
-    const epics = allIssues.filter(i => i.type === 'epic');
-    const otherIssues = allIssues.filter(i => i.type !== 'epic');
+    // Filter out issues that are in the active sprint
+    const backlogIssues = allIssues.filter(issue => !issue.sprint);
 
-    // Create groups for each epic
-    epics.forEach(epic => {
-      groups.set(epic.id, {
-        epicId: epic.id,
-        epicKey: epic.key,
-        epicName: epic.summary,
-        epicColor: this.getEpicColor(epic.id),
-        issues: [],
-        totalPoints: 0,
-        completedPoints: 0
-      });
+    // Group issues by their epicId
+    backlogIssues.forEach(issue => {
+      const epicId = issue.epicId;
+
+      if (epicId) {
+        // Find the epic data
+        const epic = loadedEpics.find(e => e.id === epicId);
+
+        if (!groups.has(epicId)) {
+          groups.set(epicId, {
+            epicId: epicId,
+            epicKey: epic?.key,
+            epicName: epic?.name || 'Unknown Epic',
+            epicColor: epic?.color || this.getEpicColor(epicId),
+            issues: [],
+            totalPoints: 0,
+            completedPoints: 0
+          });
+        }
+
+        const group = groups.get(epicId)!;
+        group.issues.push(issue);
+
+        const points = issue.storyPoints || 0;
+        group.totalPoints += points;
+        if (issue.status === 'done') {
+          group.completedPoints += points;
+        }
+      }
     });
 
-    // Create "No Epic" group for other issues
-    if (otherIssues.length > 0) {
+    // Create "No Epic" group for issues without epicId
+    const noEpicIssues = backlogIssues.filter(issue => !issue.epicId);
+    if (noEpicIssues.length > 0) {
       const group: EpicGroup = {
         epicId: null,
         epicName: 'Backlog (Sans Epic)',
         epicColor: '#6554C0',
-        issues: otherIssues,
+        issues: noEpicIssues,
         totalPoints: 0,
         completedPoints: 0
       };
 
-      otherIssues.forEach(issue => {
+      noEpicIssues.forEach(issue => {
         const points = issue.storyPoints || 0;
         group.totalPoints += points;
         if (issue.status === 'done') {
@@ -527,7 +551,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
     return Array.from(groups.values()).sort((a, b) => {
       if (a.epicId === null) return 1;
       if (b.epicId === null) return -1;
-      return a.epicName.localeCompare(b.epicName);
+      return (a.epicName || '').localeCompare(b.epicName || '');
     });
   });
 
@@ -535,6 +559,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
     private issueService: IssueService,
     private sprintService: SprintService,
     private userService: UserService,
+    private epicService: EpicService,
     private router: Router,
     private toastService: ToastService
   ) {}
@@ -543,6 +568,7 @@ export class BacklogComponent implements OnInit, OnDestroy {
     this.loadIssues();
     this.loadActiveSprint();
     this.loadAvailableData();
+    this.loadEpics();
   }
 
   loadAvailableData(): void {
@@ -560,6 +586,16 @@ export class BacklogComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => this.availableUsers.set(response.data),
         error: () => console.error('Failed to load users')
+      });
+  }
+
+  loadEpics(): void {
+    // Load all epics for grouping
+    this.epicService.getEpics(1, 100)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => this.epics.set(response.items || []),
+        error: () => console.error('Failed to load epics')
       });
   }
 

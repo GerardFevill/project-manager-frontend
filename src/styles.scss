@@ -253,3 +253,10 @@ a {
 .fade-in {
   animation: fadeIn var(--transition-normal);
 }
+
+
+/* ============================================
+   ANIMATIONS - Imported from animations.scss
+   ============================================ */
+@import './styles/animations.scss';
+

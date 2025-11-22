@@ -9,7 +9,7 @@ import { ProjectService } from '../../services/project.service';
 interface MenuItem {
   id: string;
   label: string;
-  icon: 'dashboard' | 'kanban' | 'backlog' | 'sprint' | 'reports' | 'settings' | 'folder' | 'user';
+  icon: 'dashboard' | 'kanban' | 'backlog' | 'sprint' | 'zap' | 'reports' | 'settings' | 'folder' | 'user';
   route: string;
   badge?: number;
 }
@@ -356,6 +356,7 @@ export class SidebarComponent {
         { id: 'kanban', label: 'Kanban Board', icon: 'kanban', route: '/kanban' },
         { id: 'backlog', label: 'Backlog', icon: 'backlog', route: '/backlog' },
         { id: 'sprints', label: 'Sprints', icon: 'sprint', route: '/sprints' },
+        { id: 'epics', label: 'Epics', icon: 'zap', route: '/epics' },
         { id: 'reports', label: 'Reports', icon: 'reports', route: '/reports' },
       ]
     },

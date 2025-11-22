@@ -45,6 +45,16 @@ import {
   faShield,
   faEnvelope,
   faLock,
+  faSync,
+  faFlag,
+  faPlay,
+  faCircle,
+  faInbox,
+  faBook,
+  faCheckSquare,
+  faBug,
+  faMinus,
+  faPalette,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
@@ -56,7 +66,9 @@ export type IconName =
   | 'check' | 'star' | 'attachment' | 'comment' | 'link' | 'arrow-up'
   | 'arrow-down' | 'info' | 'warning' | 'error' | 'success' | 'sun' | 'moon'
   | 'code' | 'briefcase' | 'list' | 'folder' | 'cog' | 'bell' | 'shield'
-  | 'envelope' | 'lock';
+  | 'envelope' | 'lock' | 'zap' | 'trash' | 'chart-bar' | 'exclamation-triangle'
+  | 'sync' | 'flag' | 'play' | 'circle' | 'inbox' | 'times' | 'book'
+  | 'check-square' | 'bug' | 'minus' | 'palette' | 'info-circle';
 
 @Component({
   selector: 'jira-icon',
@@ -128,5 +140,21 @@ export class IconComponent {
     'shield': faShield,
     'envelope': faEnvelope,
     'lock': faLock,
+    'zap': faBolt,
+    'trash': faTrash,
+    'chart-bar': faChartBar,
+    'exclamation-triangle': faExclamationTriangle,
+    'sync': faSync,
+    'flag': faFlag,
+    'play': faPlay,
+    'circle': faCircle,
+    'inbox': faInbox,
+    'times': faTimes,
+    'book': faBook,
+    'check-square': faCheckSquare,
+    'bug': faBug,
+    'minus': faMinus,
+    'palette': faPalette,
+    'info-circle': faInfoCircle,
   };
 }

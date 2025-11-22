@@ -1,0 +1,273 @@
+.epic-card {
+  position: relative;
+  display: block;
+  background: var(--jira-neutral-0);
+  border: 1px solid var(--jira-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  animation: fadeInUp 0.3s ease-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--jira-neutral-300);
+
+    .epic-actions {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+.epic-color-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.epic-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.epic-key-name {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.epic-icon {
+  color: var(--jira-epic);
+  flex-shrink: 0;
+}
+
+.epic-key {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--jira-neutral-600);
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+.epic-name {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--jira-neutral-900);
+  line-height: var(--line-height-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.epic-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    opacity: 1;
+  }
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--jira-neutral-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--jira-neutral-100);
+    color: var(--jira-neutral-800);
+  }
+
+  &-danger:hover {
+    background: var(--jira-danger-bg);
+    color: var(--jira-danger);
+  }
+}
+
+.epic-description {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--jira-neutral-700);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.epic-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--jira-neutral-700);
+
+  jira-icon {
+    color: var(--jira-neutral-500);
+  }
+}
+
+.progress-section {
+  margin-bottom: var(--spacing-md);
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.progress-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--jira-neutral-700);
+}
+
+.progress-percentage {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--jira-neutral-800);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--jira-neutral-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease-out, background-color 0.3s ease-out;
+}
+
+.progress-details {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-xs);
+  color: var(--jira-neutral-600);
+}
+
+.progress-detail {
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '•';
+    position: absolute;
+    right: calc(var(--spacing-md) / -2);
+    color: var(--jira-neutral-400);
+  }
+}
+
+.epic-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--jira-neutral-200);
+}
+
+.epic-date {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--jira-neutral-700);
+
+  jira-icon {
+    color: var(--jira-neutral-500);
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .epic-card {
+    background: var(--jira-neutral-900);
+    border-color: var(--jira-neutral-700);
+
+    &:hover {
+      border-color: var(--jira-neutral-600);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .epic-name {
+    color: var(--jira-neutral-100);
+  }
+
+  .epic-description,
+  .stat,
+  .progress-label,
+  .epic-date {
+    color: var(--jira-neutral-400);
+  }
+
+  .progress-percentage {
+    color: var(--jira-neutral-200);
+  }
+
+  .progress-bar {
+    background: var(--jira-neutral-800);
+  }
+
+  .epic-footer {
+    border-color: var(--jira-neutral-700);
+  }
+
+  .action-button {
+    color: var(--jira-neutral-400);
+
+    &:hover {
+      background: var(--jira-neutral-800);
+      color: var(--jira-neutral-200);
+    }
+
+    &-danger:hover {
+      background: rgba(222, 53, 11, 0.2);
+      color: var(--jira-danger);
+    }
+  }
+}

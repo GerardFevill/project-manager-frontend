@@ -1,0 +1,233 @@
+<div class="epic-detail-page">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading epic...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-container">
+    <div class="error-message">
+      <jira-icon name="exclamation-triangle" [size]="48" />
+      <h2>{{ error() }}</h2>
+      <jira-button variant="primary" (clicked)="loadEpic(epic()?.id || '')">
+        <jira-icon leftIcon name="sync" [size]="16" />
+        Retry
+      </jira-button>
+    </div>
+  </div>
+
+  <!-- Epic Content -->
+  <div *ngIf="!loading() && !error() && epic()" class="epic-content">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/epics" class="breadcrumb-link">
+        <jira-icon name="zap" [size]="16" />
+        Epics
+      </a>
+      <jira-icon name="chevron-right" [size]="12" class="breadcrumb-separator" />
+      <span class="breadcrumb-current">{{ epic()!.key }}</span>
+    </nav>
+
+    <!-- Epic Header -->
+    <div class="epic-header">
+      <div class="header-main">
+        <div class="header-top">
+          <div
+            class="epic-color-indicator"
+            [style.background-color]="epic()!.color || 'var(--jira-epic)'"
+          ></div>
+          <div class="epic-key">{{ epic()!.key }}</div>
+          <jira-badge [variant]="getStatusVariant()">
+            {{ statusConfig?.label }}
+          </jira-badge>
+        </div>
+
+        <h1 class="epic-title">{{ epic()!.name }}</h1>
+
+        <p *ngIf="epic()!.description" class="epic-description">
+          {{ epic()!.description }}
+        </p>
+
+        <div class="epic-meta">
+          <div *ngIf="epic()!.startDate" class="meta-item">
+            <jira-icon name="calendar" [size]="16" />
+            <span>Started {{ formatDate(epic()!.startDate!) }}</span>
+          </div>
+
+          <div *ngIf="epic()!.targetDate" class="meta-item">
+            <jira-icon name="flag" [size]="16" />
+            <span>Target {{ formatDate(epic()!.targetDate!) }}</span>
+          </div>
+
+          <div class="meta-item">
+            <jira-icon name="clock" [size]="16" />
+            <span>Created {{ formatDate(epic()!.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <jira-button variant="subtle" (clicked)="openEditDialog()">
+          <jira-icon leftIcon name="edit" [size]="16" />
+          Edit
+        </jira-button>
+
+        <jira-button variant="danger" (clicked)="openDeleteDialog()">
+          <jira-icon leftIcon name="trash" [size]="16" />
+          Delete
+        </jira-button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <jira-card class="stat-card">
+        <div class="stat-icon stat-icon-total">
+          <jira-icon name="list" [size]="24" />
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ epic()!.totalIssues || 0 }}</div>
+          <div class="stat-label">Total Issues</div>
+        </div>
+      </jira-card>
+
+      <jira-card class="stat-card">
+        <div class="stat-icon stat-icon-completed">
+          <jira-icon name="check" [size]="24" />
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ epic()!.completedIssues || 0 }}</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </jira-card>
+
+      <jira-card class="stat-card">
+        <div class="stat-icon stat-icon-progress">
+          <jira-icon name="play" [size]="24" />
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ epic()!.inProgressIssues || 0 }}</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+      </jira-card>
+
+      <jira-card class="stat-card">
+        <div class="stat-icon stat-icon-todo">
+          <jira-icon name="circle" [size]="24" />
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ epic()!.todoIssues || 0 }}</div>
+          <div class="stat-label">To Do</div>
+        </div>
+      </jira-card>
+    </div>
+
+    <!-- Progress Section -->
+    <jira-card class="progress-card">
+      <div class="progress-header">
+        <h2>Progress</h2>
+        <span class="progress-percentage">{{ progress }}%</span>
+      </div>
+
+      <div class="progress-bar-large">
+        <div
+          class="progress-fill"
+          [style.width.%]="progress"
+        ></div>
+      </div>
+
+      <div class="progress-breakdown">
+        <div class="breakdown-item breakdown-done">
+          <div class="breakdown-label">Done</div>
+          <div class="breakdown-value">{{ epic()!.completedIssues || 0 }}</div>
+        </div>
+        <div class="breakdown-item breakdown-inprogress">
+          <div class="breakdown-label">In Progress</div>
+          <div class="breakdown-value">{{ epic()!.inProgressIssues || 0 }}</div>
+        </div>
+        <div class="breakdown-item breakdown-todo">
+          <div class="breakdown-label">To Do</div>
+          <div class="breakdown-value">{{ epic()!.todoIssues || 0 }}</div>
+        </div>
+      </div>
+    </jira-card>
+
+    <!-- Issues Section -->
+    <div class="issues-section">
+      <h2 class="section-title">
+        <jira-icon name="list" [size]="20" />
+        Issues in this Epic
+      </h2>
+
+      <!-- Loading Issues -->
+      <div *ngIf="loadingIssues()" class="issues-loading">
+        <div class="spinner-small"></div>
+        <p>Loading issues...</p>
+      </div>
+
+      <!-- No Issues -->
+      <jira-card *ngIf="!loadingIssues() && issues().length === 0" class="no-issues">
+        <div class="empty-state-small">
+          <jira-icon name="inbox" [size]="48" />
+          <p>No issues in this epic yet</p>
+        </div>
+      </jira-card>
+
+      <!-- Issues List -->
+      <div *ngIf="!loadingIssues() && issues().length > 0" class="issues-list">
+        <a
+          *ngFor="let issue of issues()"
+          [routerLink]="['/issues', issue.id]"
+          class="issue-item"
+        >
+          <div class="issue-type">
+            <jira-icon [name]="getTypeIcon(issue.type)" [size]="16" />
+          </div>
+
+          <div class="issue-key">{{ issue.key }}</div>
+
+          <div class="issue-summary">{{ issue.summary }}</div>
+
+          <jira-badge [variant]="'default'" size="small">
+            {{ issue.status }}
+          </jira-badge>
+
+          <div *ngIf="issue.assignee" class="issue-assignee">
+            {{ getUserDisplayName(issue.assignee) }}
+          </div>
+
+          <div *ngIf="issue.priority" class="issue-priority">
+            <jira-icon [name]="getPriorityIcon(issue.priority)" [size]="14" />
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Epic Dialog -->
+  <jira-epic-form-dialog
+    *ngIf="epic()"
+    [isOpen]="showEditDialog"
+    [epic]="epic()!"
+    mode="edit"
+    (closed)="showEditDialog.set(false)"
+    (epicUpdated)="onEpicUpdated($event)"
+  />
+
+  <!-- Delete Confirmation Dialog -->
+  <div *ngIf="showDeleteDialog()" class="modal-overlay" (click)="showDeleteDialog.set(false)">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <h3>Delete Epic</h3>
+      <p>Are you sure you want to delete "{{ epic()?.name || '' }}"? This action cannot be undone.</p>
+      <div class="dialog-actions">
+        <jira-button variant="subtle" (clicked)="showDeleteDialog.set(false)">
+          Cancel
+        </jira-button>
+        <jira-button variant="danger" (clicked)="confirmDelete()">
+          Delete Epic
+        </jira-button>
+      </div>
+    </div>
+  </div>
+</div>

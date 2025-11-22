@@ -1,0 +1,307 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+
+  &-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--jira-neutral-800);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--jira-neutral-0);
+    border: 1px solid var(--jira-neutral-300);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: 36px;
+
+    &:hover:not(.dropdown-disabled &) {
+      border-color: var(--jira-neutral-400);
+      background: var(--jira-neutral-50);
+    }
+
+    &-open {
+      border-color: var(--jira-brand-primary);
+      box-shadow: 0 0 0 1px var(--jira-brand-primary);
+    }
+
+    &-small {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      min-height: 28px;
+      font-size: var(--font-size-sm);
+    }
+
+    &-large {
+      padding: var(--spacing-md) var(--spacing-lg);
+      min-height: 44px;
+      font-size: var(--font-size-lg);
+    }
+
+    &-text {
+      flex: 1;
+      color: var(--jira-neutral-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      .dropdown-trigger:not(.dropdown-trigger-open) &:empty::before {
+        content: attr(placeholder);
+        color: var(--jira-neutral-500);
+      }
+    }
+
+    &-icons {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      flex-shrink: 0;
+    }
+  }
+
+  &-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    background: none;
+    border: none;
+    color: var(--jira-neutral-600);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--jira-neutral-800);
+      background: var(--jira-neutral-200);
+    }
+  }
+
+  .icon-rotated {
+    transform: rotate(180deg);
+    transition: transform var(--transition-normal);
+  }
+
+  &-menu {
+    position: absolute;
+    top: calc(100% + var(--spacing-xs));
+    left: 0;
+    right: 0;
+    background: var(--jira-neutral-0);
+    border: 1px solid var(--jira-neutral-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-dropdown);
+    max-height: 320px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dropdownSlideIn 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  &-search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--jira-neutral-200);
+    background: var(--jira-neutral-50);
+
+    jira-icon {
+      color: var(--jira-neutral-500);
+      flex-shrink: 0;
+    }
+
+    &-input {
+      flex: 1;
+      border: none;
+      background: none;
+      outline: none;
+      font-size: var(--font-size-md);
+      color: var(--jira-neutral-800);
+      padding: 0;
+
+      &::placeholder {
+        color: var(--jira-neutral-500);
+      }
+    }
+  }
+
+  &-options {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--spacing-xs);
+  }
+
+  &-group {
+    &:not(:last-child) {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    &-label {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--jira-neutral-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover:not(&-disabled) {
+      background: var(--jira-neutral-100);
+    }
+
+    &-selected {
+      background: var(--jira-info-bg);
+
+      &:hover {
+        background: var(--jira-info-bg);
+      }
+    }
+
+    &-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      flex: 1;
+      min-width: 0;
+    }
+
+    &-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    &-label {
+      color: var(--jira-neutral-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-check {
+      color: var(--jira-brand-primary);
+      flex-shrink: 0;
+    }
+  }
+
+  &-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+    color: var(--jira-neutral-500);
+    text-align: center;
+
+    jira-icon {
+      margin-bottom: var(--spacing-md);
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  &-error-message {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--jira-danger);
+  }
+
+  &-error &-trigger {
+    border-color: var(--jira-danger);
+
+    &:hover {
+      border-color: var(--jira-danger);
+    }
+  }
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .dropdown {
+    &-trigger {
+      background: var(--jira-neutral-900);
+      border-color: var(--jira-neutral-700);
+
+      &:hover:not(.dropdown-disabled &) {
+        border-color: var(--jira-neutral-600);
+        background: var(--jira-neutral-800);
+      }
+    }
+
+    &-menu {
+      background: var(--jira-neutral-900);
+      border-color: var(--jira-neutral-700);
+    }
+
+    &-search {
+      background: var(--jira-neutral-800);
+      border-color: var(--jira-neutral-700);
+    }
+
+    &-option {
+      &:hover:not(&-disabled) {
+        background: var(--jira-neutral-800);
+      }
+
+      &-selected {
+        background: rgba(0, 101, 255, 0.2);
+
+        &:hover {
+          background: rgba(0, 101, 255, 0.3);
+        }
+      }
+    }
+  }
+}

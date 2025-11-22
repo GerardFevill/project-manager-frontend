@@ -1,0 +1,121 @@
+<jira-modal
+  [isOpen]="isOpen"
+  [title]="mode === 'create' ? 'Create Epic' : 'Edit Epic'"
+  size="medium"
+  (closed)="close()"
+>
+  <form class="epic-form" (ngSubmit)="handleSubmit()">
+    <!-- Epic Name -->
+    <div class="form-group">
+      <jira-input
+        label="Epic Name *"
+        placeholder="Enter epic name"
+        [(ngModel)]="name"
+        name="name"
+        [error]="errors()['name']"
+        [disabled]="isSubmitting()"
+        [required]="true"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        id="description"
+        class="form-textarea"
+        placeholder="Describe this epic..."
+        [(ngModel)]="description"
+        name="description"
+        [disabled]="isSubmitting()"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <!-- Color and Status Row -->
+    <div class="form-row">
+      <!-- Epic Color -->
+      <div class="form-group">
+        <jira-color-picker
+          label="Epic Color"
+          [(ngModel)]="color"
+          name="color"
+          [disabled]="isSubmitting()"
+          (colorChange)="onColorChange($event)"
+        />
+      </div>
+
+      <!-- Status -->
+      <div class="form-group">
+        <jira-dropdown
+          label="Status"
+          [options]="statusOptions"
+          [(ngModel)]="status"
+          name="status"
+          [disabled]="isSubmitting()"
+          (selectionChange)="onStatusChange($event)"
+        />
+      </div>
+    </div>
+
+    <!-- Dates Row -->
+    <div class="form-row">
+      <!-- Start Date -->
+      <div class="form-group">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input
+          type="date"
+          id="startDate"
+          class="form-input"
+          [(ngModel)]="startDate"
+          name="startDate"
+          [disabled]="isSubmitting()"
+        />
+      </div>
+
+      <!-- Target Date -->
+      <div class="form-group">
+        <label for="targetDate" class="form-label">Target Date</label>
+        <input
+          type="date"
+          id="targetDate"
+          class="form-input"
+          [(ngModel)]="targetDate"
+          name="targetDate"
+          [disabled]="isSubmitting()"
+          [class.form-input-error]="errors()['targetDate']"
+        />
+        <span *ngIf="errors()['targetDate']" class="form-error">
+          {{ errors()['targetDate'] }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Info Message -->
+    <div class="form-info">
+      <jira-icon name="info-circle" [size]="16" />
+      <span>Epics help organize large bodies of work into manageable pieces.</span>
+    </div>
+  </form>
+
+  <!-- Footer Actions -->
+  <div modal-footer class="modal-actions">
+    <jira-button
+      variant="subtle"
+      (clicked)="close()"
+      [disabled]="isSubmitting()"
+    >
+      Cancel
+    </jira-button>
+
+    <jira-button
+      variant="primary"
+      (clicked)="handleSubmit()"
+      [loading]="isSubmitting()"
+      [disabled]="isSubmitting()"
+    >
+      <jira-icon leftIcon name="check" [size]="16" />
+      {{ mode === 'create' ? 'Create Epic' : 'Update Epic' }}
+    </jira-button>
+  </div>
+</jira-modal>

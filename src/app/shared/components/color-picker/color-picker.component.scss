@@ -1,0 +1,255 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.color-picker {
+  &-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--jira-neutral-800);
+    margin-bottom: var(--spacing-sm);
+  }
+}
+
+.color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &-selected {
+    border-color: var(--jira-neutral-800);
+    box-shadow: 0 0 0 2px var(--jira-neutral-0), 0 0 0 4px var(--jira-neutral-800);
+  }
+
+  &-check {
+    color: white;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
+
+  &-custom {
+    background: linear-gradient(135deg,
+      #ff0000 0%,
+      #ff7f00 16%,
+      #ffff00 33%,
+      #00ff00 50%,
+      #0000ff 66%,
+      #8b00ff 83%,
+      #ff0000 100%
+    );
+    color: white;
+
+    jira-icon {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    }
+  }
+
+  &-active {
+    border-color: var(--jira-brand-primary);
+    box-shadow: 0 0 0 2px var(--jira-neutral-0), 0 0 0 4px var(--jira-brand-primary);
+  }
+
+  &-clear {
+    background: var(--jira-neutral-100);
+    border: 2px dashed var(--jira-neutral-400);
+    color: var(--jira-neutral-600);
+
+    &:hover:not(:disabled) {
+      background: var(--jira-neutral-200);
+      border-color: var(--jira-neutral-600);
+      color: var(--jira-neutral-800);
+    }
+  }
+}
+
+.custom-color-input {
+  margin-top: var(--spacing-md);
+  animation: slideDown 0.2s ease-out;
+
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--jira-neutral-0);
+    border: 1px solid var(--jira-neutral-300);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: border-color var(--transition-normal);
+
+    &:focus-within {
+      border-color: var(--jira-brand-primary);
+      box-shadow: 0 0 0 1px var(--jira-brand-primary);
+    }
+  }
+
+  .input-prefix {
+    color: var(--jira-neutral-600);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+  }
+
+  .custom-color-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: var(--font-size-md);
+    color: var(--jira-neutral-800);
+    text-transform: uppercase;
+    font-family: 'Courier New', monospace;
+
+    &::placeholder {
+      color: var(--jira-neutral-500);
+      text-transform: none;
+    }
+
+    &:disabled {
+      color: var(--jira-neutral-500);
+    }
+  }
+
+  .color-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--jira-neutral-300);
+    flex-shrink: 0;
+  }
+
+  .input-hint {
+    display: block;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    color: var(--jira-neutral-600);
+  }
+}
+
+.selected-color {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--jira-neutral-50);
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.2s ease-out;
+
+  &-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--jira-neutral-300);
+    flex-shrink: 0;
+  }
+
+  &-value {
+    font-size: var(--font-size-sm);
+    color: var(--jira-neutral-700);
+    font-family: 'Courier New', monospace;
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dark mode support
+[data-theme='dark'] {
+  .color-swatch {
+    &-selected {
+      border-color: var(--jira-neutral-200);
+      box-shadow: 0 0 0 2px var(--jira-neutral-900), 0 0 0 4px var(--jira-neutral-200);
+    }
+
+    &-custom {
+      jira-icon {
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+      }
+    }
+
+    &-active {
+      box-shadow: 0 0 0 2px var(--jira-neutral-900), 0 0 0 4px var(--jira-brand-primary);
+    }
+
+    &-clear {
+      background: var(--jira-neutral-800);
+      border-color: var(--jira-neutral-600);
+      color: var(--jira-neutral-400);
+
+      &:hover:not(:disabled) {
+        background: var(--jira-neutral-700);
+        color: var(--jira-neutral-200);
+      }
+    }
+  }
+
+  .custom-color-input {
+    .input-group {
+      background: var(--jira-neutral-900);
+      border-color: var(--jira-neutral-700);
+    }
+
+    .color-preview {
+      border-color: var(--jira-neutral-600);
+    }
+  }
+
+  .selected-color {
+    background: var(--jira-neutral-800);
+
+    &-preview {
+      border-color: var(--jira-neutral-600);
+    }
+  }
+}
